@@ -47,6 +47,7 @@ export default {
         //更新登录信息
         commit("updateUser", res.data);
       } else {
+        // ...展开运算符，用于展开数组元素或对象属性，进行复制、合并等操作。
         commit("updateUser", {
           ...state.loginUser,
           userRole: ACCESS_ENUM.NOT_LOGIN,
@@ -55,10 +56,6 @@ export default {
       // commit("updateUser", { userName: "鱼皮" });
       // commit("updateUser", payload);
     },
-    // async getAllProducts({ commit }) {
-    //   const products = await shop.getProducts();
-    //   commit("setProducts", products);
-    // },
   },
   // 执行同步操作
   mutations: {

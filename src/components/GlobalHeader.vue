@@ -60,12 +60,10 @@ router.afterEach((to, from, failure) => {
 var store = useStore();
 // console.log(store.state.user.loginUser);
 
-//修改状态变量
+//自动登录
 setTimeout(() => {
-  store.dispatch("user/getLoginUser", {
-    userName: "管理员",
-    userRole: ACCESS_ENUM.ADMIN,
-  });
+  //修改状态变量
+  store.dispatch("user/getLoginUser");
 }, 3000);
 
 //过滤掉数组中需要权限的路由，保留不需权限的；

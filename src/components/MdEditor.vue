@@ -1,29 +1,36 @@
 <template>
-  <Editor :value="value" :plugins="plugins" @change="handleChange" />
+  <!--  属性可以在官网查-->
+  <Editor
+    :value="value"
+    :mode="mode"
+    :plugins="plugins"
+    @change="handleChange"
+  />
 </template>
 
 <script setup lang="ts">
-import { Editor, Viewer } from "@bytemd/vue-next";
+import { Editor } from "@bytemd/vue-next";
 import gfm from "@bytemd/plugin-gfm";
 import highlight from "@bytemd/plugin-highlight";
 import { ref, withDefaults, defineProps } from "vue";
-
-const value = ref("");
 
 const plugins = [
   gfm(),
   highlight(),
   // Add more plugins here
 ];
-const handleChange = (v: string) => {
-  value.value = v;
-};
+// const value = ref("");
+// const handleChange = (v: string) => {
+//   value.value = v;
+// };
 
 /**
  * 定义组件属性类型
  */
 interface Props {
   value: string;
+  // 显示模式：split（两列，实时预览）, tab, auto
+  mode?: string;
   handleChange: (v: string) => void;
 }
 
@@ -33,13 +40,18 @@ interface Props {
  */
 const props = withDefaults(defineProps<Props>(), {
   value: () => "",
+  mode: () => "split",
   handleChange: (v: string) => {
     // console.log(v);
   },
 });
 </script>
 
-<style scoped>
+<style>
+/*
+隐藏编辑器上github图标（超链接）
+要把<style>中的scoped删了，不然无法生效
+*/
 .bytemd-toolbar-icon.bytemd-tippy.bytemd-tippy-right:last-child {
   display: none;
 }

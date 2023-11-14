@@ -57,7 +57,7 @@ onMounted(() => {
     // enableSplitViewResizing: false,
     readOnly: false, //是否只读  取值 true | false
     minimap: {
-      enabled: true,
+      enabled: false,
     },
   });
 
