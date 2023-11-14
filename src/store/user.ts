@@ -40,14 +40,18 @@ export default {
   // getters,
   // 执行异步操作
   actions: {
+    /**
+     * 从远程获取登录信息，并更新vuex用户信息
+     */
     async getLoginUser({ commit, state }, payload) {
-      // todo 改为从远程获取登录信息，并更新vuex用户信息
+      // todo 改为从远程获取登录信息（可实现自动登录），并更新vuex用户信息
       const res = await UserControllerService.getLoginUserUsingGet();
       if (res.code === 0) {
         //更新登录信息
         commit("updateUser", res.data);
       } else {
         // ...展开运算符，用于展开数组元素或对象属性，进行复制、合并等操作。
+        //这里，复制了 state.loginUser 的属性，并修改了 userRole 属性(已有则覆盖复制来的值，没有则添加)
         commit("updateUser", {
           ...state.loginUser,
           userRole: ACCESS_ENUM.NOT_LOGIN,

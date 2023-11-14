@@ -38,10 +38,11 @@ import { useRouter } from "vue-router";
 import { computed, ref } from "vue";
 import { useStore } from "vuex";
 import checkAccess from "@/access/checkAccess";
-import ACCESS_ENUM from "@/access/accessEnum";
 
 const router = useRouter();
-//点击菜单项更新路由
+/**
+ * 点击菜单项更新路由
+ */
 const doMenuClick = (key: string) => {
   // console.log("key=" + key);
   router.push({
@@ -57,27 +58,30 @@ router.afterEach((to, from, failure) => {
   selectedKeys.value = [to.path];
 });
 
+/**
+ * 自动登录
+ */
 var store = useStore();
 // console.log(store.state.user.loginUser);
-
-//自动登录
 setTimeout(() => {
-  //修改状态变量
+  //远程获取登录信息，并更新本地vuex用户信息
   store.dispatch("user/getLoginUser");
 }, 3000);
 
-//过滤掉数组中需要权限的路由，保留不需权限的；
-// 注意，这里使用计算属性，是为了当登录用户信息发生变更时，触发菜单栏的重新渲染，展示新增权限的菜单项
-const loginUser = store.state.user.loginUser;
+/**
+ * 过滤掉数组中需要权限的路由，保留不需权限的；
+ * 注意：这里使用计算属性，是为了当登录用户信息发生变更时，触发菜单栏的重新渲染，展示新增权限的菜单项
+ */
 const visibleRoutes = computed(() => {
+  //filter方法中，遍历元素返回true就会保留该元素，否则过滤掉
   return routes.filter((item, index) => {
-    //filter方法中，遍历元素返回true就会保留该元素，否则过滤掉
+    //根据meta的hideInMenu字段控制菜单显隐
     if (item.meta?.hideInMenu) {
       return false;
     }
     // todo 根据权限过滤菜单
     // as 类型断言，告诉编译器
-    if (!checkAccess(loginUser, item.meta?.access as string)) {
+    if (!checkAccess(store.state.user.loginUser, item.meta?.access as string)) {
       return false;
     }
     return true;

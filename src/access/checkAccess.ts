@@ -1,8 +1,7 @@
-//定义公用的权限校验方法
 import ACCESS_ENUM from "@/access/accessEnum";
 
 /**
- *
+ * 过滤菜单时使用,定义公用的权限校验方法
  * @param loginUser 当前登录用户
  * @param needAccess 需要有的权限
  * @return boolean 有无权限
@@ -28,9 +27,9 @@ const checkAccess = (
       return false;
     }
   }
-  //如果需要用户登录才能访问
+  //如果需要管理员权限
   if (needAccess === ACCESS_ENUM.ADMIN) {
-    //如果用户没登录，那么表示无权限
+    // 如果不为管理员，表示无权限
     if (loginUserAccess !== ACCESS_ENUM.ADMIN) {
       return false;
     }

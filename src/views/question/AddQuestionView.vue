@@ -1,6 +1,8 @@
 <template>
   <div id="addQuestionView">
-    <h2 style="text-align: center">创建题目</h2>
+    <h2 style="text-align: center">
+      {{ updatePage ? "更新题目" : "创建题目" }}
+    </h2>
     <a-form :model="form">
       <a-form-item field="title" label="标题">
         <a-input v-model="form.title" placeholder="请输入标题" />
@@ -120,9 +122,10 @@ import { onMounted, reactive } from "vue";
 import MdEditor from "@/components/MdEditor.vue";
 import message from "@arco-design/web-vue/es/message";
 import { useRoute } from "vue-router";
-import { Question, QuestionControllerService } from "../../../generated";
+import { QuestionControllerService } from "../../../generated";
 
 const route = useRoute();
+// 如果页面地址包含 update，视为更新页面,includes()返回Boolean值
 const updatePage = route.path.includes("update");
 
 let form = reactive({
@@ -216,7 +219,7 @@ const loadData = async () => {
     } else {
       form.tags = [];
     }
-    console.log(form);
+    // console.log(form);
   } else {
     message.error("加载失败，" + res.message);
   }

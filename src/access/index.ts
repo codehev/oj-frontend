@@ -21,17 +21,23 @@ router.beforeEach(async (to, from, next) => {
 
   // 自动登录
   //loginUser当前登录用户信息
-  const loginUser = store.state.user.loginUser;
+  let loginUser = store.state.user.loginUser;
   if (!loginUser || !loginUser.userRole) {
     //await：等用户登录成功后，再执行后续代码；user前不能加“/”
     await store.dispatch("user/getLoginUser");
+    //重新登陆了，更新loginUser
+    loginUser = store.state.user.loginUser;
   }
   //needAccess：访问该页面需要的权限;as 类型断言，告诉编译器
   const needAccess = (to.meta?.access as string) ?? ACCESS_ENUM.NOT_LOGIN;
   //要跳转的页面必须要登录
   if (needAccess !== ACCESS_ENUM.NOT_LOGIN) {
     //如果没登录，跳转到登录页面
-    if (!loginUser || !loginUser.userRole) {
+    if (
+      !loginUser ||
+      !loginUser.userRole ||
+      loginUser.userRole === ACCESS_ENUM.NOT_LOGIN
+    ) {
       //模版字符串，保留当前路径，以便登录完成后重定向回来
       next(`/user/login?redirect=${to.fullPath}`);
       return;
@@ -39,8 +45,8 @@ router.beforeEach(async (to, from, next) => {
     //如果已经登录了，但权限不足
     if (!checkAccess(loginUser, needAccess)) {
       next("/noAuth");
+      return;
     }
-    return;
   }
   next();
 });

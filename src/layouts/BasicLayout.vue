@@ -15,6 +15,10 @@
   </div>
 </template>
 
+<script setup lang="ts">
+import GlobalHeader from "@/components/GlobalHeader.vue";
+</script>
+
 <style scoped>
 /*scoped样式只在当前vue文件下起作用*/
 /*#basicLayout {*/
@@ -47,6 +51,3 @@
   text-align: center;
 }
 </style>
-<script setup lang="ts">
-import GlobalHeader from "@/components/GlobalHeader.vue";
-</script>
