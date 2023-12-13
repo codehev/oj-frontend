@@ -8,7 +8,7 @@
         <!--a-space组件可以提供不同大小的间距，并且支持响应式布局。
         这意味着间距可以根据屏幕尺寸进行自适应调整，以在不同设备上提供良好的用户体验。-->
         <a-space>
-          <img src="../assets/oj-logo.svg" class="logo" />
+          <img src="../assets/logo.jpeg" class="logo" />
           <div>OJ</div>
         </a-space>
       </a-layout-header>

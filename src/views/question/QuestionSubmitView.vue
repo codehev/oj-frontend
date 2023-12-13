@@ -1,11 +1,23 @@
 <template>
-  <div id="questionsView">
+  <div id="questionSubmitView">
     <a-form :model="searchParams" layout="inline">
-      <a-form-item field="title" label="题目名称" style="min-width: 280px">
-        <a-input v-model="searchParams.title" placeholder="请输入题目名称..." />
+      <a-form-item field="questionId" label="题目ID" style="min-width: 280px">
+        <a-input
+          v-model="searchParams.questionId"
+          placeholder="请输入题目名称..."
+        />
       </a-form-item>
-      <a-form-item field="tags" label="标签" style="min-width: 280px">
-        <a-input-tag v-model="searchParams.tags" placeholder="请输入标签..." />
+      <a-form-item field="language" label="编程语言" style="min-width: 280px">
+        <a-select
+          v-model="searchParams.language"
+          :style="{ width: '320px' }"
+          placeholder="请选择编程语言..."
+          allow-clear
+        >
+          <a-option v-for="(language, key) in languageEnum" :key="key"
+            >{{ language }}
+          </a-option>
+        </a-select>
       </a-form-item>
       <a-form-item>
         <a-button type="primary" @click="doSubmit">搜索</a-button>
@@ -28,36 +40,17 @@
       @page-change="onPageChange"
       @page-size-change="onPageSizeChange"
     >
-      <!--标签-->
-      <template #tags="{ record }">
-        <a-space wrap>
-          <a-tag v-for="(tag, index) of record.tags" :key="index" color="green"
-            >{{ tag }}
-          </a-tag>
-        </a-space>
+      <!--判题信息-->
+      <template #judgeInfo="{ record }">
+        {{ JSON.stringify(record.judgeInfo) }}
       </template>
-      <!--通过率-->
-      <template #acceptedRate="{ record }">
-        {{
-          `${
-            record.submitNum ? record.acceptedNum / record.submitNum : "0"
-          }% (${record.acceptedNum} / ${record.submitNum})`
-        }}
+      <!--判题状态-->
+      <template #status="{ record }">
+        {{ statusEnum[record.status] }}
       </template>
       <!--创建时间-->
       <template #createTime="{ record }">
         {{ moment(record.createTime).format("YYYY-MM-DD, h:mm:ss") }}
-      </template>
-      <!--作用域插槽，{ record }解构赋值，record行记录-->
-      <template #optional="{ record }">
-        <a-space>
-          <a-button
-            type="primary"
-            size="small"
-            @click="toQuestionPage(record.id)"
-            >做题
-          </a-button>
-        </a-space>
       </template>
     </a-table>
   </div>
@@ -67,16 +60,18 @@
 import { onMounted, ref, watchEffect } from "vue";
 import {
   QuestionControllerService,
-  QuestionQueryRequest,
+  QuestionSubmitQueryRequest,
 } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
 import moment from "moment";
+import languageEnum from "@/enum/languageEnum";
+import statusEnum from "../../enum/statusEnum";
 
 //搜索参数
-const searchParams = ref<QuestionQueryRequest>({
-  title: "",
-  tags: [],
+const searchParams = ref<QuestionSubmitQueryRequest>({
+  questionId: undefined,
+  language: undefined,
   pageSize: 10,
   current: 1,
 });
@@ -90,8 +85,12 @@ const dataList = ref([]);
  */
 const loadData = async () => {
   //获取题目封装类
-  const res = await QuestionControllerService.listQuestionVoByPageUsingPost(
-    searchParams.value
+  const res = await QuestionControllerService.listQuestionSubmitByPageUsingPost(
+    {
+      ...searchParams.value,
+      sortField: "createTime", //按创建时间降序
+      sortOrder: "descend", //降序
+    }
   );
   if (res.code === 0) {
     dataList.value = res.data.records;
@@ -103,42 +102,44 @@ const loadData = async () => {
 onMounted(() => {
   loadData();
 });
+/**
+ * 每隔10秒刷新一次（更新判题状态）
+ */
+setInterval(() => {
+  loadData();
+}, 10000);
 
 /**
  * 要展示的列，以及设置列属性
  */
 const columns = [
   {
-    title: "题号",
+    title: "提交编号",
     dataIndex: "id",
   },
   {
-    title: "题目名称",
-    dataIndex: "title",
+    title: "编程语言",
+    dataIndex: "language",
   },
   {
-    title: "标签",
-    slotName: "tags", //插槽名称
+    title: "判题信息",
+    slotName: "judgeInfo", //插槽名称
   },
   {
-    // 通过数/提交数
-    title: "通过率",
-    slotName: "acceptedRate", //插槽名称
+    title: "状态",
+    slotName: "status",
   },
-  // {
-  //   title: "提交数",
-  //   dataIndex: "submitNum",
-  // },
-  // {
-  //   title: "通过数",
-  //   dataIndex: "acceptedNum",
-  // },
+  {
+    title: "题目ID",
+    dataIndex: "questionId",
+  },
+  {
+    title: "用户ID",
+    dataIndex: "userId",
+  },
   {
     title: "创建时间",
-    slotName: "createTime",
-  },
-  {
-    slotName: "optional",
+    slotName: "createTime", //插槽名称
   },
 ];
 
@@ -188,7 +189,7 @@ const doSubmit = () => {
 </script>
 
 <style scoped>
-#questionsView {
+#questionSubmitView {
   max-width: 1280px;
   margin: 0 auto;
 }

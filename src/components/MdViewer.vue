@@ -1,38 +1,22 @@
 <template>
-  <!--md编辑器-->
+  <!--md浏览器-->
   <!--属性可以在官网查-->
-  <Editor
-    :value="value"
-    :mode="mode"
-    :plugins="plugins"
-    @change="handleChange"
-  />
+  <Viewer :value="value" :plugins="plugins" />
 </template>
 
 <script setup lang="ts">
-import { Editor } from "@bytemd/vue-next";
+import { Viewer } from "@bytemd/vue-next";
 import gfm from "@bytemd/plugin-gfm";
 import highlight from "@bytemd/plugin-highlight";
 import { withDefaults, defineProps } from "vue";
 
-const plugins = [
-  gfm(),
-  highlight(),
-  // Add more plugins here
-];
-// const value = ref("");
-// const handleChange = (v: string) => {
-//   value.value = v;
-// };
+const plugins = [gfm(), highlight()];
 
 /**
- * 定义组件属性，暴露给父组件，便于父组件去使用，同时也是提高组件的通用性
+ * 定义组件属性类型
  */
 interface Props {
   value: string;
-  // 显示模式：split（两列，实时预览）, tab, auto
-  mode?: string;
-  handleChange: (v: string) => void;
 }
 
 /**props：自定义组件属性
@@ -41,10 +25,6 @@ interface Props {
  */
 const props = withDefaults(defineProps<Props>(), {
   value: () => "",
-  mode: () => "split",
-  handleChange: (v: string) => {
-    // console.log(v);
-  },
 });
 </script>
 

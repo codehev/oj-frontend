@@ -55,7 +55,7 @@ const handleSubmit = async (data: any) => {
     await store.dispatch("user/getLoginUser");
     //登录成功后返回之前的页面或直接固定返回主页
     router.push({
-      path: "/home",
+      path: "/",
       replace: true, //不保留当前页面的历史记录，无法其他页面back回去
     });
   } else {

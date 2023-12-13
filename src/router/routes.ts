@@ -24,9 +24,9 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/",
-    name: "浏览题目",
-    component: () => import("@/views/question/QuestionsView.vue"),
-    // redirect: "/questions",
+    name: "主页",
+    // component: () => import("@/views/question/QuestionsView.vue"),
+    redirect: "/questions",
   },
   {
     path: "/questions",
@@ -34,6 +34,24 @@ export const routes: Array<RouteRecordRaw> = [
     component: () => import("@/views/question/QuestionsView.vue"),
     meta: {
       hideInMenu: true, //仅是在菜单栏上隐藏，依旧可以通过router跳转该页面
+    },
+  },
+  {
+    path: "/question_submit",
+    name: "浏览题目提交",
+    component: () => import("@/views/question/QuestionSubmitView.vue"),
+    meta: {
+      // hideInMenu: true, //仅是在菜单栏上隐藏，依旧可以通过router跳转该页面
+    },
+  },
+  {
+    path: "/view/question/:id",
+    name: "在线题目",
+    component: () => import("@/views/question/ViewQuestionView.vue"),
+    props: true, // 当 props 设置为 true 时，route.params 将被设置为组件的 props。
+    meta: {
+      access: ACCESS_ENUM.USER,
+      hideInMenu: true,
     },
   },
   {

@@ -17,7 +17,7 @@
           disabled
         >
           <div class="title-bar">
-            <img class="logo" src="../assets/oj-logo.svg" />
+            <img class="logo" src="../assets/logo.jpeg" />
           </div>
           <div class="title">OJ</div>
         </a-menu-item>
@@ -97,7 +97,7 @@ const visibleRoutes = computed(() => {
 }
 
 .logo {
-  height: 48px;
+  height: 38px;
 }
 
 .title {
