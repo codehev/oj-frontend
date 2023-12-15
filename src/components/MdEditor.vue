@@ -2,6 +2,7 @@
   <!--md编辑器-->
   <!--属性可以在官网查-->
   <Editor
+    id="editor"
     :value="value"
     :mode="mode"
     :plugins="plugins"
@@ -41,7 +42,7 @@ interface Props {
  */
 const props = withDefaults(defineProps<Props>(), {
   value: () => "",
-  mode: () => "split",
+  mode: () => "auto", // 显示模式：split（两列，实时预览）, tab, auto
   handleChange: (v: string) => {
     // console.log(v);
   },
@@ -55,5 +56,9 @@ const props = withDefaults(defineProps<Props>(), {
 */
 .bytemd-toolbar-icon.bytemd-tippy.bytemd-tippy-right:last-child {
   display: none;
+}
+
+#editor {
+  width: 800px;
 }
 </style>

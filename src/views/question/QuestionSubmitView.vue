@@ -1,16 +1,26 @@
 <template>
   <div id="questionSubmitView">
     <a-form :model="searchParams" layout="inline">
-      <a-form-item field="questionId" label="题目ID" style="min-width: 280px">
+      <a-form-item
+        field="questionId"
+        label="题目ID"
+        :show-colon="true"
+        style="min-width: 280px"
+      >
         <a-input
           v-model="searchParams.questionId"
-          placeholder="请输入题目名称..."
+          placeholder="请输入题目ID..."
         />
       </a-form-item>
-      <a-form-item field="language" label="编程语言" style="min-width: 280px">
+      <a-form-item
+        field="language"
+        label="编程语言"
+        :show-colon="true"
+        style="min-width: 280px"
+      >
         <a-select
           v-model="searchParams.language"
-          :style="{ width: '320px' }"
+          :style="{ width: '160px' }"
           placeholder="请选择编程语言..."
           allow-clear
         >
@@ -19,11 +29,11 @@
           </a-option>
         </a-select>
       </a-form-item>
-      <a-form-item>
-        <a-button type="primary" @click="doSubmit">搜索</a-button>
-      </a-form-item>
+      <!--      <a-form-item>-->
+      <!--        <a-button type="primary" @click="doSubmit">搜索</a-button>-->
+      <!--      </a-form-item>-->
     </a-form>
-    <a-divider size="0" />
+    <a-divider :size="0" />
     <a-table
       :columns="columns"
       :data="dataList"
@@ -50,7 +60,7 @@
       </template>
       <!--创建时间-->
       <template #createTime="{ record }">
-        {{ moment(record.createTime).format("YYYY-MM-DD, h:mm:ss") }}
+        {{ moment(record.createTime).format("YYYY-MM-DD h:mm:ss") }}
       </template>
     </a-table>
   </div>
@@ -94,20 +104,20 @@ const loadData = async () => {
   );
   if (res.code === 0) {
     dataList.value = res.data.records;
-    total.value = res.data.total;
+    total.value = Number(res.data.total);
   } else {
-    message.error("加载失败" + res.message);
+    message.error("加载失败，" + res.message);
   }
 };
 onMounted(() => {
   loadData();
 });
 /**
- * 每隔10秒刷新一次（更新判题状态）
+ * 每隔15秒刷新一次（更新判题状态）
  */
-setInterval(() => {
-  loadData();
-}, 10000);
+// setInterval(() => {
+//   loadData();
+// }, 15000);
 
 /**
  * 要展示的列，以及设置列属性
@@ -116,30 +126,48 @@ const columns = [
   {
     title: "提交编号",
     dataIndex: "id",
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
   },
   {
-    title: "编程语言",
-    dataIndex: "language",
+    title: "用户ID",
+    dataIndex: "userId",
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
+  },
+  {
+    title: "题目ID",
+    dataIndex: "questionId",
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
+  },
+  {
+    title: "状态",
+    slotName: "status",
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
   },
   {
     title: "判题信息",
     slotName: "judgeInfo", //插槽名称
   },
   {
-    title: "状态",
-    slotName: "status",
-  },
-  {
-    title: "题目ID",
-    dataIndex: "questionId",
-  },
-  {
-    title: "用户ID",
-    dataIndex: "userId",
+    title: "编程语言",
+    dataIndex: "language",
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
   },
   {
     title: "创建时间",
     slotName: "createTime", //插槽名称
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
   },
 ];
 
@@ -164,7 +192,7 @@ const onPageChange = (page: number) => {
   // loadData();
 };
 const onPageSizeChange = (pageSize: number) => {
-  searchParams.value = { ...searchParams.value, pageSize };
+  searchParams.value = { ...searchParams.value, pageSize, current: 1 };
   // searchParams.value.pageSize = pageSize;
   // loadData();
 };

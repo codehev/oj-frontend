@@ -1,13 +1,11 @@
 <template>
-  <div id="homeView">
-    <span>homeView</span>
-  </div>
+  <div id="matchView">比赛</div>
 </template>
 
 <script setup lang="ts"></script>
 
 <style scoped>
-#homeView {
+#matchView {
   max-width: 1280px;
   margin: 0 auto;
 }

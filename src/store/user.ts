@@ -35,6 +35,7 @@ export default {
   state: () => ({
     loginUser: {
       userName: "未登录",
+      userRole: ACCESS_ENUM.NOT_LOGIN,
     },
   }),
   // getters,

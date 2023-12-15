@@ -1,5 +1,27 @@
 <template>
   <div id="manageQuestionView">
+    <a-button type="primary" style="float: right" @click="createQuestion"
+      >创建题目
+    </a-button>
+    <a-form :model="searchParams" layout="inline">
+      <a-form-item
+        field="title"
+        label="题目名称"
+        :show-colon="true"
+        style="min-width: 280px"
+      >
+        <a-input v-model="searchParams.title" placeholder="请输入题目名称..." />
+      </a-form-item>
+      <a-form-item
+        field="tags"
+        label="标签"
+        :show-colon="true"
+        style="min-width: 280px"
+      >
+        <a-input-tag v-model="searchParams.tags" placeholder="请输入标签..." />
+      </a-form-item>
+    </a-form>
+    <a-divider :size="0" />
     <a-table
       :columns="columns"
       :data="dataList"
@@ -16,6 +38,12 @@
       @page-change="onPageChange"
       @page-size-change="onPageSizeChange"
     >
+      <!--题目-->
+      <template #title="{ record }">
+        <div class="title" @click="toQuestionPage(record.id)">
+          {{ record.title }}
+        </div>
+      </template>
       <template #tags="{ record }">
         <a-space wrap>
           <a-tag v-for="(tag, index) of record.tags" :key="index" color="green"
@@ -24,17 +52,21 @@
         </a-space>
       </template>
       <template #createTime="{ record }">
-        {{ moment(record.createTime).format("YYYY-MM-DD, h:mm:ss") }}
+        {{ moment(record.createTime).format("YYYY-MM-DD h:mm:ss") }}
       </template>
       <template #updateTime="{ record }">
-        {{ moment(record.updateTime).format("YYYY-MM-DD, h:mm:ss") }}
+        {{ moment(record.updateTime).format("YYYY-MM-DD h:mm:ss") }}
       </template>
       <template #optional="{ record }">
-        <a-space>
-          <a-button type="primary" size="small" @click="doUpdate(record.id)"
-            >修改</a-button
-          >
-          <a-button status="danger" size="small" @click="doDelete(record.id)"
+        <a-space direction="vertical">
+          <a-button type="text" size="mini" @click="doUpdate(record.id)"
+            >修改
+          </a-button>
+          <a-button
+            type="text"
+            status="danger"
+            size="mini"
+            @click="doDelete(record.id)"
             >删除
           </a-button>
         </a-space>
@@ -51,6 +83,8 @@ import { useRouter } from "vue-router";
 import moment from "moment";
 //搜索参数
 const searchParams = ref({
+  title: "",
+  tags: [],
   pageSize: 10,
   current: 1,
 });
@@ -63,9 +97,10 @@ const dataList = ref();
  * 加载表格数据
  */
 const loadData = async () => {
-  const res = await QuestionControllerService.listQuestionByPageUsingPost(
-    searchParams.value
-  );
+  //获取题目封装类，要写成对象的形式，不然会监听不到searchParams.value的变化
+  const res = await QuestionControllerService.listQuestionByPageUsingPost({
+    ...searchParams.value,
+  });
   if (res.code === 0) {
     dataList.value = res.data.records;
     //解析json
@@ -96,9 +131,9 @@ const loadData = async () => {
       //   };
       // }
     }
-    total.value = res.data.total;
+    total.value = Number(res.data.total);
   } else {
-    message.error("加载失败" + res.message);
+    message.error("加载失败，" + res.message);
   }
 };
 onMounted(() => {
@@ -112,62 +147,122 @@ const columns = [
   {
     title: "id",
     dataIndex: "id",
+    ellipsis: true,
+    tooltip: true,
   },
   {
-    title: "标题",
-    dataIndex: "title",
+    title: "题目",
+    slotName: "title",
+    width: 150,
+    ellipsis: true,
+    tooltip: true,
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
   },
   {
     title: "标签",
     slotName: "tags",
+    ellipsis: true,
+    tooltip: true,
   },
   {
     title: "内容",
     dataIndex: "content",
+    ellipsis: true,
+    tooltip: true,
   },
   {
     title: "答案",
     dataIndex: "answer",
+    ellipsis: true,
+    tooltip: true,
   },
   {
     title: "提交数",
     dataIndex: "submitNum",
+    ellipsis: true,
+    tooltip: true,
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
   },
   {
     title: "通过数",
     dataIndex: "acceptedNum",
+    ellipsis: true,
+    tooltip: true,
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
   },
   {
     title: "判题配置",
     dataIndex: "judgeConfig",
+    ellipsis: true,
+    tooltip: true,
   },
   {
     title: "判题用例",
     dataIndex: "judgeCase",
+    ellipsis: true,
+    tooltip: true,
   },
   {
     title: "用户ID",
     dataIndex: "userId",
+    ellipsis: true,
+    tooltip: true,
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
   },
   {
     title: "创建时间",
     slotName: "createTime",
+    ellipsis: true,
+    tooltip: true,
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
   },
   {
     title: "更新时间",
     slotName: "updateTime",
+    ellipsis: true,
+    tooltip: true,
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
   },
   {
     title: "操作",
     slotName: "optional",
   },
 ];
-
+/**
+ * 创建题目
+ * @param id
+ */
+const route = useRouter();
+const createQuestion = () => {
+  route.push({
+    path: "/add/question",
+  });
+};
+/**
+ * 跳转到做题页面
+ * @param id
+ */
+const toQuestionPage = (id: number) => {
+  route.push({
+    path: `/view/question/${id}`,
+  });
+};
 /**
  * 更新
  * @param id
  */
-const route = useRouter();
 const doUpdate = (id: number) => {
   route.push({
     path: "/update/question",
@@ -201,7 +296,7 @@ const onPageChange = (page: number) => {
   // loadData();
 };
 const onPageSizeChange = (pageSize: number) => {
-  searchParams.value = { ...searchParams.value, pageSize };
+  searchParams.value = { ...searchParams.value, pageSize, current: 1 };
   // searchParams.value.pageSize = pageSize;
   // loadData();
 };
@@ -220,5 +315,11 @@ watchEffect(() => {
 
 <style scoped>
 #manageQuestionView {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.title:hover {
+  color: #59a4f3;
 }
 </style>

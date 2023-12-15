@@ -1,5 +1,6 @@
 <template>
   <div id="viewQuestionView">
+    <a-button type="text" @click="router.back()">返回</a-button>
     <!--指定 gutter 可以增加栅格的区域间隔-->
     <a-row class="grid" :gutter="[24, 24]">
       <!--响应式布局，预置六种响应尺寸, 分别为 xs, sm, md, lg, xl, xxl。（从左到右依次变大）
@@ -14,13 +15,13 @@
                 :column="{ xs: 1, md: 2, lg: 3 }"
               >
                 <a-descriptions-item label="时间限制">
-                  {{ question.judgeConfig.timeLimit ?? 0 }}s
+                  {{ question.judgeConfig.timeLimit ?? 0 }}ms
                 </a-descriptions-item>
                 <a-descriptions-item label="内存限制">
-                  {{ question.judgeConfig.memoryLimit ?? 0 }}MB
+                  {{ question.judgeConfig.memoryLimit ?? 0 }}kb
                 </a-descriptions-item>
                 <a-descriptions-item label="堆栈限制">
-                  {{ question.judgeConfig.stackLimit ?? 0 }}MB
+                  {{ question.judgeConfig.stackLimit ?? 0 }}kb
                 </a-descriptions-item>
               </a-descriptions>
               <MdViewer :value="question.content || ''" />
@@ -66,7 +67,7 @@
           :language="form.language"
           :handle-change="onCodeChange"
         />
-        <a-divider size="0" />
+        <a-divider :size="0" />
         <a-button type="primary" style="min-width: 200px" @click="onSubmit"
           >提交代码
         </a-button>
@@ -87,6 +88,7 @@ import message from "@arco-design/web-vue/es/message";
 import CodeEditor from "@/components/CodeEditor.vue";
 import MdViewer from "@/components/MdViewer.vue";
 import languageEnum from "@/enum/languageEnum";
+import router from "@/router";
 
 interface Props {
   id: string;

@@ -24,24 +24,36 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/",
-    name: "主页",
-    // component: () => import("@/views/question/QuestionsView.vue"),
-    redirect: "/questions",
+    name: "首页",
+    component: () => import("@/views/HomeView.vue"),
+    // redirect: "/questions",
+    meta: {
+      icon: "home",
+    },
   },
   {
     path: "/questions",
-    name: "浏览题目",
+    name: "题目",
     component: () => import("@/views/question/QuestionsView.vue"),
     meta: {
-      hideInMenu: true, //仅是在菜单栏上隐藏，依旧可以通过router跳转该页面
+      icon: "all-application",
+    },
+  },
+  {
+    path: "/match",
+    name: "比赛",
+    component: () => import("@/views/MatchView.vue"),
+    meta: {
+      icon: "trophy",
     },
   },
   {
     path: "/question_submit",
-    name: "浏览题目提交",
+    name: "状态",
     component: () => import("@/views/question/QuestionSubmitView.vue"),
     meta: {
-      // hideInMenu: true, //仅是在菜单栏上隐藏，依旧可以通过router跳转该页面
+      access: ACCESS_ENUM.USER,
+      icon: "ecg",
     },
   },
   {
@@ -60,6 +72,7 @@ export const routes: Array<RouteRecordRaw> = [
     component: () => import("@/views/question/AddQuestionView.vue"),
     meta: {
       access: ACCESS_ENUM.USER,
+      hideInMenu: true,
     },
   },
   {
@@ -77,6 +90,15 @@ export const routes: Array<RouteRecordRaw> = [
     component: () => import("@/views/question/ManageQuestionView.vue"),
     meta: {
       access: ACCESS_ENUM.ADMIN,
+      icon: "dropbox",
+    },
+  },
+  {
+    path: "/about",
+    name: "关于",
+    component: () => import("../views/AboutView.vue"),
+    meta: {
+      icon: "bill",
     },
   },
   {
@@ -102,10 +124,5 @@ export const routes: Array<RouteRecordRaw> = [
   //   meta: {
   //     access: ACCESS_ENUM.ADMIN,
   //   },
-  // },
-  // {
-  //   path: "/about",
-  //   name: "关于",
-  //   component: () => import("../views/AboutView.vue"),
   // },
 ];

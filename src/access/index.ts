@@ -1,8 +1,7 @@
 import router from "@/router"; //默认引入@/router/index.ts
-import store from "@/store";
+import store from "@/store"; //默认引入@/store/index.ts
 import ACCESS_ENUM from "@/access/accessEnum";
 import checkAccess from "@/access/checkAccess";
-import * as net from "net"; //默认引入@/store/index.ts
 
 router.beforeEach(async (to, from, next) => {
   // console.log(to);
@@ -22,7 +21,11 @@ router.beforeEach(async (to, from, next) => {
   // 自动登录
   //loginUser当前登录用户信息
   let loginUser = store.state.user.loginUser;
-  if (!loginUser || !loginUser.userRole) {
+  if (
+    !loginUser ||
+    !loginUser.userRole ||
+    loginUser.userRole === ACCESS_ENUM.NOT_LOGIN
+  ) {
     //await：等用户登录成功后，再执行后续代码；user前不能加“/”
     await store.dispatch("user/getLoginUser");
     //重新登陆了，更新loginUser

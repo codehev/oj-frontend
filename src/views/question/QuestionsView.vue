@@ -1,17 +1,27 @@
 <template>
   <div id="questionsView">
     <a-form :model="searchParams" layout="inline">
-      <a-form-item field="title" label="题目名称" style="min-width: 280px">
+      <a-form-item
+        field="title"
+        label="题目名称"
+        :show-colon="true"
+        style="min-width: 280px"
+      >
         <a-input v-model="searchParams.title" placeholder="请输入题目名称..." />
       </a-form-item>
-      <a-form-item field="tags" label="标签" style="min-width: 280px">
+      <a-form-item
+        field="tags"
+        label="标签"
+        :show-colon="true"
+        style="min-width: 280px"
+      >
         <a-input-tag v-model="searchParams.tags" placeholder="请输入标签..." />
       </a-form-item>
-      <a-form-item>
-        <a-button type="primary" @click="doSubmit">搜索</a-button>
-      </a-form-item>
+      <!--      <a-form-item>-->
+      <!--        <a-button type="primary" @click="doSubmit">搜索</a-button>-->
+      <!--      </a-form-item>-->
     </a-form>
-    <a-divider size="0" />
+    <a-divider :size="0" />
     <a-table
       :columns="columns"
       :data="dataList"
@@ -28,6 +38,18 @@
       @page-change="onPageChange"
       @page-size-change="onPageSizeChange"
     >
+      <!--题目-->
+      <template #title="{ record }">
+        <div class="title" @click="toQuestionPage(record.id)">
+          {{ record.title }}
+        </div>
+        <!--        <router-link-->
+        <!--          :to="{-->
+        <!--            path: `/view/question/${record.id}`,-->
+        <!--          }"-->
+        <!--          >{{ record.title }}-->
+        <!--        </router-link>-->
+      </template>
       <!--标签-->
       <template #tags="{ record }">
         <a-space wrap>
@@ -46,19 +68,19 @@
       </template>
       <!--创建时间-->
       <template #createTime="{ record }">
-        {{ moment(record.createTime).format("YYYY-MM-DD, h:mm:ss") }}
+        {{ moment(record.createTime).format("YYYY-MM-DD h:mm:ss") }}
       </template>
       <!--作用域插槽，{ record }解构赋值，record行记录-->
-      <template #optional="{ record }">
-        <a-space>
-          <a-button
-            type="primary"
-            size="small"
-            @click="toQuestionPage(record.id)"
-            >做题
-          </a-button>
-        </a-space>
-      </template>
+      <!--      <template #optional="{ record }">-->
+      <!--        <a-space>-->
+      <!--          <a-button-->
+      <!--            type="primary"-->
+      <!--            size="small"-->
+      <!--            @click="toQuestionPage(record.id)"-->
+      <!--            >做题-->
+      <!--          </a-button>-->
+      <!--        </a-space>-->
+      <!--      </template>-->
     </a-table>
   </div>
 </template>
@@ -89,15 +111,15 @@ const dataList = ref([]);
  * 加载表格数据
  */
 const loadData = async () => {
-  //获取题目封装类
-  const res = await QuestionControllerService.listQuestionVoByPageUsingPost(
-    searchParams.value
-  );
+  //获取题目封装类，要写成对象的形式，不然会监听不到searchParams.value的变化
+  const res = await QuestionControllerService.listQuestionVoByPageUsingPost({
+    ...searchParams.value,
+  });
   if (res.code === 0) {
     dataList.value = res.data.records;
-    total.value = res.data.total;
+    total.value = Number(res.data.total);
   } else {
-    message.error("加载失败" + res.message);
+    message.error("加载失败，" + res.message);
   }
 };
 onMounted(() => {
@@ -111,10 +133,18 @@ const columns = [
   {
     title: "题号",
     dataIndex: "id",
+    width: 200,
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
   },
   {
     title: "题目名称",
-    dataIndex: "title",
+    slotName: "title",
+    width: 300,
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
   },
   {
     title: "标签",
@@ -124,11 +154,17 @@ const columns = [
     // 通过数/提交数
     title: "通过率",
     slotName: "acceptedRate", //插槽名称
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
   },
-  // {
-  //   title: "提交数",
-  //   dataIndex: "submitNum",
-  // },
+  {
+    title: "提交数",
+    dataIndex: "submitNum",
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
+  },
   // {
   //   title: "通过数",
   //   dataIndex: "acceptedNum",
@@ -136,10 +172,14 @@ const columns = [
   {
     title: "创建时间",
     slotName: "createTime",
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
   },
-  {
-    slotName: "optional",
-  },
+  // {
+  //   title: "操作",
+  //   slotName: "optional",
+  // },
 ];
 
 /**
@@ -163,7 +203,7 @@ const onPageChange = (page: number) => {
   // loadData();
 };
 const onPageSizeChange = (pageSize: number) => {
-  searchParams.value = { ...searchParams.value, pageSize };
+  searchParams.value = { ...searchParams.value, pageSize, current: 1 };
   // searchParams.value.pageSize = pageSize;
   // loadData();
 };
@@ -176,6 +216,7 @@ const onPageSizeChange = (pageSize: number) => {
  */
 watchEffect(() => {
   loadData();
+  // console.log("watchEffect配置的回调执行了");
 });
 
 const doSubmit = () => {
@@ -191,5 +232,9 @@ const doSubmit = () => {
 #questionsView {
   max-width: 1280px;
   margin: 0 auto;
+}
+
+.title:hover {
+  color: #59a4f3;
 }
 </style>

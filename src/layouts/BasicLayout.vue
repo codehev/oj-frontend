@@ -10,7 +10,10 @@
       <a-layout-content class="content">
         <router-view />
       </a-layout-content>
-      <a-layout-footer class="footer"><a>Footer</a></a-layout-footer>
+      <a-layout-footer class="footer">
+        OJ网站 ©2023 by
+        <a-link href="https://github.com/xink-xs" target="_blank">hewei</a-link>
+      </a-layout-footer>
     </a-layout>
   </div>
 </template>
@@ -40,7 +43,7 @@ import GlobalHeader from "@/components/GlobalHeader.vue";
 
 #basicLayout .footer {
   background: #efefef;
-  padding: 16px;
+  padding: 8px;
   /*position: sticky;它使得元素在页面滚动时相对于视口（viewport）固定，直到某个位置。
   这种行为类似于position: relative;和position: fixed;的组合。
   当一个元素被设置为position: sticky;时，它基于用户的滚动位置在相对定位和固定定位之间切换。*/

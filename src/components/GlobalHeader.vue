@@ -18,17 +18,103 @@
         >
           <div class="title-bar">
             <img class="logo" src="../assets/logo.jpeg" />
+            <div class="title">OJ</div>
           </div>
-          <div class="title">OJ</div>
         </a-menu-item>
-        <a-menu-item v-for="item in visibleRoutes" :key="item.path"
-          >{{ item.name }}
+        <a-menu-item v-for="item in visibleRoutes" :key="item.path">
+          <IconPark :type="item.meta.icon" theme="filled" />
+          <!--          <IconPark :icon="item.meta.icon" />-->
+          {{ item.name }}
         </a-menu-item>
       </a-menu>
     </a-col>
     <a-col flex="100px">
       <!--用户登录信息显示-->
-      <div>{{ store.state.user?.loginUser?.userName ?? "未登录" }}</div>
+      <!--      <div>{{ store.state.user?.loginUser?.userName ?? "未登录" }}</div>-->
+      <div v-if="store.state.user?.loginUser?.userRole != accessEnum.NOT_LOGIN">
+        <!--        <a-space decoration="vertical" fill>
+                  {{ store.state.user?.loginUser?.userName }}
+                  <a-button type="text" @click="userLoginout">注销</a-button>
+                </a-space>-->
+        <a-space>
+          <a-dropdown trigger="hover">
+            <a-avatar>
+              <img
+                alt="avatar"
+                src="https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp"
+              />
+            </a-avatar>
+            <template #content>
+              <a-space style="margin: 14px">
+                <a-avatar :size="32">
+                  <img
+                    alt="avatar"
+                    src="https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp"
+                  />
+                </a-avatar>
+                <div>{{ store.state.user?.loginUser?.userName }}</div>
+              </a-space>
+              <a-divider :size="0" margin="3px" />
+              <a-doption>
+                <template #icon>
+                  <IconPark type="user" theme="filled" fill="#333" />
+                </template>
+                <template #default>
+                  <div @click="userLoginout">我的主页</div>
+                </template>
+              </a-doption>
+              <a-doption>
+                <template #icon>
+                  <IconPark type="config" theme="filled" fill="#333" />
+                </template>
+                <template #default>
+                  <div @click="userLoginout">我的设置</div>
+                </template>
+              </a-doption>
+              <a-divider :size="0" margin="3px" />
+              <a-doption>
+                <template #icon>
+                  <IconPark type="logout" theme="filled" fill="#333" />
+                </template>
+                <template #default>
+                  <div @click="userLoginout">退出登录</div>
+                </template>
+              </a-doption>
+            </template>
+          </a-dropdown>
+          <!--          {{ store.state.user?.loginUser?.userName }}-->
+        </a-space>
+      </div>
+      <div v-else>
+        <!--        <a-space decoration="vertical" fill>-->
+        <!--          <router-link to="/user/login">登录</router-link>-->
+        <!--          <router-link to="#">注册</router-link>-->
+        <!--        </a-space>-->
+        <a-space>
+          <a-dropdown trigger="hover">
+            <a-avatar>未登录</a-avatar>
+            <template #content>
+              <a-doption>
+                <template #icon>
+                  <IconPark type="login" theme="filled" fill="#333" />
+                </template>
+                <template #default>
+                  <div @click="userLogin">登录</div>
+                </template>
+              </a-doption>
+              <a-doption>
+                <template #icon>
+                  <IconPark type="newlybuild" theme="filled" fill="#333" />
+                </template>
+                <template #default>
+                  <div @click="userRegister">注册</div>
+                </template>
+              </a-doption>
+            </template>
+          </a-dropdown>
+          <!--          {{ store.state.user?.loginUser?.userName }}-->
+        </a-space>
+      </div>
     </a-col>
   </a-row>
 </template>
@@ -38,6 +124,9 @@ import { useRouter } from "vue-router";
 import { computed, ref } from "vue";
 import { useStore } from "vuex";
 import checkAccess from "@/access/checkAccess";
+import { UserControllerService } from "../../generated";
+import accessEnum from "@/access/accessEnum";
+import { IconPark } from "@icon-park/vue-next/es/all";
 
 const router = useRouter();
 /**
@@ -87,6 +176,25 @@ const visibleRoutes = computed(() => {
     return true;
   });
 });
+const userLogin = () => {
+  router.push({
+    path: "/user/login",
+  });
+};
+const userRegister = () => {
+  router.push({
+    path: "/user/register",
+  });
+};
+const userLoginout = () => {
+  UserControllerService.userLogoutUsingPost();
+  //更新vuex用户信息
+  store.dispatch("user/getLoginUser");
+  router.push({
+    path: "/",
+    replace: true, //不保留当前页面的历史记录，无法其他页面back回去
+  });
+};
 </script>
 <style scoped>
 /*scoped样式只在当前vue文件下起作用*/
@@ -97,7 +205,7 @@ const visibleRoutes = computed(() => {
 }
 
 .logo {
-  height: 38px;
+  height: 26px;
 }
 
 .title {

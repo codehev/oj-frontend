@@ -9,13 +9,29 @@
       auto-label-width
       style="max-width: 480px; margin: 0 auto"
     >
-      <a-form-item field="userAccount" label="账号：">
+      <a-form-item
+        field="userAccount"
+        tooltip="账号长度不低于4位数"
+        label="账号"
+        :show-colon="true"
+        :rules="[
+          { required: true, message: 'userAccount is required' },
+          { minLength: 4, message: 'must be greater than 8 characters' },
+        ]"
+        :validate-trigger="['change', 'input']"
+      >
         <a-input v-model="form.userAccount" placeholder="请输入账号..." />
       </a-form-item>
       <a-form-item
         field="userPassword"
-        tooltip="密码长度不低于4位数"
-        label="密码："
+        tooltip="密码长度不低于8位数"
+        label="密码"
+        :show-colon="true"
+        :rules="[
+          { required: true, message: 'userPassword is required' },
+          { minLength: 8, message: 'must be greater than 8 characters' },
+        ]"
+        :validate-trigger="['change', 'input']"
       >
         <a-input-password
           v-model="form.userPassword"
@@ -43,10 +59,13 @@ const form = reactive({
   userAccount: "",
   userPassword: "",
 } as UserLoginRequest);
-const handleSubmit = async (data: any) => {
+const handleSubmit = async ({ values, errors }: any) => {
   // console.log(data);
   // alert(JSON.stringify(data.value));
   // await UserControllerService.userLoginUsingPost(data.value);
+  if (errors != undefined && Object.keys(errors).length > 0) {
+    return;
+  }
   const res = await UserControllerService.userLoginUsingPost(form);
   if (res.code === 0) {
     // alert(res.data);
