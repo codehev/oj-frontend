@@ -38,8 +38,7 @@
 }
 
 #userLayout .logo {
-  width: 64px;
-  height: 64px;
+  width: 32px;
 }
 
 #userLayout .content {

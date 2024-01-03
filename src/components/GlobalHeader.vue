@@ -45,16 +45,16 @@
               />
             </a-avatar>
             <template #content>
-              <a-space style="margin: 14px">
-                <a-avatar :size="32">
-                  <img
-                    alt="avatar"
-                    src="https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp"
-                  />
-                </a-avatar>
-                <div>{{ store.state.user?.loginUser?.userName }}</div>
-              </a-space>
-              <a-divider :size="0" margin="3px" />
+              <!--              <a-space style="margin: 14px">
+                              <a-avatar :size="32">
+                                <img
+                                  alt="avatar"
+                                  src="https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp"
+                                />
+                              </a-avatar>
+                              <div>{{ store.state.user?.loginUser?.userName }}</div>
+                            </a-space>
+                            <a-divider :size="0" margin="3px" />-->
               <a-doption>
                 <template #icon>
                   <IconPark type="user" theme="filled" fill="#333" />
@@ -82,7 +82,7 @@
               </a-doption>
             </template>
           </a-dropdown>
-          <!--          {{ store.state.user?.loginUser?.userName }}-->
+          {{ store.state.user?.loginUser?.userName }}
         </a-space>
       </div>
       <div v-else>
