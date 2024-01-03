@@ -5,14 +5,15 @@
       {{ isUpdatePage ? "更新题目" : "创建题目" }}
     </h2>
     <a-form ref="formRef" :model="form" @submit="doSubmit">
+      <!--:show-colon="true"显示冒号-->
       <a-form-item
         field="title"
         label="标题"
         :show-colon="true"
         :rules="[
-          { required: true, message: 'title is required' },
-          { minLength: 5, message: 'must be greater than 5 characters' },
-          { maxLength: 80, message: 'must be greater than 5 characters' },
+          { required: true, message: '标题是必填项' },
+          { minLength: 5, message: '必须大于5个字符' },
+          { maxLength: 80, message: '必须小于80个字符' },
         ]"
         :validate-trigger="['change', 'input']"
       >
@@ -27,13 +28,14 @@
         label="标签"
         :show-colon="true"
         :rules="[
-          { required: true, message: 'tags is required' },
+          { required: true, message: '标签是必填项' },
           {
             type: 'array',
             minLength: 1,
-            message: 'must add greater than one options',
+            message: '至少有一个标签',
           },
         ]"
+        :validate-trigger="['change', 'input']"
       >
         <a-input-tag
           v-model:model-value="form.tags"
@@ -46,7 +48,8 @@
         field="content"
         label="内容"
         :show-colon="true"
-        :rules="[{ required: true, message: 'content is required' }]"
+        :rules="[{ required: true, message: '内容是必填项' }]"
+        validate-trigger="input"
       >
         <!--没法通过v-model绑定值，通过函数handle-change手动获取值-->
         <MdEditor :value="form.content" :handle-change="onContentChange" />
@@ -55,13 +58,15 @@
         field="answer"
         label="答案"
         :show-colon="true"
-        :rules="[{ required: true, message: 'answer is required' }]"
+        :rules="[{ required: true, message: '答案是必填项' }]"
+        validate-trigger="input"
       >
         <!--我们自定义的代码编辑器组件不会被组件库识别，需要手动指定 value 和 handleChange 函数。-->
         <MdEditor :value="form.answer" :handle-change="onAnswerChange" />
       </a-form-item>
       <a-form-item label="测试用例" :show-colon="true">
         <a-space direction="vertical">
+          <!--综合嵌套数据和动态表单的写法-->
           <a-space
             v-for="(judgeCaseItem, index) of form.judgeCase"
             :key="index"
@@ -69,28 +74,28 @@
             style="min-width: 480px"
           >
             <a-form-item
-              :field="`judgeCaseItem[${index}+1].input`"
+              :field="`judgeCase[${index}].input`"
               :label="`输入用例${index + 1}`"
               :key="index"
               :show-colon="true"
-              :rules="[
-                { required: true, message: 'judgeCaseItem is required' },
-              ]"
+              :rules="[{ required: true, message: '输入用例是必填项' }]"
+              validate-trigger="input"
             >
+              <!--直接judgeCaseItem.output，而非judgeCase[${index}].output，arco design的动态表单的写法，参考官方文档-->
               <a-input
                 v-model="judgeCaseItem.input"
                 placeholder="请输入输入用例"
               />
             </a-form-item>
             <a-form-item
-              :field="`judgeCaseItem[${index}].output`"
+              :field="`judgeCase[${index}].output`"
               :label="`输出用例${index + 1}`"
               :key="index"
               :show-colon="true"
-              :rules="[
-                { required: true, message: 'judgeCaseItem is required' },
-              ]"
+              :rules="[{ required: true, message: '输出用例是必填项' }]"
+              validate-trigger="input"
             >
+              <!--直接judgeCaseItem.output，而非judgeCase[${index}].output，arco design的动态表单的写法，参考官方文档-->
               <a-input
                 v-model="judgeCaseItem.output"
                 placeholder="请输入输出用例"
@@ -121,12 +126,12 @@
             field="judgeConfig.timeLimit"
             validate-trigger="input"
             :rules="[
-              { required: true, message: 'timeLimit is required' },
+              { required: true, message: '时间限制是必填项' },
               {
                 type: 'number',
                 min: 0,
-                max: 1048576,
-                message: 'timeLimit is max than 1024mb',
+                max: 60000,
+                message: '时间限制必须大于 0 小于 1min',
               },
             ]"
             label="时间限制"
@@ -144,12 +149,12 @@
             field="judgeConfig.memoryLimit"
             validate-trigger="input"
             :rules="[
-              { required: true, message: 'memoryLimit is required' },
+              { required: true, message: '内存限制是必填项' },
               {
                 type: 'number',
                 min: 0,
                 max: 1048576,
-                message: 'memoryLimit is max than 1024mb',
+                message: '内存限制必须大于 0 小于1024mb',
               },
             ]"
             label="内存限制"
@@ -167,12 +172,12 @@
             field="judgeConfig.stackLimit"
             validate-trigger="input"
             :rules="[
-              { required: true, message: 'stackLimit is required' },
+              { required: true, message: '堆栈限制是必填项' },
               {
                 type: 'number',
                 min: 0,
                 max: 1048576,
-                message: 'stackLimit is max than 1024mb',
+                message: '堆栈限制必须大于 0 小于1024mb',
               },
             ]"
             label="堆栈限制"
@@ -320,7 +325,8 @@ onMounted(() => {
  * 提交表单
  */
 const doSubmit = async ({ values, errors }: any) => {
-  // console.log("values:", values, "\nerrors:", errors);
+  console.log("values:", values, "\nerrors:", errors);
+  console.log("\nform:", form);
   // console.log("bject.keys(errors):", Object.keys(errors));
   if (errors != undefined && Object.keys(errors).length > 0) {
     return;

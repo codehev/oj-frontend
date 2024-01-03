@@ -12,7 +12,9 @@
       </a-layout-content>
       <a-layout-footer class="footer">
         OJ网站 ©2023 by
-        <a-link href="https://github.com/xink-xs" target="_blank">hewei</a-link>
+        <a-link href="https://github.com/codehev" target="_blank"
+          >codehev
+        </a-link>
       </a-layout-footer>
     </a-layout>
   </div>
