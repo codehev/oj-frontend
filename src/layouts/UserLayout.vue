@@ -19,7 +19,9 @@
     </a-layout>
   </div>
 </template>
-
+<script>
+import { LOG_URL } from "@/constant";
+</script>
 <style scoped>
 /*scoped样式只在当前vue文件下起作用*/
 /*#userLayout {*/
@@ -62,4 +64,3 @@
   text-align: center;
 }
 </style>
-<script setup lang="ts"></script>

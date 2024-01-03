@@ -11,12 +11,12 @@
     >
       <a-form-item
         field="userAccount"
-        tooltip="账号长度不低于4位数"
+        tooltip="账号长度不低于4位字符"
         label="账号"
         :show-colon="true"
         :rules="[
-          { required: true, message: 'userAccount is required' },
-          { minLength: 4, message: 'must be greater than 8 characters' },
+          { required: true, message: '账号为必填字段' },
+          { minLength: 4, message: '账号长度不低于4位字符' },
         ]"
         :validate-trigger="['change', 'input']"
       >
@@ -24,19 +24,28 @@
       </a-form-item>
       <a-form-item
         field="userPassword"
-        tooltip="密码长度不低于8位数"
+        tooltip="密码长度不低于8字符"
         label="密码"
         :show-colon="true"
         :rules="[
-          { required: true, message: 'userPassword is required' },
-          { minLength: 8, message: 'must be greater than 8 characters' },
+          { required: true, message: '密码为必填字段' },
+          { minLength: 8, message: '密码长度不低于8位字符' },
         ]"
         :validate-trigger="['change', 'input']"
       >
         <a-input-password
           v-model="form.userPassword"
           placeholder="请输入密码..."
+          @keyup.enter="handleSubmit"
         />
+      </a-form-item>
+      <a-form-item field="autoLogin" style="text-aligt: center">
+        <a-checkbox v-model="autoLogin"> 自动登录</a-checkbox>
+        <div style="width: 70%; text-align: right">
+          <a style="cursor: pointer; color: #1677ff" @click="ToRegister"
+            >没有账号？去注册</a
+          >
+        </div>
       </a-form-item>
       <a-form-item>
         <a-button type="primary" html-type="submit" style="width: 120px"
@@ -47,7 +56,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import { UserControllerService, UserLoginRequest } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
 import router from "@/router";
@@ -59,6 +68,24 @@ const form = reactive({
   userAccount: "",
   userPassword: "",
 } as UserLoginRequest);
+
+let autoLogin = ref(false);
+
+/**
+ * 跳转到注册页面
+ * @constructor
+ */
+const ToRegister = () => {
+  router.push({
+    path: "/user/register",
+    replace: true,
+  });
+};
+/**
+ * 注册
+ * @param values
+ * @param errors
+ */
 const handleSubmit = async ({ values, errors }: any) => {
   // console.log(data);
   // alert(JSON.stringify(data.value));
