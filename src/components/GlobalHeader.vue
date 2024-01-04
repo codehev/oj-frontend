@@ -37,7 +37,8 @@
               <img :src="userInfo.userAvatar" />
             </a-avatar>
             <a-avatar v-else>
-              <IconPark type="fail-picture" theme="filled" />
+              {{ userInfo?.userName.charAt(0) }}
+              <!--              <IconPark type="fail-picture" theme="filled" />-->
             </a-avatar>
             <template #content>
               <a-doption>
@@ -182,8 +183,10 @@ const userRegister = () => {
     path: "/user/register",
   });
 };
-const userLoginout = () => {
-  UserControllerService.userLogoutUsingPost();
+const userLoginout = async () => {
+  // 如果不加await改成同步请求，可能还没注销完毕，后面的获取信息在注销之前就执行完毕了
+  // 导致点击退出登录后，右上角还是注销之前的状态，（点击没反应，刷新页面其实已经注销了）
+  await UserControllerService.userLogoutUsingPost();
   //更新vuex用户信息
   store.dispatch("user/getLoginUser");
   router.push({
