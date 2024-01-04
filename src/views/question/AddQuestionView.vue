@@ -325,12 +325,15 @@ onMounted(() => {
  * 提交表单
  */
 const doSubmit = async ({ values, errors }: any) => {
-  console.log("values:", values, "\nerrors:", errors);
-  console.log("\nform:", form);
+  // console.log("values:", values, "\nerrors:", errors);
+  // console.log("\nform:", form);
   // console.log("bject.keys(errors):", Object.keys(errors));
-  if (errors != undefined && Object.keys(errors).length > 0) {
+  if (errors) {
     return;
   }
+  // if (errors != undefined && Object.keys(errors).length > 0) {
+  //   return;
+  // }
   if (isUpdatePage) {
     const res = await QuestionControllerService.updateQuestionUsingPost(form);
     if (res.code === 0) {

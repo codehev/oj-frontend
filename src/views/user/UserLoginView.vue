@@ -1,17 +1,17 @@
 <template>
   <!--  默认以文件名为组件名，使用ESLint时组件名只能多单词命名-->
   <div id="userLoginView">
-    <h2 style="margin-bottom: 16px">用户登录</h2>
+    <h2 style="margin-bottom: 32px">用户登录</h2>
     <a-form
       :model="form"
       @submit="handleSubmit"
       label-align="left"
+      size="large"
       auto-label-width
       style="max-width: 480px; margin: 0 auto"
     >
       <a-form-item
         field="userAccount"
-        tooltip="账号长度不低于4位字符"
         label="账号"
         :show-colon="true"
         :rules="[
@@ -24,7 +24,6 @@
       </a-form-item>
       <a-form-item
         field="userPassword"
-        tooltip="密码长度不低于8字符"
         label="密码"
         :show-colon="true"
         :rules="[
@@ -48,7 +47,7 @@
         </div>
       </a-form-item>
       <a-form-item>
-        <a-button type="primary" html-type="submit" style="width: 120px"
+        <a-button type="primary" html-type="submit" style="width: 380px"
           >登录
         </a-button>
       </a-form-item>

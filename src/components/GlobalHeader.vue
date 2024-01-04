@@ -23,38 +23,23 @@
         </a-menu-item>
         <a-menu-item v-for="item in visibleRoutes" :key="item.path">
           <IconPark :type="item.meta.icon" theme="filled" />
-          <!--          <IconPark :icon="item.meta.icon" />-->
           {{ item.name }}
         </a-menu-item>
       </a-menu>
     </a-col>
     <a-col flex="100px">
-      <!--用户登录信息显示-->
-      <!--      <div>{{ store.state.user?.loginUser?.userName ?? "未登录" }}</div>-->
-      <div v-if="store.state.user?.loginUser?.userRole != accessEnum.NOT_LOGIN">
-        <!--        <a-space decoration="vertical" fill>
-                  {{ store.state.user?.loginUser?.userName }}
-                  <a-button type="text" @click="userLoginout">注销</a-button>
-                </a-space>-->
+      <!--用户已登录，登录信息显示-->
+      <div v-if="userInfo?.userRole != accessEnum.NOT_LOGIN">
         <a-space>
           <a-dropdown trigger="hover">
-            <a-avatar>
-              <img
-                alt="avatar"
-                src="https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp"
-              />
+            <a-avatar v-if="userInfo.userAvatar">
+              <!--alt="avatar"替换文本，当图片加载失败时，才显示的文字-->
+              <img :src="userInfo.userAvatar" />
+            </a-avatar>
+            <a-avatar v-else>
+              <IconPark type="fail-picture" theme="filled" />
             </a-avatar>
             <template #content>
-              <!--              <a-space style="margin: 14px">
-                              <a-avatar :size="32">
-                                <img
-                                  alt="avatar"
-                                  src="https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp"
-                                />
-                              </a-avatar>
-                              <div>{{ store.state.user?.loginUser?.userName }}</div>
-                            </a-space>
-                            <a-divider :size="0" margin="3px" />-->
               <a-doption>
                 <template #icon>
                   <IconPark type="user" theme="filled" fill="#333" />
@@ -82,14 +67,19 @@
               </a-doption>
             </template>
           </a-dropdown>
-          {{ store.state.user?.loginUser?.userName }}
+          <!--          {{ store.state.user?.loginUser?.userName }}-->
+          <a-typography-paragraph
+            :ellipsis="{
+              rows: 1,
+              showTooltip: true,
+            }"
+            style="width: 90px; margin: 0 auto; padding-right: 10px"
+          >
+            {{ userInfo?.userName }}
+          </a-typography-paragraph>
         </a-space>
       </div>
       <div v-else>
-        <!--        <a-space decoration="vertical" fill>-->
-        <!--          <router-link to="/user/login">登录</router-link>-->
-        <!--          <router-link to="#">注册</router-link>-->
-        <!--        </a-space>-->
         <a-space>
           <a-dropdown trigger="hover">
             <a-avatar>未登录</a-avatar>
@@ -112,7 +102,6 @@
               </a-doption>
             </template>
           </a-dropdown>
-          <!--          {{ store.state.user?.loginUser?.userName }}-->
         </a-space>
       </div>
     </a-col>
@@ -139,8 +128,10 @@ const doMenuClick = (key: string) => {
   });
 };
 
-// 每次点击菜单项更新路由后，更新菜单栏上的指示条（菜单栏高亮）
-// 目的是刷新页面后，菜单栏上的指示条（菜单栏高亮）保持不动，而不是直接消失
+/**
+ * 每次点击菜单项更新路由后，更新菜单栏上的指示条（菜单栏高亮）
+ * 目的是刷新页面后，菜单栏上的指示条（菜单栏高亮）保持不动，而不是直接消失
+ */
 const selectedKeys = ref(["/"]); //默认主页
 router.afterEach((to, from, failure) => {
   // console.log("path=" + to.path);
@@ -156,6 +147,11 @@ setTimeout(() => {
   //远程获取登录信息，并更新本地vuex用户信息
   store.dispatch("user/getLoginUser");
 }, 3000);
+
+/**
+ * 获取用户信息
+ */
+let userInfo = computed(() => store.state.user.loginUser);
 
 /**
  * 过滤掉数组中需要权限的路由，保留不需权限的；

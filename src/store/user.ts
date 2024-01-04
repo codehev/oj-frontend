@@ -33,6 +33,7 @@ import { UserControllerService } from "../../generated";
 export default {
   namespaced: true,
   state: () => ({
+    // 存储后端返回的脱敏的用户信息，此处给出必要字段的默认值
     loginUser: {
       userName: "未登录",
       userRole: ACCESS_ENUM.NOT_LOGIN,
@@ -50,6 +51,7 @@ export default {
       if (res.code === 0) {
         //更新登录信息
         commit("updateUser", res.data);
+        // console.log("user=" + JSON.stringify(res.data));
       } else {
         // ...展开运算符，用于展开数组元素或对象属性，进行复制、合并等操作。
         //这里，复制了 state.loginUser 的属性，并修改了 userRole 属性(已有则覆盖复制来的值，没有则添加)
