@@ -1,6 +1,6 @@
 import router from "@/router"; //默认引入@/router/index.ts
 import store from "@/store"; //默认引入@/store/index.ts
-import ACCESS_ENUM from "@/access/accessEnum";
+import ACCESS_ENUM from "@/enum/AccessEnum";
 import checkAccess from "@/access/checkAccess";
 
 router.beforeEach(async (to, from, next) => {

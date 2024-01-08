@@ -1,5 +1,5 @@
 import { RouteRecordRaw } from "vue-router";
-import ACCESS_ENUM from "@/access/accessEnum";
+import ACCESS_ENUM from "@/enum/AccessEnum";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -19,6 +19,16 @@ export const routes: Array<RouteRecordRaw> = [
         path: "/user/register",
         name: "用户注册",
         component: () => import("@/views/user/UserRegisterView.vue"),
+      },
+      {
+        path: "/user/home/:id",
+        name: "我的主页",
+        component: () => import("@/views/user/UserHomeView.vue"),
+        props: true, // 当 props 设置为 true 时，route.params 将被设置为组件的 props。
+        meta: {
+          access: ACCESS_ENUM.USER,
+          hideInMenu: true,
+        },
       },
     ],
   },

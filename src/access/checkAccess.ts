@@ -1,4 +1,4 @@
-import ACCESS_ENUM from "@/access/accessEnum";
+import ACCESS_ENUM from "@/enum/AccessEnum";
 
 /**
  * 过滤菜单时使用,定义公用的权限校验方法

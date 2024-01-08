@@ -6,6 +6,12 @@
 <script setup lang="ts">
 import * as monaco from "monaco-editor";
 import { defineProps, onMounted, ref, toRaw, watch, withDefaults } from "vue";
+import LanguageEnum from "@/enum/LanguageEnum";
+import { LanguageValue, DefaultCodeEnum } from "@/enum/DefaultCodeEnum";
+
+const codeEditorRef = ref(); //div的ref对象
+const codeEditor = ref(); //代码编辑器实例
+// const value = ref(""); //代码编辑器默认显示值
 
 /**
  * 定义组件属性类型
@@ -16,17 +22,25 @@ interface Props {
   handleChange: (v: string) => void;
 }
 
-/**props：自定义组件属性，暴露给父组件，便于父组件去使用，同时也是提高组件的通用性
- * withDefaults:当父组件没有传值，使用在此定义的默认值
- * defineProps<Props>()：固定写法，定义默认值的属性类型
+/**
+ * props：自定义组件属性，暴露给父组件，便于父组件去使用，同时也是提高组件的通用性
+ *
+ * Vue 3 中的 `withDefaults` 函数是一个工厂函数，用于创建一个具有默认值的响应式对象。
+ * 它可以用于创建可重用的组件选项，并且可以通过给它传递不同的默认值来创建不同的配置。
+ *
+ * `defineProps` 函数则是 Vue 3 中的一个用于定义响应式 prop 的函数。它可以用于在组件定义时声明 prop，
+ * 并且可以指定 prop 的默认值、类型约束和参数验证器。
+ *
+ * 其实这里设置默认值没啥用，因为父组件会给值，覆盖这里的
  */
 const props = withDefaults(defineProps<Props>(), {
-  value: () => "",
-  language: () => "java",
+  value: DefaultCodeEnum.java,
+  language: LanguageEnum.JAVA,
   handleChange: (v: string) => {
     // console.log(v);
   },
 });
+
 /**
  * 监听language变化
  * 动态更改编辑器的语言
@@ -39,32 +53,20 @@ watch(
         toRaw(codeEditor.value).getModel(),
         props.language
       );
+      //此方式无效
+      // codeEditor.value.updateOptions({
+      //   language: props.language,
+      // });
+
+      //props是Proxy对象
+      //keyof获取键值，不是数组，类似于let color: 'red' | 'blue' | 'black';
+      //keyof Language; // "java" | "cpp" | "c"
+      toRaw(codeEditor.value).setValue(
+        DefaultCodeEnum[props.language as keyof LanguageValue]
+      );
     }
-    // 更新 monacoEditor 对象
-    // loadCodeEditor();
-    // codeEditor.value.updateOptions({
-    //   language: props.language,
-    // });
   }
 );
-
-const codeEditorRef = ref(); //div的ref对象
-const codeEditor = ref(); //代码编辑器实例
-const value = ref(""); //代码编辑器默认显示值
-
-/**
- * 填充值
- */
-/*const fillValue = () => {
-  //如果codeEditorRef实例不存在
-  if (!codeEditor.value) {
-    return;
-  }
-  // console.log(codeEditor.value);
-  // console.log(toRaw(codeEditor.value));
-  // toRaw作用：将一个由reactive生成的响应式对象转为普通对象。
-  toRaw(codeEditor.value).setValue("新的值");
-};*/
 
 /**
  * 加载代码编辑器
@@ -108,9 +110,24 @@ onMounted(() => {
   codeEditor.value.onDidChangeModelContent(() => {
     // console.log("目前内容为：", toRaw(codeEditor.value).getValue());
     // toRaw作用：将一个由reactive生成的响应式对象转为普通对象。
+    //在子组件中调用传入的方法并将子组件的值作为方法的参数传入
     props.handleChange(toRaw(codeEditor.value).getValue());
   });
 });
+
+/**
+ * 填充值
+ */
+/*const fillValue = () => {
+  //如果codeEditorRef实例不存在
+  if (!codeEditor.value) {
+    return;
+  }
+  // console.log(codeEditor.value);
+  // console.log(toRaw(codeEditor.value));
+  // toRaw作用：将一个由reactive生成的响应式对象转为普通对象。
+  toRaw(codeEditor.value).setValue("新的值");
+};*/
 </script>
 
 <style scoped>

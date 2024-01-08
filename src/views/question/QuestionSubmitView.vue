@@ -32,7 +32,27 @@
       <!--      <a-form-item>-->
       <!--        <a-button type="primary" @click="doSubmit">搜索</a-button>-->
       <!--      </a-form-item>-->
+      <a-switch
+        style="float: right; margin-right: 16px"
+        v-model="searchParams.userId"
+        :checked-value="userInfo.id"
+        unchecked-value=""
+        @change="onSwitchChange"
+      >
+        <template #checked> 我的</template>
+        <template #unchecked> 全部</template>
+      </a-switch>
+      <IconPark
+        class="refreshBtn"
+        style="float: right"
+        type="refresh"
+        theme="filled"
+        fill="#333"
+        size="28"
+        @click="onRefresh"
+      />
     </a-form>
+
     <a-divider :size="0" />
     <a-table
       :columns="columns"
@@ -50,13 +70,54 @@
       @page-change="onPageChange"
       @page-size-change="onPageSizeChange"
     >
-      <!--判题信息-->
-      <template #judgeInfo="{ record }">
-        {{ JSON.stringify(record.judgeInfo) }}
+      <!--提交记录id-->
+      <template #id="{ record }">
+        <template v-if="record.userId == userInfo?.id">
+          <router-link
+            class="tableLink"
+            :to="{
+              path: `/user/home/${record.userId}`,
+            }"
+            >{{ record.id }}
+          </router-link>
+        </template>
+        <template v-else>{{ record.id }}</template>
+      </template>
+      <!--用户-->
+      <template #userName="{ record }">
+        <router-link
+          class="tableLink"
+          :to="{
+            path: `/user/home/${record.userId}`,
+          }"
+          >{{ record.userVO.userName }}
+        </router-link>
+      </template>
+      <!--题目-->
+      <template #title="{ record }">
+        <router-link
+          class="tableLink"
+          :to="{
+            path: `/view/question/${record.questionId}`,
+          }"
+          >{{ record.questionVO.title }}
+        </router-link>
       </template>
       <!--判题状态-->
       <template #status="{ record }">
         {{ statusEnum[record.status] }}
+      </template>
+      <!--判题结果-->
+      <template #judgeMessage="{ record }">
+        {{ record.judgeInfo.message }}
+      </template>
+      <!--时间消耗-->
+      <template #judgeTime="{ record }">
+        {{ record.judgeInfo.time }}ms
+      </template>
+      <!--内存消耗-->
+      <template #judgeMemory="{ record }">
+        {{ record.judgeInfo.memory }}kb
       </template>
       <!--创建时间-->
       <template #createTime="{ record }">
@@ -67,7 +128,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watchEffect } from "vue";
+import { computed, onMounted, ref, watchEffect } from "vue";
 import {
   QuestionControllerService,
   QuestionSubmitQueryRequest,
@@ -75,13 +136,16 @@ import {
 import message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
 import moment from "moment";
-import languageEnum from "@/enum/languageEnum";
-import statusEnum from "../../enum/statusEnum";
+import languageEnum from "@/enum/LanguageEnum";
+import statusEnum from "../../enum/StatusEnum";
+import { useStore } from "vuex";
+import { IconPark } from "@icon-park/vue-next/es/all";
 
 //搜索参数
 const searchParams = ref<QuestionSubmitQueryRequest>({
   questionId: undefined,
   language: undefined,
+  userId: undefined,
   pageSize: 10,
   current: 1,
 });
@@ -89,6 +153,12 @@ const searchParams = ref<QuestionSubmitQueryRequest>({
 const total = ref(0);
 //表格数据
 const dataList = ref([]);
+
+/**
+ * 获取用户信息
+ */
+let store = useStore();
+let userInfo = computed(() => store.state.user.loginUser);
 
 /**
  * 加载表格数据
@@ -115,45 +185,41 @@ onMounted(() => {
 /**
  * 每隔15秒刷新一次（更新判题状态）
  */
-// setInterval(() => {
-//   loadData();
-// }, 15000);
+/*setInterval(() => {
+  loadData();
+}, 15000);*/
 
 /**
  * 要展示的列，以及设置列属性
  */
 const columns = [
   {
-    title: "提交编号",
-    dataIndex: "id",
-    sortable: {
-      sortDirections: ["ascend", "descend"],
-    },
+    title: "#",
+    slotName: "id",
   },
   {
-    title: "用户ID",
-    dataIndex: "userId",
-    sortable: {
-      sortDirections: ["ascend", "descend"],
-    },
+    title: "用户",
+    slotName: "userName",
   },
   {
-    title: "题目ID",
-    dataIndex: "questionId",
-    sortable: {
-      sortDirections: ["ascend", "descend"],
-    },
+    title: "题目",
+    slotName: "title",
   },
   {
-    title: "状态",
+    title: "判题状态",
     slotName: "status",
-    sortable: {
-      sortDirections: ["ascend", "descend"],
-    },
   },
   {
-    title: "判题信息",
-    slotName: "judgeInfo", //插槽名称
+    title: "判题结果",
+    slotName: "judgeMessage", //插槽名称
+  },
+  {
+    title: "时间消耗",
+    slotName: "judgeTime", //插槽名称
+  },
+  {
+    title: "内存消耗",
+    slotName: "judgeMemory", //插槽名称
   },
   {
     title: "编程语言",
@@ -163,7 +229,7 @@ const columns = [
     },
   },
   {
-    title: "创建时间",
+    title: "提交时间",
     slotName: "createTime", //插槽名称
     sortable: {
       sortDirections: ["ascend", "descend"],
@@ -196,6 +262,15 @@ const onPageSizeChange = (pageSize: number) => {
   // searchParams.value.pageSize = pageSize;
   // loadData();
 };
+
+const onSwitchChange = () => {
+  searchParams.value = { ...searchParams.value, current: 1 };
+};
+
+const onRefresh = () => {
+  //即使原来页面也是1，也能监听得到改变
+  searchParams.value = { ...searchParams.value, current: 1 };
+};
 /**
  * 监听loadData()中的响应式变量，例如searchParams，改变时触发函数重新调用（页面重新加载）
  *
@@ -220,5 +295,19 @@ const doSubmit = () => {
 #questionSubmitView {
   max-width: 1280px;
   margin: 0 auto;
+}
+
+.tableLink:link {
+  color: #0275d8;
+  text-decoration: none;
+}
+
+.tableLink:visited {
+  color: #0275d8;
+}
+
+.tableLink:hover {
+  color: #014c8c;
+  text-decoration: underline;
 }
 </style>

@@ -1,9 +1,8 @@
-//权限类型
+//语言枚举
 const LANGUAGE_ENUM = {
   JAVA: "java",
-  C: "c",
   CPP: "cpp",
-  GO: "go",
+  C: "c",
 };
 
 export default LANGUAGE_ENUM;

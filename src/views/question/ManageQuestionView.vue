@@ -39,11 +39,32 @@
       @page-size-change="onPageSizeChange"
     >
       <!--题目-->
+      <!--      <template #title="{ record }">
+              <div class="title" @click="toQuestionPage(record.id)">
+                {{ record.title }}
+              </div>
+            </template>-->
+      <!--题目-->
       <template #title="{ record }">
-        <div class="title" @click="toQuestionPage(record.id)">
-          {{ record.title }}
-        </div>
+        <router-link
+          class="tableLink"
+          :to="{
+            path: `/view/question/${record.id}`,
+          }"
+          >{{ record.title }}
+        </router-link>
       </template>
+      <!--用户-->
+      <template #userName="{ record }">
+        <router-link
+          class="tableLink"
+          :to="{
+            path: `/user/home/${record.userId}`,
+          }"
+          >{{ record?.userId }}
+        </router-link>
+      </template>
+      <!--标签-->
       <template #tags="{ record }">
         <a-space wrap>
           <a-tag v-for="(tag, index) of record.tags" :key="index" color="green"
@@ -51,12 +72,15 @@
           </a-tag>
         </a-space>
       </template>
+      <!--创建时间-->
       <template #createTime="{ record }">
         {{ moment(record.createTime).format("YYYY-MM-DD h:mm:ss") }}
       </template>
+      <!--更新时间-->
       <template #updateTime="{ record }">
         {{ moment(record.updateTime).format("YYYY-MM-DD h:mm:ss") }}
       </template>
+      <!--操作-->
       <template #optional="{ record }">
         <a-space direction="vertical">
           <a-button type="text" size="mini" @click="doUpdate(record.id)"
@@ -167,18 +191,6 @@ const columns = [
     tooltip: true,
   },
   {
-    title: "内容",
-    dataIndex: "content",
-    ellipsis: true,
-    tooltip: true,
-  },
-  {
-    title: "答案",
-    dataIndex: "answer",
-    ellipsis: true,
-    tooltip: true,
-  },
-  {
     title: "提交数",
     dataIndex: "submitNum",
     ellipsis: true,
@@ -209,8 +221,8 @@ const columns = [
     tooltip: true,
   },
   {
-    title: "用户ID",
-    dataIndex: "userId",
+    title: "创建用户",
+    slotName: "userName",
     ellipsis: true,
     tooltip: true,
     sortable: {
@@ -319,7 +331,17 @@ watchEffect(() => {
   margin: 0 auto;
 }
 
-.title:hover {
-  color: #59a4f3;
+.tableLink:link {
+  color: #0275d8;
+  text-decoration: none;
+}
+
+.tableLink:visited {
+  color: #0275d8;
+}
+
+.tableLink:hover {
+  color: #014c8c;
+  text-decoration: underline;
 }
 </style>

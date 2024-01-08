@@ -40,15 +40,16 @@
     >
       <!--题目-->
       <template #title="{ record }">
-        <div class="title" @click="toQuestionPage(record.id)">
-          {{ record.title }}
-        </div>
-        <!--        <router-link-->
-        <!--          :to="{-->
-        <!--            path: `/view/question/${record.id}`,-->
-        <!--          }"-->
-        <!--          >{{ record.title }}-->
-        <!--        </router-link>-->
+        <!--        <span class="title" @click="toQuestionPage(record.id)">-->
+        <!--          {{ record.title }}-->
+        <!--        </span>-->
+        <router-link
+          class="tableLink"
+          :to="{
+            path: `/view/question/${record.id}`,
+          }"
+          >{{ record.title }}
+        </router-link>
       </template>
       <!--标签-->
       <template #tags="{ record }">
@@ -234,7 +235,17 @@ const doSubmit = () => {
   margin: 0 auto;
 }
 
-.title:hover {
-  color: #59a4f3;
+.tableLink:link {
+  color: #0275d8;
+  text-decoration: none;
+}
+
+.tableLink:visited {
+  color: #0275d8;
+}
+
+.tableLink:hover {
+  color: #014c8c;
+  text-decoration: underline;
 }
 </style>

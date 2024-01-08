@@ -56,7 +56,7 @@
               :style="{ width: '320px' }"
               placeholder="请选择编程语言..."
             >
-              <a-option v-for="(language, key) in languageEnum" :key="key"
+              <a-option v-for="(language, key) in LanguageEnum" :key="key"
                 >{{ language }}
               </a-option>
             </a-select>
@@ -81,14 +81,14 @@ import { ref, onMounted, withDefaults, defineProps } from "vue";
 import {
   QuestionControllerService,
   QuestionSubmitAddRequest,
-  QuestionSubmitControllerService,
   QuestionVO,
 } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
 import CodeEditor from "@/components/CodeEditor.vue";
 import MdViewer from "@/components/MdViewer.vue";
-import languageEnum from "@/enum/languageEnum";
+import LanguageEnum from "@/enum/LanguageEnum";
 import router from "@/router";
+import { DefaultCodeEnum } from "@/enum/DefaultCodeEnum";
 
 interface Props {
   id: string;
@@ -119,9 +119,10 @@ onMounted(() => {
  * 提交代码
  */
 const form = ref<QuestionSubmitAddRequest>({
-  language: "java",
-  code: "",
+  language: LanguageEnum.JAVA,
+  code: DefaultCodeEnum.java,
 });
+//父组件向子组件传递一个函数
 const onCodeChange = (v: string) => {
   form.value.code = v;
   // console.log(v);

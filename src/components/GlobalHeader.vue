@@ -25,87 +25,89 @@
           <IconPark :type="item.meta.icon" theme="filled" />
           {{ item.name }}
         </a-menu-item>
+        <div :style="{ padding: 0, float: 'right', marginRight: '0px' }">
+          <!--用户已登录，登录信息显示-->
+          <template v-if="userInfo?.userRole != accessEnum.NOT_LOGIN">
+            <a-space>
+              <a-dropdown trigger="hover">
+                <a-avatar v-if="userInfo.userAvatar">
+                  <!--alt="avatar"替换文本，当图片加载失败时，才显示的文字-->
+                  <img :src="userInfo.userAvatar" />
+                </a-avatar>
+                <a-avatar v-else>
+                  {{ userInfo?.userName.charAt(0) }}
+                  <!--              <IconPark type="fail-picture" theme="filled" />-->
+                </a-avatar>
+                <template #content>
+                  <a-doption>
+                    <template #icon>
+                      <IconPark type="user" theme="filled" fill="#333" />
+                    </template>
+                    <template #default>
+                      <div @click="userLoginout">我的主页</div>
+                    </template>
+                  </a-doption>
+                  <a-doption>
+                    <template #icon>
+                      <IconPark type="config" theme="filled" fill="#333" />
+                    </template>
+                    <template #default>
+                      <div @click="userLoginout">我的设置</div>
+                    </template>
+                  </a-doption>
+                  <a-divider :size="0" margin="3px" />
+                  <a-doption>
+                    <template #icon>
+                      <IconPark type="logout" theme="filled" fill="#333" />
+                    </template>
+                    <template #default>
+                      <div @click="userLoginout">退出登录</div>
+                    </template>
+                  </a-doption>
+                </template>
+              </a-dropdown>
+              <!--          {{ store.state.user?.loginUser?.userName }}-->
+              <a-typography-paragraph
+                :ellipsis="{
+                  rows: 1,
+                  showTooltip: true,
+                }"
+                style="width: 90px; margin: 0 auto; padding-right: 10px"
+              >
+                {{ userInfo?.userName }}
+              </a-typography-paragraph>
+            </a-space>
+          </template>
+          <!--用户未登录-->
+          <template v-else>
+            <a-space>
+              <a-dropdown trigger="hover">
+                <a-avatar>未登录</a-avatar>
+                <template #content>
+                  <a-doption>
+                    <template #icon>
+                      <IconPark type="login" theme="filled" fill="#333" />
+                    </template>
+                    <template #default>
+                      <div @click="userLogin">登录</div>
+                    </template>
+                  </a-doption>
+                  <a-doption>
+                    <template #icon>
+                      <IconPark type="newlybuild" theme="filled" fill="#333" />
+                    </template>
+                    <template #default>
+                      <div @click="userRegister">注册</div>
+                    </template>
+                  </a-doption>
+                </template>
+              </a-dropdown>
+            </a-space>
+          </template>
+        </div>
       </a-menu>
     </a-col>
-    <a-col flex="100px">
-      <!--用户已登录，登录信息显示-->
-      <div v-if="userInfo?.userRole != accessEnum.NOT_LOGIN">
-        <a-space>
-          <a-dropdown trigger="hover">
-            <a-avatar v-if="userInfo.userAvatar">
-              <!--alt="avatar"替换文本，当图片加载失败时，才显示的文字-->
-              <img :src="userInfo.userAvatar" />
-            </a-avatar>
-            <a-avatar v-else>
-              {{ userInfo?.userName.charAt(0) }}
-              <!--              <IconPark type="fail-picture" theme="filled" />-->
-            </a-avatar>
-            <template #content>
-              <a-doption>
-                <template #icon>
-                  <IconPark type="user" theme="filled" fill="#333" />
-                </template>
-                <template #default>
-                  <div @click="userLoginout">我的主页</div>
-                </template>
-              </a-doption>
-              <a-doption>
-                <template #icon>
-                  <IconPark type="config" theme="filled" fill="#333" />
-                </template>
-                <template #default>
-                  <div @click="userLoginout">我的设置</div>
-                </template>
-              </a-doption>
-              <a-divider :size="0" margin="3px" />
-              <a-doption>
-                <template #icon>
-                  <IconPark type="logout" theme="filled" fill="#333" />
-                </template>
-                <template #default>
-                  <div @click="userLoginout">退出登录</div>
-                </template>
-              </a-doption>
-            </template>
-          </a-dropdown>
-          <!--          {{ store.state.user?.loginUser?.userName }}-->
-          <a-typography-paragraph
-            :ellipsis="{
-              rows: 1,
-              showTooltip: true,
-            }"
-            style="width: 90px; margin: 0 auto; padding-right: 10px"
-          >
-            {{ userInfo?.userName }}
-          </a-typography-paragraph>
-        </a-space>
-      </div>
-      <div v-else>
-        <a-space>
-          <a-dropdown trigger="hover">
-            <a-avatar>未登录</a-avatar>
-            <template #content>
-              <a-doption>
-                <template #icon>
-                  <IconPark type="login" theme="filled" fill="#333" />
-                </template>
-                <template #default>
-                  <div @click="userLogin">登录</div>
-                </template>
-              </a-doption>
-              <a-doption>
-                <template #icon>
-                  <IconPark type="newlybuild" theme="filled" fill="#333" />
-                </template>
-                <template #default>
-                  <div @click="userRegister">注册</div>
-                </template>
-              </a-doption>
-            </template>
-          </a-dropdown>
-        </a-space>
-      </div>
-    </a-col>
+    <!--    <a-col flex="100px"> 6666666666666666</a-col>-->
   </a-row>
 </template>
 <script setup lang="ts">
@@ -115,7 +117,7 @@ import { computed, ref } from "vue";
 import { useStore } from "vuex";
 import checkAccess from "@/access/checkAccess";
 import { UserControllerService } from "../../generated";
-import accessEnum from "@/access/accessEnum";
+import accessEnum from "@/enum/AccessEnum";
 import { IconPark } from "@icon-park/vue-next/es/all";
 
 const router = useRouter();
