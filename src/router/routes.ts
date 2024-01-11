@@ -25,9 +25,24 @@ export const routes: Array<RouteRecordRaw> = [
         name: "我的主页",
         component: () => import("@/views/user/UserHomeView.vue"),
         props: true, // 当 props 设置为 true 时，route.params 将被设置为组件的 props。
+      },
+    ],
+  },
+  {
+    path: "/view",
+    name: "查看",
+    component: () => import("@/layouts/QuestionLayout.vue"),
+    meta: {
+      hideInMenu: true, //仅是在菜单栏上隐藏，依旧可以通过router跳转该页面
+    },
+    children: [
+      {
+        path: "/view/question/:id",
+        name: "在线题目",
+        component: () => import("@/views/question/ViewQuestionView.vue"),
+        props: true, // 当 props 设置为 true 时，route.params 将被设置为组件的 props。
         meta: {
           access: ACCESS_ENUM.USER,
-          hideInMenu: true,
         },
       },
     ],
@@ -66,7 +81,7 @@ export const routes: Array<RouteRecordRaw> = [
       icon: "ecg",
     },
   },
-  {
+  /*{
     path: "/view/question/:id",
     name: "在线题目",
     component: () => import("@/views/question/ViewQuestionView.vue"),
@@ -75,7 +90,7 @@ export const routes: Array<RouteRecordRaw> = [
       access: ACCESS_ENUM.USER,
       hideInMenu: true,
     },
-  },
+  },*/
   {
     path: "/add/question",
     name: "创建题目",

@@ -4,7 +4,7 @@
     系统会将视口的宽度和高度分为100份，1vh就占用视口高度的百分之一。
     这个单位使得前端开发更加灵活，可以适应不同大小的视口，提高用户体验。-->
     <a-layout style="min-height: 100vh">
-      <!--offset-top距离窗口顶部达到指定偏移量后触发-->
+      <!--固定header，offset-top距离窗口顶部达到指定偏移量后触发-->
       <a-affix :offsetTop="0">
         <a-layout-header class="header">
           <GlobalHeader />

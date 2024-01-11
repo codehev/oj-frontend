@@ -140,6 +140,7 @@ router.afterEach((to, from, failure) => {
   // console.log("path=" + to.path);
   selectedKeys.value = [to.path];
 });
+// document.body.setAttribute("arco-theme", "dark");
 
 /**
  * 自动登录

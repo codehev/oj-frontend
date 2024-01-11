@@ -19,7 +19,7 @@ const codeEditor = ref(); //代码编辑器实例
 interface Props {
   value: string;
   language: string;
-  handleChange: (v: string) => void;
+  handleChange?: (v: string) => void;
 }
 
 /**
@@ -36,9 +36,6 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   value: DefaultCodeEnum.java,
   language: LanguageEnum.JAVA,
-  handleChange: (v: string) => {
-    // console.log(v);
-  },
 });
 
 /**
@@ -48,7 +45,7 @@ const props = withDefaults(defineProps<Props>(), {
  * 注意：父组件传递来的数据与原来一样，并不会触发监听
  */
 watch(
-  () => props.language,
+  props,
   () => {
     if (codeEditor.value) {
       monaco.editor.setModelLanguage(
@@ -60,14 +57,10 @@ watch(
       //   language: props.language,
       // });
 
-      //props是Proxy对象
-      //keyof获取键值，不是数组，类似于let color: 'red' | 'blue' | 'black';
-      //keyof Language; // "java" | "cpp" | "c"
-      toRaw(codeEditor.value).setValue(
-        DefaultCodeEnum[props.language as keyof LanguageValue]
-      );
+      toRaw(codeEditor.value).setValue(props.value);
     }
-  }
+  },
+  { immediate: true, deep: true }
 );
 
 /**
@@ -76,7 +69,7 @@ watch(
 const loadCodeEditor = () => {
   // 使用 - 创建 monacoEditor 对象
   codeEditor.value = monaco.editor.create(codeEditorRef.value, {
-    theme: "vs-dark", // 主题'vs' (default), 'vs-dark', 'hc-black', 'hc-light.
+    theme: "vs-dark", // 主题
     value: props.value, // 默认显示的值
     language: props.language,
     folding: true, // 是否折叠
@@ -94,7 +87,7 @@ const loadCodeEditor = () => {
     lineNumbers: "on", // 行号 取值： "on" | "off" | "relative" | "interval" | function
     lineNumbersMinChars: 5, // 行号最小字符   number
     // enableSplitViewResizing: false,
-    readOnly: false, //是否只读  取值 true | false
+    readOnly: true, //是否只读  取值 true | false
     minimap: {
       enabled: false,
     },
@@ -108,28 +101,7 @@ onMounted(() => {
   }
   //加载代码编辑器
   loadCodeEditor();
-  // 编辑 监听内容变化
-  codeEditor.value.onDidChangeModelContent(() => {
-    // console.log("目前内容为：", toRaw(codeEditor.value).getValue());
-    // toRaw作用：将一个由reactive生成的响应式对象转为普通对象。
-    //在子组件中调用传入的方法并将子组件的值作为方法的参数传入
-    props.handleChange(toRaw(codeEditor.value).getValue());
-  });
 });
-
-/**
- * 填充值
- */
-/*const fillValue = () => {
-  //如果codeEditorRef实例不存在
-  if (!codeEditor.value) {
-    return;
-  }
-  // console.log(codeEditor.value);
-  // console.log(toRaw(codeEditor.value));
-  // toRaw作用：将一个由reactive生成的响应式对象转为普通对象。
-  toRaw(codeEditor.value).setValue("新的值");
-};*/
 </script>
 
 <style scoped>

@@ -52,7 +52,11 @@
         validate-trigger="input"
       >
         <!--没法通过v-model绑定值，通过函数handle-change手动获取值-->
-        <MdEditor :value="form.content" :handle-change="onContentChange" />
+        <MdEditor
+          class="mdEditor"
+          :value="form.content"
+          :handle-change="onContentChange"
+        />
       </a-form-item>
       <a-form-item
         field="answer"
@@ -62,7 +66,11 @@
         validate-trigger="input"
       >
         <!--我们自定义的代码编辑器组件不会被组件库识别，需要手动指定 value 和 handleChange 函数。-->
-        <MdEditor :value="form.answer" :handle-change="onAnswerChange" />
+        <MdEditor
+          class="mdEditor"
+          :value="form.answer"
+          :handle-change="onAnswerChange"
+        />
       </a-form-item>
       <a-form-item label="测试用例" :show-colon="true">
         <a-space direction="vertical">
@@ -356,5 +364,9 @@ const doSubmit = async ({ values, errors }: any) => {
 #addQuestionView {
   max-width: 1280px;
   margin: 0 auto;
+}
+
+.mdEditor {
+  width: 1200px;
 }
 </style>

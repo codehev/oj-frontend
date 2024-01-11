@@ -42,18 +42,53 @@
         <template #checked> 我的</template>
         <template #unchecked> 全部</template>
       </a-switch>
-      <IconPark
-        class="refreshBtn"
-        style="float: right"
-        type="refresh"
-        theme="filled"
-        fill="#333"
-        size="28"
-        @click="onRefresh"
-      />
+      <a-button type="primary" shape="round" size="small" @click="onRefresh">
+        <template #icon>
+          <IconPark type="refresh" theme="outline" fill="#ffffff" />
+        </template>
+        <template #default>刷新</template>
+      </a-button>
     </a-form>
 
     <a-divider :size="0" />
+    <!--弹窗，显示提交代码-->
+    <template>
+      <a-modal v-model:visible="visible" @ok="handleOk" hide-cancel fullscreen>
+        <template #title> {{ record?.questionVO?.title }}</template>
+        <div>
+          <div v-if="record?.judgeInfo?.message === '答案正确'">
+            <IconPark
+              type="check-one"
+              theme="filled"
+              size="30"
+              fill="#19be6b"
+            />
+            {{ record?.judgeInfo?.message }}
+            时间：{{ record?.judgeInfo?.time }} 内存：{{
+              record?.judgeInfo?.memory
+            }}
+            语言：{{ record?.language }} 作者：{{ record?.userVO?.userName }}
+          </div>
+          <div v-else>
+            <IconPark
+              type="close-one"
+              theme="filled"
+              size="30"
+              fill="#ed3f14"
+            />
+            {{ record?.judgeInfo?.message }}
+            时间：{{ record?.judgeInfo?.time }} 内存：{{
+              record?.judgeInfo?.memory
+            }}
+            语言：{{ record?.language }} 作者：{{ record?.userVO?.userName }}
+          </div>
+          <CodeViewer
+            :value="record?.code"
+            :language="record?.language"
+          ></CodeViewer>
+        </div>
+      </a-modal>
+    </template>
     <a-table
       :columns="columns"
       :data="dataList"
@@ -72,14 +107,15 @@
     >
       <!--提交记录id-->
       <template #id="{ record }">
-        <template v-if="record.userId == userInfo?.id">
-          <router-link
-            class="tableLink"
-            :to="{
-              path: `/user/home/${record.userId}`,
-            }"
+        <template
+          v-if="
+            record.userId == userInfo?.id ||
+            userInfo?.userRole == AccessEnum.ADMIN
+          "
+        >
+          <a-link class="tableLink" @click="handleClick(record)"
             >{{ record.id }}
-          </router-link>
+          </a-link>
         </template>
         <template v-else>{{ record.id }}</template>
       </template>
@@ -132,6 +168,7 @@ import { computed, onMounted, ref, watchEffect } from "vue";
 import {
   QuestionControllerService,
   QuestionSubmitQueryRequest,
+  QuestionSubmitVO,
 } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
@@ -140,6 +177,25 @@ import languageEnum from "@/enum/LanguageEnum";
 import statusEnum from "../../enum/StatusEnum";
 import { useStore } from "vuex";
 import { IconPark } from "@icon-park/vue-next/es/all";
+import AccessEnum from "@/enum/AccessEnum";
+import CodeViewer from "@/components/CodeViewer.vue";
+
+/**
+ * 查看代码（弹窗相关）
+ */
+const visible = ref(false);
+const record = ref<QuestionSubmitVO>();
+
+const handleClick = (recordValue: any) => {
+  visible.value = true;
+  record.value = recordValue;
+};
+const handleOk = () => {
+  visible.value = false;
+};
+/*const handleCancel = () => {
+  visible.value = false;
+};*/
 
 //搜索参数
 const searchParams = ref<QuestionSubmitQueryRequest>({
@@ -175,6 +231,7 @@ const loadData = async () => {
   if (res.code === 0) {
     dataList.value = res.data.records;
     total.value = Number(res.data.total);
+    // message.success("加载成功");
   } else {
     message.error("加载失败，" + res.message);
   }
@@ -198,7 +255,7 @@ const columns = [
     slotName: "id",
   },
   {
-    title: "用户",
+    title: "作者",
     slotName: "userName",
   },
   {
@@ -206,30 +263,30 @@ const columns = [
     slotName: "title",
   },
   {
-    title: "判题状态",
+    title: "状态",
     slotName: "status",
   },
   {
-    title: "判题结果",
+    title: "结果",
     slotName: "judgeMessage", //插槽名称
   },
   {
-    title: "时间消耗",
+    title: "时间",
     slotName: "judgeTime", //插槽名称
   },
   {
-    title: "内存消耗",
+    title: "内存",
     slotName: "judgeMemory", //插槽名称
   },
   {
-    title: "编程语言",
+    title: "语言",
     dataIndex: "language",
     sortable: {
       sortDirections: ["ascend", "descend"],
     },
   },
   {
-    title: "提交时间",
+    title: "时间",
     slotName: "createTime", //插槽名称
     sortable: {
       sortDirections: ["ascend", "descend"],
@@ -241,9 +298,9 @@ const columns = [
  * 跳转到做题页面
  * @param id
  */
-const route = useRouter();
+const router = useRouter();
 const toQuestionPage = (id: number) => {
-  route.push({
+  router.push({
     path: `/view/question/${id}`,
   });
 };
@@ -268,7 +325,7 @@ const onSwitchChange = () => {
 };
 
 const onRefresh = () => {
-  //即使原来页面也是1，也能监听得到改变
+  //即使原来页面也是1（数据与原来一样，但有重新赋值），也能监听得到改变
   searchParams.value = { ...searchParams.value, current: 1 };
 };
 /**

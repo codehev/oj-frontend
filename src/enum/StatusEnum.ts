@@ -1,5 +1,5 @@
 //权限类型
-const STATUS_ENUM = ["等待中", "判题中", "成功", "失败"];
+const STATUS_ENUM = ["等待中", "判题中", "判题完成", "判题失败"];
 
 /*WAITING("等待中", 0),
 RUNNING("判题中", 1),

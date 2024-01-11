@@ -1,78 +1,150 @@
 <template>
   <div id="viewQuestionView">
-    <a-button type="text" @click="router.back()">返回</a-button>
-    <!--指定 gutter 可以增加栅格的区域间隔-->
-    <a-row class="grid" :gutter="[24, 24]">
-      <!--响应式布局，预置六种响应尺寸, 分别为 xs, sm, md, lg, xl, xxl。（从左到右依次变大）
-      当窗口宽度对应对应尺寸时使用对应的宽度-->
-      <a-col :md="12" :xs="24">
-        <a-tabs default-active-key="question">
-          <a-tab-pane key="question" title="题目描述">
-            <a-card v-if="question" :title="question.title">
-              <!--              不同窗口大小，动态调整列数-->
-              <a-descriptions
-                title="判题条件"
-                :column="{ xs: 1, md: 2, lg: 3 }"
+    <a-split
+      :default-size="0.5"
+      :min="0.01"
+      :max="0.99"
+      :style="{
+        height: '95vh',
+        width: '100%',
+      }"
+    >
+      <template #first>
+        <div class="leftDiv">
+          <a-tabs default-active-key="1">
+            <a-tab-pane key="1">
+              <template #title>
+                <IconPark
+                  type="transaction-order"
+                  theme="filled"
+                  size="16"
+                  fill="#007bff"
+                />
+                题目描述
+              </template>
+              <!--滚动条-->
+              <a-scrollbar
+                type="embed"
+                style="height: 95vh; margin: 15px; overflow: auto"
               >
-                <a-descriptions-item label="时间限制">
-                  {{ question.judgeConfig.timeLimit ?? 0 }}ms
-                </a-descriptions-item>
-                <a-descriptions-item label="内存限制">
-                  {{ question.judgeConfig.memoryLimit ?? 0 }}kb
-                </a-descriptions-item>
-                <a-descriptions-item label="堆栈限制">
-                  {{ question.judgeConfig.stackLimit ?? 0 }}kb
-                </a-descriptions-item>
-              </a-descriptions>
-              <MdViewer :value="question.content || ''" />
-              <template #extra>
                 <a-space wrap>
                   <a-tag
-                    v-for="(tag, index) in question.tags"
+                    v-for="(tag, index) in question?.tags"
                     :key="index"
                     color="green"
                     >{{ tag }}
                   </a-tag>
                 </a-space>
+                <!--描述，不同窗口大小，动态调整列数-->
+                <a-descriptions
+                  title="判题条件："
+                  :column="{ xs: 1, md: 2, lg: 3 }"
+                >
+                  <a-descriptions-item label="时间限制">
+                    {{ question?.judgeConfig?.timeLimit ?? 0 }}ms
+                  </a-descriptions-item>
+                  <a-descriptions-item label="内存限制">
+                    {{ question?.judgeConfig?.memoryLimit ?? 0 }}kb
+                  </a-descriptions-item>
+                  <a-descriptions-item label="堆栈限制">
+                    {{ question?.judgeConfig?.stackLimit ?? 0 }}kb
+                  </a-descriptions-item>
+                </a-descriptions>
+                <MdViewer :value="question?.content || ''" />
+              </a-scrollbar>
+            </a-tab-pane>
+            <a-tab-pane key="2">
+              <template #title>
+                <IconPark
+                  type="cuvette"
+                  theme="filled"
+                  size="16"
+                  fill="#007bff"
+                />
+                题解
               </template>
-            </a-card>
-          </a-tab-pane>
-          <a-tab-pane key="2" title="评论"> 评论区</a-tab-pane>
-          <a-tab-pane key="3" title="题解">暂无答案</a-tab-pane>
-          <a-tab-pane key="4" title="提交记录">
-            Content of Tab Panel 4
-          </a-tab-pane>
-        </a-tabs>
-      </a-col>
-      <a-col :md="12" :xs="24">
-        <a-form :model="form" layout="inline">
-          <a-form-item
-            field="language"
-            label="编程语言"
-            style="min-width: 280px"
-          >
-            <a-select
-              v-model="form.language"
-              :style="{ width: '320px' }"
-              placeholder="请选择编程语言..."
-            >
-              <a-option v-for="(language, key) in LanguageEnum" :key="key"
-                >{{ language }}
-              </a-option>
-            </a-select>
-          </a-form-item>
-        </a-form>
-        <CodeEditor
-          :value="form.code"
-          :language="form.language"
-          :handle-change="onCodeChange"
-        />
-        <a-divider :size="0" />
-        <a-button type="primary" style="min-width: 200px" @click="onSubmit"
-          >提交代码
-        </a-button>
-      </a-col>
-    </a-row>
+              暂无题解
+              {{ question?.title }}
+            </a-tab-pane>
+            <a-tab-pane key="3" title="提交记录">
+              <template #title>
+                <IconPark
+                  type="history"
+                  theme="filled"
+                  size="16"
+                  fill="#007bff"
+                />
+                提交记录
+              </template>
+              暂无提交记录
+            </a-tab-pane>
+            <a-tab-pane key="4" title="评论">
+              <template #title>
+                <IconPark
+                  type="comment"
+                  theme="filled"
+                  size="16"
+                  fill="#007bff"
+                />
+                评论
+              </template>
+              暂无评论
+            </a-tab-pane>
+          </a-tabs>
+        </div>
+      </template>
+      <template #second>
+        <div class="rightDiv">
+          <a-tabs>
+            <template #extra>
+              <a-space style="margin-right: 10px">
+                <a-select
+                  size="small"
+                  v-model="form.language"
+                  :style="{ width: '80px' }"
+                  placeholder="请选择编程语言..."
+                >
+                  <a-option v-for="(language, key) in LanguageEnum" :key="key"
+                    >{{ language }}
+                  </a-option>
+                </a-select>
+                <a-button
+                  type="primary"
+                  size="small"
+                  style="min-width: 60px"
+                  @click="onSubmit"
+                >
+                  <template #icon>
+                    <IconPark
+                      type="upload-one"
+                      theme="filled"
+                      size="24"
+                      fill="#fff"
+                    />
+                  </template>
+                  <template #default>提交代码</template>
+                </a-button>
+              </a-space>
+            </template>
+            <a-tab-pane key="1">
+              <template #title>
+                <IconPark type="code" theme="filled" size="16" fill="#02b128" />
+                代码
+              </template>
+              <CodeEditor
+                :style="{
+                  height: '89vh',
+                  width: '100%',
+                }"
+                :value="form.code"
+                :language="form.language"
+                :handle-change="onCodeChange"
+              />
+            </a-tab-pane>
+          </a-tabs>
+        </div>
+      </template>
+    </a-split>
   </div>
 </template>
 
@@ -87,8 +159,8 @@ import message from "@arco-design/web-vue/es/message";
 import CodeEditor from "@/components/CodeEditor.vue";
 import MdViewer from "@/components/MdViewer.vue";
 import LanguageEnum from "@/enum/LanguageEnum";
-import router from "@/router";
 import { DefaultCodeEnum } from "@/enum/DefaultCodeEnum";
+import { IconPark } from "@icon-park/vue-next/es/all";
 
 interface Props {
   id: string;
@@ -145,7 +217,6 @@ const onSubmit = async () => {
 
 <style scoped>
 #viewQuestionView {
-  max-width: 1400px;
   margin: 0 auto;
 }
 
@@ -153,5 +224,22 @@ const onSubmit = async () => {
 #viewQuestionView .arco-space-horizontal .arco-space-item {
   /*!important提升优先级*/
   margin-bottom: 0 !important;
+}
+
+/* 隐藏滚动条但能滚动 */
+.leftDiv::-webkit-scrollbar {
+  display: none;
+}
+
+.rightDiv::-webkit-scrollbar {
+  display: none;
+}
+
+.leftDiv,
+.rightDiv {
+  background-color: #ffffff;
+  /* length具体尺寸*/
+  border-radius: 10px;
+  padding: 5px;
 }
 </style>
