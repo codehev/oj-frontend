@@ -1,7 +1,7 @@
 import ACCESS_ENUM from "@/enum/AccessEnum";
 
 /**
- * 过滤菜单时使用,定义公用的权限校验方法
+ * 过滤菜单时使用,定义公用的权限校验方法（检查是否有权限）
  * @param loginUser 当前登录用户
  * @param needAccess 需要有的权限
  * @return boolean 有无权限

@@ -3,6 +3,9 @@ import store from "@/store"; //默认引入@/store/index.ts
 import ACCESS_ENUM from "@/enum/AccessEnum";
 import checkAccess from "@/access/checkAccess";
 
+/**
+ * 这是路由守卫，拦截路由请求，判断用户是否有权限访问该路由
+ */
 router.beforeEach(async (to, from, next) => {
   // console.log(to);
   // console.log(store.state.user.loginUser);

@@ -99,8 +99,9 @@ const handleSubmit = async ({ values, errors }: any) => {
     //获取并保存用户信息，可以发起请求获取登录信息，也可以直接使用登录时响应的用户信息再保存
     await store.dispatch("user/getLoginUser");
     //登录成功后返回之前的页面或直接固定返回主页
-    router.push({
-      path: "/",
+    const urlParams = new URL(window.location.href).searchParams;
+    await router.push({
+      path: urlParams.get("redirect") || "/",
       replace: true, //不保留当前页面的历史记录，无法其他页面back回去
     });
   } else {
