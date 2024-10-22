@@ -2,11 +2,11 @@
 
 > **GitHub项目地址**
 >
-> [前端](https://github.com/codehev/oj-frontend) | [后端](https://github.com/codehev/oj-backend) | [后端微服务版](https://github.com/codehev/oj-backend-microservice) | [代码沙箱](https://github.com/codehev/oj-code-sandbox)
+> [前端](https://github.com/codehev/oj-frontend) | [后端](https://github.com/codehev/oj-backend) | [后端（微服务版）](https://github.com/codehev/oj-backend-microservice) | [代码沙箱](https://github.com/codehev/oj-code-sandbox)
 
 ## 项目介绍
 
-这次带做的是一个让很多同学 “望而生畏” 的硬项目， 基于 Vue 3 + Spring Boot + Spring Cloud 微服务 + Docker 的**编程题目在线评测系统** （简称 OJ）。
+此项目是基于 Vue 3 + Spring Boot + Spring Cloud 微服务 + Docker 的**编程题目在线评测系统** （简称 OJ）。
 
 在系统前台，管理员可以创建、管理题目；用户可以自由搜索题目、阅读题目、编写并提交代码。
 
@@ -22,7 +22,7 @@
 
 ## 项目业务流
 
-![17c059bc-ed9c-462b-bb01-35a6285f43ce](image/README/17c059bc-ed9c-462b-bb01-35a6285f43ce.png)
+![17c059bc-ed9c-462b-bb01-35a6285f43ce](image/README/17c059bc-ed9c-462b-bb01-35a6285f43ce-1729605368404-1.png)
 
 ## 技术选型
 
