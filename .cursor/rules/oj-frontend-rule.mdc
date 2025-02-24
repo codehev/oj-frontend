@@ -1,0 +1,16 @@
+---
+description: 
+globs: 
+---
+---
+description: 技术栈
+globs: 
+---
+这是一个编程题目在线评测系统（简称○J）的前端项目，使用的技术栈如下：
+- Vue 3
+- Vuex状态管理
+- Arco Design 组件库
+- 前端工程化：ESLint + Prettier + TypeScript
+- bytemd：Markdown 富文本编辑器
+- monaco-editor： 代码编辑器
+- openapi-typescript-codegen： 前端接口代码生成
