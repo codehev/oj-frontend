@@ -364,9 +364,49 @@ const doSubmit = async ({ values, errors }: any) => {
 #addQuestionView {
   max-width: 1280px;
   margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .mdEditor {
-  width: 1200px;
+  width: 100%;
+  max-width: 1200px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+a-button[type="primary"] {
+  background-color: #4caf50;
+  border-color: #4caf50;
+  color: white;
+}
+
+a-button[type="primary"]:hover {
+  background-color: #45a049;
+  border-color: #45a049;
+}
+
+a-button[type="outline"] {
+  border-color: #4caf50;
+  color: #4caf50;
+}
+
+a-button[type="outline"]:hover {
+  background-color: #f1f1f1;
+  border-color: #45a049;
+  color: #45a049;
+}
+
+a-space {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 </style>
