@@ -63,4 +63,10 @@ const props = withDefaults(defineProps<Props>(), {
 .bytemd-toolbar-icon.bytemd-tippy.bytemd-tippy-right:last-child {
   display: none;
 }
+
+/* 修复全屏时的层级问题 */
+.bytemd-fullscreen {
+  z-index: 9999 !important;
+  background-color: white !important;
+}
 </style>
