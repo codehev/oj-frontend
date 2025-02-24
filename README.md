@@ -1,6 +1,6 @@
 # NexGenOJ-前端
 
-> **GitHub项目地址**
+> **GitHub 项目地址**
 >
 > [前端](https://github.com/codehev/oj-frontend) | [后端](https://github.com/codehev/oj-backend) | [后端（微服务版）](https://github.com/codehev/oj-backend-microservice) | [代码沙箱](https://github.com/codehev/oj-code-sandbox)
 
@@ -14,11 +14,7 @@
 
 其中，代码沙箱可以作为独立服务，提供给其他开发者使用。
 
-
-
 项目截图待补充：
-
-
 
 ## 项目业务流
 
@@ -38,11 +34,9 @@
 - ⭐️ Monaco Editor 代码编辑器
 - ⭐️ OpenAPI 前端代码生成
 
-
-
 **后端**
 
-- ⭐️ Java Spring Cloud + Spring Cloud Alibaba 微服务 
+- ⭐️ Java Spring Cloud + Spring Cloud Alibaba 微服务
   - Nacos 注册中心
   - OpenFeign 客户端调用
   - GateWay 网关
@@ -56,7 +50,7 @@
 - MyBatis-Plus 及 MyBatis X 自动生成
 - Redis 分布式 Session
 - ⭐️ RabbitMQ 消息队列
-- ⭐️ 多种设计模式 
+- ⭐️ 多种设计模式
 - 策略模式
   - 工厂模式
   - 代理模式
