@@ -1,4 +1,5 @@
 <template>
+  <!-- 题目管理页面 -->
   <div id="manageQuestionView">
     <a-button type="primary" style="float: right" @click="createQuestion"
       >创建题目

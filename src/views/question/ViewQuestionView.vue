@@ -1,4 +1,5 @@
 <template>
+  <!-- 查看题目页面 -->
   <div id="viewQuestionView">
     <a-split
       :default-size="0.5"

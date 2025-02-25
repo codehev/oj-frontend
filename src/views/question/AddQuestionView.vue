@@ -1,4 +1,5 @@
 <template>
+  <!-- 添加或更新题目页面 -->
   <div id="addQuestionView">
     <a-button type="text" @click="router.back()">返回</a-button>
     <h2 style="text-align: center">
