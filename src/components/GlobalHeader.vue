@@ -22,7 +22,7 @@
           </div>
         </a-menu-item>
         <a-menu-item v-for="item in visibleRoutes" :key="item.path">
-          <IconPark :type="item.meta.icon" theme="filled" />
+          <IconPark :type="item.meta?.icon as string" theme="filled" />
           {{ item.name }}
         </a-menu-item>
         <div :style="{ padding: 0, float: 'right', marginRight: '0px' }">
