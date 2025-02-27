@@ -252,7 +252,7 @@
                               AI 分析
                             </a-button>
                           </div>
-                          <CodeEditor
+                          <CodeViewer
                             :value="currentSubmission?.code"
                             :language="currentSubmission?.language"
                             :readonly="true"
@@ -368,6 +368,7 @@ import {
 } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
 import CodeEditor from "@/components/CodeEditor.vue";
+import CodeViewer from "@/components/CodeViewer.vue";
 import MdViewer from "@/components/MdViewer.vue";
 import LanguageEnum from "@/enum/LanguageEnum";
 import STATUS_ENUM from "@/enum/StatusEnum";
