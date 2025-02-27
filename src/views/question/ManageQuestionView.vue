@@ -40,12 +40,6 @@
       @page-size-change="onPageSizeChange"
     >
       <!--题目-->
-      <!--      <template #title="{ record }">
-              <div class="title" @click="toQuestionPage(record.id)">
-                {{ record.title }}
-              </div>
-            </template>-->
-      <!--题目-->
       <template #title="{ record }">
         <router-link
           class="tableLink"
@@ -54,6 +48,45 @@
           }"
           >{{ record.title }}
         </router-link>
+      </template>
+      <!--标签-->
+      <template #tags="{ record }">
+        <a-space wrap>
+          <a-tag v-for="(tag, index) of record.tags" :key="index" color="green"
+            >{{ tag }}
+          </a-tag>
+        </a-space>
+      </template>
+      <!--判题配置-->
+      <template #judgeConfig="{ record }">
+        <a-popover position="right">
+          <a-button type="text" size="mini">查看配置</a-button>
+          <template #content>
+            <a-descriptions
+              :data="formatJudgeConfig(record.judgeConfig)"
+              size="mini"
+              :column="1"
+            />
+          </template>
+        </a-popover>
+      </template>
+      <!--判题用例-->
+      <template #judgeCase="{ record }">
+        <a-popover position="right">
+          <a-button type="text" size="mini"
+            >查看用例({{ getJudgeCaseCount(record.judgeCase) }})</a-button
+          >
+          <template #content>
+            <a-descriptions
+              v-for="(item, index) in parseJudgeCase(record.judgeCase)"
+              :key="index"
+              :title="`用例 ${index + 1}`"
+              :data="formatJudgeCase(item)"
+              size="mini"
+              :column="1"
+            />
+          </template>
+        </a-popover>
       </template>
       <!--用户-->
       <template #userName="{ record }">
@@ -64,14 +97,6 @@
           }"
           >{{ record?.userId }}
         </router-link>
-      </template>
-      <!--标签-->
-      <template #tags="{ record }">
-        <a-space wrap>
-          <a-tag v-for="(tag, index) of record.tags" :key="index" color="green"
-            >{{ tag }}
-          </a-tag>
-        </a-space>
       </template>
       <!--创建时间-->
       <template #createTime="{ record }">
@@ -211,12 +236,14 @@ const columns = [
   },
   {
     title: "判题配置",
+    slotName: "judgeConfig",
     dataIndex: "judgeConfig",
     ellipsis: true,
     tooltip: true,
   },
   {
     title: "判题用例",
+    slotName: "judgeCase",
     dataIndex: "judgeCase",
     ellipsis: true,
     tooltip: true,
@@ -324,6 +351,59 @@ const onPageSizeChange = (pageSize: number) => {
 watchEffect(() => {
   loadData();
 });
+
+/**
+ * 格式化判题配置
+ */
+const formatJudgeConfig = (judgeConfig: string) => {
+  if (!judgeConfig) {
+    return [
+      { label: "时间限制", value: "1000 ms" },
+      { label: "内存限制", value: "1000 MB" },
+      { label: "堆栈限制", value: "1000 MB" },
+    ];
+  }
+  const config =
+    typeof judgeConfig === "string" ? JSON.parse(judgeConfig) : judgeConfig;
+  return [
+    { label: "时间限制", value: `${config.timeLimit} ms` },
+    { label: "内存限制", value: `${config.memoryLimit} MB` },
+    { label: "堆栈限制", value: `${config.stackLimit} MB` },
+  ];
+};
+
+/**
+ * 解析判题用例
+ */
+const parseJudgeCase = (judgeCase: string) => {
+  if (!judgeCase) {
+    return [
+      {
+        input: "",
+        output: "",
+      },
+    ];
+  }
+  return typeof judgeCase === "string" ? JSON.parse(judgeCase) : judgeCase;
+};
+
+/**
+ * 格式化单个判题用例
+ */
+const formatJudgeCase = (caseItem: any) => {
+  return [
+    { label: "输入", value: caseItem.input || "空" },
+    { label: "输出", value: caseItem.output || "空" },
+  ];
+};
+
+/**
+ * 获取判题用例数量
+ */
+const getJudgeCaseCount = (judgeCase: string) => {
+  const cases = parseJudgeCase(judgeCase);
+  return cases.length;
+};
 </script>
 
 <style scoped>
