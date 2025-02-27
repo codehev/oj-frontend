@@ -241,14 +241,12 @@ const columns = [
     slotName: "judgeConfig",
     dataIndex: "judgeConfig",
     ellipsis: true,
-    tooltip: true,
   },
   {
     title: "判题用例",
     slotName: "judgeCase",
     dataIndex: "judgeCase",
     ellipsis: true,
-    tooltip: true,
   },
   {
     title: "创建用户",
