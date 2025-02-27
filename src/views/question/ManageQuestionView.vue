@@ -77,14 +77,16 @@
             >查看用例({{ getJudgeCaseCount(record.judgeCase) }})</a-button
           >
           <template #content>
-            <a-descriptions
-              v-for="(item, index) in parseJudgeCase(record.judgeCase)"
-              :key="index"
-              :title="`用例 ${index + 1}`"
-              :data="formatJudgeCase(item)"
-              size="mini"
-              :column="1"
-            />
+            <div class="case-scroll">
+              <a-descriptions
+                v-for="(item, index) in parseJudgeCase(record.judgeCase)"
+                :key="index"
+                :title="`用例 ${index + 1}`"
+                :data="formatJudgeCase(item)"
+                size="mini"
+                :column="1"
+              />
+            </div>
           </template>
         </a-popover>
       </template>
@@ -424,5 +426,30 @@ const getJudgeCaseCount = (judgeCase: string) => {
 .tableLink:hover {
   color: #014c8c;
   text-decoration: underline;
+}
+
+/* 自定义滚动条样式 */
+.case-scroll {
+  max-height: 100px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.case-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.case-scroll::-webkit-scrollbar-thumb {
+  border-radius: 2px;
+  background-color: rgba(192, 196, 204, 0.5);
+}
+
+.case-scroll::-webkit-scrollbar-track {
+  border-radius: 2px;
+  background: transparent;
+}
+
+.case-scroll:hover::-webkit-scrollbar-thumb {
+  background-color: #c0c4cc;
 }
 </style>
