@@ -2,7 +2,7 @@
   <!--栅格布局，Flex 用法：通过设置 Col 组件的 flex 属性，可以任意配置 flex 布局。
   通过 align 来进行垂直布局。-->
   <a-row id="globalHeader" class="grid-demo" align="center" :wrap="false">
-    <!--:wrap="false",关闭换行，当窗口缩小时，不会把”未登录“这块的字挤压到第二行，
+    <!--:wrap="false",关闭换行，当窗口缩小时，不会把"未登录"这块的字挤压到第二行，
     :是为了把false识别出属性而非字符串-->
     <a-col flex="auto">
       <!--菜单-->
@@ -10,6 +10,7 @@
         mode="horizontal"
         :selected-keys="selectedKeys"
         @menu-item-click="doMenuClick"
+        class="main-menu"
       >
         <a-menu-item
           key="0"
@@ -17,89 +18,97 @@
           disabled
         >
           <div class="title-bar">
-            <img class="logo" src="../assets/logo.jpeg" />
-            <div class="title">OJ</div>
+            <div class="logo-wrapper">
+              <icon-code theme="filled" size="24" />
+            </div>
+            <div class="title">在线评测</div>
           </div>
         </a-menu-item>
-        <a-menu-item v-for="item in visibleRoutes" :key="item.path">
-          <IconPark :type="item.meta?.icon as string" theme="filled" />
+        <a-menu-item
+          v-for="item in visibleRoutes"
+          :key="item.path"
+          class="menu-item"
+        >
+          <IconPark
+            :type="item.meta?.icon as string"
+            theme="filled"
+            :size="16"
+            class="menu-icon"
+          />
           {{ item.name }}
         </a-menu-item>
-        <div :style="{ padding: 0, float: 'right', marginRight: '0px' }">
-          <!--用户已登录，登录信息显示-->
+
+        <!-- 用户信息区域 -->
+        <div class="user-area">
           <template v-if="userInfo?.userRole != accessEnum.NOT_LOGIN">
             <a-space>
               <a-dropdown trigger="hover">
-                <a-avatar v-if="userInfo.userAvatar">
-                  <!--alt="avatar"替换文本，当图片加载失败时，才显示的文字-->
-                  <img :src="userInfo.userAvatar" />
-                </a-avatar>
-                <a-avatar v-else>
-                  {{ userInfo?.userName.charAt(0) }}
-                  <!--              <IconPark type="fail-picture" theme="filled" />-->
-                </a-avatar>
+                <div class="user-info">
+                  <a-avatar
+                    :size="32"
+                    class="user-avatar"
+                    v-if="userInfo.userAvatar"
+                  >
+                    <img :src="userInfo.userAvatar" alt="用户头像" />
+                  </a-avatar>
+                  <a-avatar :size="32" class="user-avatar" v-else>
+                    {{ userInfo?.userName.charAt(0) }}
+                  </a-avatar>
+                  <a-typography-paragraph
+                    :ellipsis="{
+                      rows: 1,
+                      showTooltip: true,
+                    }"
+                    class="username"
+                  >
+                    {{ userInfo?.userName }}
+                  </a-typography-paragraph>
+                </div>
                 <template #content>
-                  <a-doption>
-                    <template #icon>
-                      <IconPark type="user" theme="filled" fill="#333" />
-                    </template>
-                    <template #default>
-                      <div @click="userLoginout">我的主页</div>
-                    </template>
-                  </a-doption>
-                  <a-doption>
-                    <template #icon>
-                      <IconPark type="config" theme="filled" fill="#333" />
-                    </template>
-                    <template #default>
-                      <div @click="userLoginout">我的设置</div>
-                    </template>
-                  </a-doption>
-                  <a-divider :size="0" margin="3px" />
-                  <a-doption>
-                    <template #icon>
-                      <IconPark type="logout" theme="filled" fill="#333" />
-                    </template>
-                    <template #default>
+                  <div class="dropdown-menu">
+                    <a-doption class="dropdown-item">
+                      <template #icon>
+                        <IconPark type="user" theme="filled" :size="16" />
+                      </template>
+                      <div @click="toUserHome">我的主页</div>
+                    </a-doption>
+                    <a-doption class="dropdown-item">
+                      <template #icon>
+                        <IconPark type="config" theme="filled" :size="16" />
+                      </template>
+                      <div @click="toUserSettings">我的设置</div>
+                    </a-doption>
+                    <a-divider margin="4" />
+                    <a-doption class="dropdown-item">
+                      <template #icon>
+                        <IconPark type="logout" theme="filled" :size="16" />
+                      </template>
                       <div @click="userLoginout">退出登录</div>
-                    </template>
-                  </a-doption>
+                    </a-doption>
+                  </div>
                 </template>
               </a-dropdown>
-              <!--          {{ store.state.user?.loginUser?.userName }}-->
-              <a-typography-paragraph
-                :ellipsis="{
-                  rows: 1,
-                  showTooltip: true,
-                }"
-                style="width: 90px; margin: 0 auto; padding-right: 10px"
-              >
-                {{ userInfo?.userName }}
-              </a-typography-paragraph>
             </a-space>
           </template>
-          <!--用户未登录-->
           <template v-else>
             <a-space>
               <a-dropdown trigger="hover">
-                <a-avatar>未登录</a-avatar>
+                <a-avatar :size="32" class="guest-avatar">未登录</a-avatar>
                 <template #content>
-                  <a-doption>
-                    <template #icon>
-                      <IconPark type="login" theme="filled" fill="#333" />
-                    </template>
-                    <template #default>
+                  <div class="dropdown-menu">
+                    <a-doption class="dropdown-item">
+                      <template #icon>
+                        <IconPark type="login" theme="filled" :size="16" />
+                      </template>
                       <div @click="userLogin">登录</div>
-                    </template>
-                  </a-doption>
-                  <a-doption>
-                    <template #icon>
-                      <IconPark type="newlybuild" theme="filled" fill="#333" />
-                    </template>
-                    <template #default>
+                    </a-doption>
+                    <a-doption class="dropdown-item">
+                      <template #icon>
+                        <IconPark type="newlybuild" theme="filled" :size="16" />
+                      </template>
                       <div @click="userRegister">注册</div>
-                    </template>
-                  </a-doption>
+                    </a-doption>
+                  </div>
                 </template>
               </a-dropdown>
             </a-space>
@@ -119,6 +128,7 @@ import checkAccess from "@/access/checkAccess";
 import { UserControllerService } from "../../generated";
 import accessEnum from "@/enum/AccessEnum";
 import { IconPark } from "@icon-park/vue-next/es/all";
+import { IconCode } from "@arco-design/web-vue/es/icon";
 
 const router = useRouter();
 /**
@@ -197,20 +207,153 @@ const userLoginout = async () => {
     replace: true, //不保留当前页面的历史记录，无法其他页面back回去
   });
 };
+
+// 新增用户主页和设置页面的跳转方法
+const toUserHome = () => {
+  router.push({
+    path: `/user/home/${userInfo.value?.id}`,
+  });
+};
+
+const toUserSettings = () => {
+  router.push({
+    path: "/user/settings",
+  });
+};
 </script>
 <style scoped>
 /*scoped样式只在当前vue文件下起作用*/
 
+.main-menu {
+  padding: 0 16px;
+}
+
 .title-bar {
   display: flex;
   align-items: center;
+  gap: 12px;
+  padding: 0 4px;
 }
 
-.logo {
-  height: 26px;
+.logo-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgb(var(--primary-6));
+  color: #fff;
+  transition: all 0.3s ease;
+}
+
+.logo-wrapper:hover {
+  transform: rotate(30deg);
 }
 
 .title {
-  color: #444;
+  font-size: 18px;
+  font-weight: 600;
+  color: rgb(var(--primary-6));
+  letter-spacing: 0.5px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 16px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.menu-icon {
+  margin-right: 4px;
+}
+
+.user-area {
+  float: right;
+  margin-right: 0;
+  padding: 0 8px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.user-info:hover {
+  background: var(--color-fill-2);
+}
+
+.user-avatar {
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.user-avatar:hover {
+  border-color: rgb(var(--primary-6));
+}
+
+.guest-avatar {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.guest-avatar:hover {
+  background: var(--color-fill-2);
+}
+
+.username {
+  width: 90px;
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-text-1);
+}
+
+.dropdown-menu {
+  min-width: 160px;
+  padding: 4px;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+:deep(.arco-dropdown-option:hover) {
+  background-color: var(--color-fill-2);
+}
+
+:deep(.arco-menu-light .arco-menu-item.arco-menu-selected) {
+  color: rgb(var(--primary-6));
+  font-weight: 500;
+}
+
+:deep(.arco-menu-light .arco-menu-item:hover) {
+  color: rgb(var(--primary-6));
+}
+
+@media screen and (max-width: 768px) {
+  .main-menu {
+    padding: 0 8px;
+  }
+
+  .menu-item {
+    padding: 0 12px;
+  }
+
+  .username {
+    display: none;
+  }
 }
 </style>

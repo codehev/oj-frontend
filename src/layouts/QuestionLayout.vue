@@ -3,8 +3,8 @@
     <!--vh是前端开发中的一个动态单位，表示相对于视口（Viewport）的高度。
     系统会将视口的宽度和高度分为100份，1vh就占用视口高度的百分之一。
     这个单位使得前端开发更加灵活，可以适应不同大小的视口，提高用户体验。-->
-    <a-layout style="height: 100vh; width: 99.5vw">
-      <a-layout-header class="header" style="height: 5vh">
+    <a-layout style="height: 100vh">
+      <a-layout-header class="header">
         <a-drawer
           :width="340"
           :visible="visible"
@@ -21,10 +21,10 @@
         </a-drawer>
         <!--a-space组件可以提供不同大小的间距，并且支持响应式布局。
         这意味着间距可以根据屏幕尺寸进行自适应调整，以在不同设备上提供良好的用户体验。-->
-        <a-space style="float: left">
+        <a-space>
           <a-popover content="返回">
             <a-button type="text" @click="router.back()">
-              <IconPark type="return" theme="filled" size="20" fill="#777777" />
+              <IconPark type="return" theme="filled" size="20" fill="#666" />
             </a-button>
           </a-popover>
           <a-popover content="题库">
@@ -33,18 +33,18 @@
                 type="menu-unfold-one"
                 theme="filled"
                 size="20"
-                fill="#777777"
+                fill="#666"
               />
             </a-button>
           </a-popover>
           <a-popover content="上一题">
             <a-button type="text" @click="router.back()">
-              <IconPark type="left" theme="filled" size="20" fill="#777777" />
+              <IconPark type="left" theme="filled" size="20" fill="#666" />
             </a-button>
           </a-popover>
           <a-popover content="下一题">
             <a-button type="text" @click="router.back()">
-              <IconPark type="right" theme="filled" size="20" fill="#777777" />
+              <IconPark type="right" theme="filled" size="20" fill="#666" />
             </a-button>
           </a-popover>
           <a-popover content="随机一题">
@@ -53,13 +53,13 @@
                 type="shuffle-one"
                 theme="filled"
                 size="16"
-                fill="#777777"
+                fill="#666"
               />
             </a-button>
           </a-popover>
         </a-space>
       </a-layout-header>
-      <a-layout-content class="content" style="height: 95vh">
+      <a-layout-content class="content">
         <router-view />
       </a-layout-content>
     </a-layout>
@@ -84,9 +84,41 @@ const handleCancel = () => {
 /*scoped样式只在当前vue文件下起作用*/
 
 #questionLayout {
-  background-color: #f0f0f0;
-  margin: 0px 0px;
-  padding: 0px 5px;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--color-neutral-2);
+}
+
+.header {
+  height: 48px;
+  line-height: 48px;
+  padding: 0 24px;
+  background: #fff;
+  border-bottom: 1px solid var(--color-neutral-3);
+  display: flex;
+  align-items: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.content {
+  height: calc(100vh - 48px);
+  padding: 16px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+:deep(.arco-btn-text) {
+  color: var(--color-text-2);
+}
+
+:deep(.arco-btn-text:hover) {
+  background-color: var(--color-fill-2);
+  color: rgb(var(--primary-6));
+}
+
+:deep(.arco-popover) {
+  font-size: 13px;
 }
 
 /*#questionLayout .header {

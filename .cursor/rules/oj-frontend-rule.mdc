@@ -1,10 +1,7 @@
 ---
-description: 
+description: 项目技术栈
 globs: 
----
----
-description: 技术栈
-globs: 
+alwaysApply: true
 ---
 这是一个编程题目在线评测系统（简称○J）的前端项目，使用的技术栈如下：
 - Vue 3

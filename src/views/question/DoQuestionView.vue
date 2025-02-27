@@ -6,8 +6,9 @@
       :min="0.01"
       :max="0.99"
       :style="{
-        height: '95vh',
+        height: '100vh',
         width: '100%',
+        overflow: 'hidden',
       }"
     >
       <template #first>
@@ -15,7 +16,7 @@
           <a-tabs
             default-active-key="1"
             v-model:active-key="activeKey"
-            @change="onClickTab"
+            @change="onTabChange"
           >
             <a-tab-pane key="1">
               <template #title>
@@ -27,14 +28,10 @@
                 />
                 题目描述
               </template>
-              <!--滚动条-->
-              <a-scrollbar
-                type="embed"
-                style="height: 95vh; margin: 15px; overflow: auto"
-              >
+              <div class="tab-content">
                 <a-space wrap>
                   <a-tag
-                    v-for="(tag, index) in question?.tags"
+                    v-for="(tag, index) in questionVO?.tags"
                     :key="index"
                     color="green"
                     >{{ tag }}
@@ -46,17 +43,17 @@
                   :column="{ xs: 1, md: 2, lg: 3 }"
                 >
                   <a-descriptions-item label="时间限制">
-                    {{ question?.judgeConfig?.timeLimit ?? 0 }}ms
+                    {{ questionVO?.judgeConfig?.timeLimit ?? 0 }}ms
                   </a-descriptions-item>
                   <a-descriptions-item label="内存限制">
-                    {{ question?.judgeConfig?.memoryLimit ?? 0 }}kb
+                    {{ questionVO?.judgeConfig?.memoryLimit ?? 0 }}kb
                   </a-descriptions-item>
                   <a-descriptions-item label="堆栈限制">
-                    {{ question?.judgeConfig?.stackLimit ?? 0 }}kb
+                    {{ questionVO?.judgeConfig?.stackLimit ?? 0 }}kb
                   </a-descriptions-item>
                 </a-descriptions>
-                <MdViewer :value="question?.content || ''" />
-              </a-scrollbar>
+                <MdViewer :value="questionVO?.content || ''" />
+              </div>
             </a-tab-pane>
             <a-tab-pane key="2">
               <template #title>
@@ -68,8 +65,12 @@
                 />
                 题解
               </template>
-              暂无题解
-              {{ question?.title }}
+              <div class="tab-content">
+                <div v-if="question?.answer">
+                  <MdViewer :value="question.answer" />
+                </div>
+                <div v-else>暂无题解</div>
+              </div>
             </a-tab-pane>
             <a-tab-pane key="3" title="提交记录">
               <template #title>
@@ -81,19 +82,209 @@
                 />
                 提交记录
               </template>
-              <div v-if="submissions.length === 0">暂无提交记录</div>
-              <a-list v-else>
-                <a-list-item
-                  v-for="(submission, index) in submissions"
-                  :key="index"
+              <div class="tab-content">
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 16px;
+                  "
                 >
-                  <a-list-item-meta
-                    :title="submission.questionId"
-                    :description="submission.judgeInfo"
-                  />
-                  <div>{{ STATUS_ENUM[submission?.status ?? 0] }}</div>
-                </a-list-item>
-              </a-list>
+                  <div class="filter-section">
+                    <a-select
+                      v-model="searchParams.language"
+                      placeholder="选择编程语言"
+                      allow-clear
+                      size="small"
+                      style="width: 120px; margin-right: 16px"
+                      @change="handleLanguageChange"
+                    >
+                      <a-option
+                        v-for="(language, key) in LanguageEnum"
+                        :key="key"
+                      >
+                        {{ language }}
+                      </a-option>
+                    </a-select>
+                  </div>
+                  <a-button
+                    type="primary"
+                    @click="refreshSubmissions"
+                    :loading="loading"
+                    size="small"
+                  >
+                    刷新提交记录
+                  </a-button>
+                </div>
+                <div v-if="submissions.length === 0">暂无提交记录</div>
+                <a-table
+                  v-else
+                  :data="submissions"
+                  :columns="columns"
+                  :pagination="{
+                    total: total,
+                    current: current,
+                    pageSize: pageSize,
+                    showTotal: true,
+                    showJumper: true,
+                    showPageSize: true,
+                    pageSizeOptions: [5, 10, 20],
+                    baseSize: 5,
+                  }"
+                  @row-click="handleRowClick"
+                  @page-change="onPageChange"
+                  @page-size-change="onPageSizeChange"
+                >
+                  <!-- 状态列 -->
+                  <template #status="{ record }">
+                    {{ STATUS_ENUM[record.status] }}
+                  </template>
+                  <!-- 结果列 -->
+                  <template #judgeMessage="{ record }">
+                    {{ record.judgeInfo?.message }}
+                  </template>
+                  <!-- 时间列 -->
+                  <template #judgeTime="{ record }">
+                    {{ record.judgeInfo?.time }}ms
+                  </template>
+                  <!-- 内存列 -->
+                  <template #judgeMemory="{ record }">
+                    {{ record.judgeInfo?.memory }}kb
+                  </template>
+                </a-table>
+
+                <!-- 提交详情弹窗 -->
+                <a-modal
+                  v-model:visible="detailModalVisible"
+                  :title="'提交详情'"
+                  :footer="false"
+                  fullscreen
+                  :mask-style="{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }"
+                >
+                  <div class="submission-detail">
+                    <!-- 顶部操作栏 -->
+                    <div class="detail-header">
+                      <div class="left-section">
+                        <h2>提交详情 #{{ currentSubmission?.id }}</h2>
+                      </div>
+                      <div class="right-section">
+                        <a-button
+                          type="primary"
+                          @click="detailModalVisible = false"
+                        >
+                          <template #icon>
+                            <icon-park type="close" theme="outline" size="18" />
+                          </template>
+                          关闭
+                        </a-button>
+                      </div>
+                    </div>
+
+                    <!-- 提交信息 -->
+                    <div class="submission-info">
+                      <div
+                        :class="[
+                          'status',
+                          currentSubmission?.status === 3 ? 'success' : 'error',
+                        ]"
+                      >
+                        <IconPark
+                          :type="
+                            currentSubmission?.status === 3
+                              ? 'check-one'
+                              : 'close-one'
+                          "
+                          theme="filled"
+                          size="24"
+                          :fill="
+                            currentSubmission?.status === 3
+                              ? '#19be6b'
+                              : '#ed3f14'
+                          "
+                        />
+                        {{ STATUS_ENUM[currentSubmission?.status ?? 0] }}
+                      </div>
+                      <div class="info-items">
+                        <span
+                          >结果：{{
+                            currentSubmission?.judgeInfo?.message
+                          }}</span
+                        >
+                        <span
+                          >时间：{{
+                            currentSubmission?.judgeInfo?.time
+                          }}ms</span
+                        >
+                        <span
+                          >内存：{{
+                            currentSubmission?.judgeInfo?.memory
+                          }}kb</span
+                        >
+                        <span>语言：{{ currentSubmission?.language }}</span>
+                      </div>
+                    </div>
+
+                    <!-- 代码和分析结果分栏 -->
+                    <a-split
+                      :style="{ height: 'calc(100vh - 200px)' }"
+                      :default-size="0.6"
+                      min="0.3"
+                      max="0.7"
+                    >
+                      <template #first>
+                        <div class="code-section">
+                          <div class="section-header">
+                            <h3>提交的代码</h3>
+                            <a-button
+                              type="primary"
+                              size="small"
+                              @click="showAIAnalysis(currentSubmission)"
+                            >
+                              <template #icon>
+                                <icon-park
+                                  type="brain"
+                                  theme="filled"
+                                  size="16"
+                                  fill="#fff"
+                                />
+                              </template>
+                              AI 分析
+                            </a-button>
+                          </div>
+                          <CodeEditor
+                            :value="currentSubmission?.code"
+                            :language="currentSubmission?.language"
+                            :readonly="true"
+                            style="height: calc(100% - 50px)"
+                          />
+                        </div>
+                      </template>
+                      <template #second>
+                        <div class="ai-analysis">
+                          <h3>AI 分析结果</h3>
+                          <a-spin :loading="aiAnalysisLoading">
+                            <div
+                              v-if="aiAnalysisResult"
+                              class="analysis-content"
+                            >
+                              <MdViewer :value="aiAnalysisResult" />
+                            </div>
+                            <div v-else class="empty-analysis">
+                              <icon-park
+                                type="click"
+                                theme="outline"
+                                size="32"
+                              />
+                              <p>点击"AI 分析"按钮获取代码分析</p>
+                            </div>
+                          </a-spin>
+                        </div>
+                      </template>
+                    </a-split>
+                  </div>
+                </a-modal>
+              </div>
             </a-tab-pane>
             <a-tab-pane key="4" title="评论">
               <template #title>
@@ -150,8 +341,9 @@
               </template>
               <CodeEditor
                 :style="{
-                  height: '89vh',
+                  height: 'calc(85vh - 32px)',
                   width: '100%',
+                  margin: '16px',
                 }"
                 :value="form.code"
                 :language="form.language"
@@ -168,12 +360,11 @@
 <script setup lang="ts">
 import { ref, onMounted, withDefaults, defineProps } from "vue";
 import {
-  LoginUserVO,
   QuestionControllerService,
   QuestionSubmitAddRequest,
   QuestionSubmitVO,
   QuestionVO,
-  UserControllerService,
+  Question,
 } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
 import CodeEditor from "@/components/CodeEditor.vue";
@@ -182,6 +373,10 @@ import LanguageEnum from "@/enum/LanguageEnum";
 import STATUS_ENUM from "@/enum/StatusEnum";
 import { DefaultCodeEnum } from "@/enum/DefaultCodeEnum";
 import { IconPark } from "@icon-park/vue-next/es/all";
+import { useStore } from "vuex";
+import ACCESS_ENUM from "@/enum/AccessEnum";
+
+const store = useStore();
 
 interface Props {
   id: string;
@@ -189,8 +384,49 @@ interface Props {
 // 获取路由参数，questionId
 const props = withDefaults(defineProps<Props>(), { id: () => "" });
 var activeKey = ref<string>("1");
-var question = ref<QuestionVO>();
+var questionVO = ref<QuestionVO>();
+var question = ref<Question>();
 var submissions = ref<QuestionSubmitVO[]>([]); // 用于存储提交记录
+var loading = ref<boolean>(false); // 添加加载状态
+
+const aiModalVisible = ref(false);
+const aiModalTitle = ref("");
+const aiAnalysisResult = ref("");
+const aiAnalysisLoading = ref(false);
+
+const columns = [
+  {
+    title: "状态",
+    slotName: "status",
+  },
+  {
+    title: "结果",
+    slotName: "judgeMessage",
+  },
+  {
+    title: "时间",
+    slotName: "judgeTime",
+  },
+  {
+    title: "内存",
+    slotName: "judgeMemory",
+  },
+  {
+    title: "语言",
+    dataIndex: "language",
+  },
+];
+
+const detailModalVisible = ref(false);
+const currentSubmission = ref<QuestionSubmitVO>();
+
+const current = ref(1);
+const pageSize = ref(10);
+const total = ref(0);
+
+const searchParams = ref({
+  language: undefined,
+});
 
 /**
  * 加载题目信息
@@ -201,55 +437,94 @@ const loadQuestion = async () => {
     props.id as any
   );
   if (res.code === 0) {
-    question.value = res.data;
+    questionVO.value = res.data;
   } else {
     message.error("加载题目失败，" + res.message);
   }
 };
-
-const loadSubmissions = async () => {
-  // 获取当前用户
-  var userRes = await UserControllerService.getLoginUserUsingGet();
-  var user: LoginUserVO | undefined = undefined;
-  if (userRes.code === 0) {
-    user = userRes.data;
+/**
+ * 加载题目答案
+ */
+const loadQuestionAnswer = async () => {
+  // 获取题目答案
+  const res = await QuestionControllerService.getQuestionByIdUsingGet(
+    props.id as any
+  );
+  if (res.code === 0) {
+    question.value = res.data;
+  } else {
+    message.error("加载题目答案失败，" + res.message);
   }
+};
+/**
+ * 加载提交记录
+ */
+const loadSubmissions = async () => {
+  // 从 Vuex 中获取用户信息
+  const user = store.state.user.loginUser;
+
+  let userId;
+  if (user && user.userRole !== ACCESS_ENUM.NOT_LOGIN) {
+    userId = user.id;
+  } else {
+    await store.dispatch("user/getLoginUser");
+  }
+
   // 获取提交记录
   const res = await QuestionControllerService.listQuestionSubmitByPageUsingPost(
     {
-      questionId: question.value?.id,
-      userId: user?.id,
-      current: 1,
-      pageSize: 10,
+      questionId: questionVO.value?.id,
+      userId: userId,
+      language: searchParams.value.language,
+      current: current.value,
+      pageSize: pageSize.value,
+      sortField: "createTime",
+      sortOrder: "descend",
     }
   );
+
   if (res.code === 0) {
     submissions.value = res.data.records;
+    total.value = res.data.total;
   } else {
     message.error("加载提交记录失败" + res.message);
   }
+};
+/**
+ * 刷新提交记录
+ */
+const refreshSubmissions = async () => {
+  loading.value = true;
+  current.value = 1; // 刷新时重置为第一页
+  searchParams.value.language = undefined; // 重置语言筛选
+  await loadSubmissions();
+  loading.value = false;
+};
+
+/**
+ * 格式化日期
+ */
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return date.toLocaleString(); // 格式化为本地时间字符串
 };
 
 onMounted(() => {
   loadQuestion(); //加载题目信息
 });
 
-const onClickTab = (key: string) => {
-  // console.log("key=================================>", key);
-  // console.log(
-  //   "activeKey.value=================================>",
-  //   activeKey.value
-  // );
-  if (key === "3") {
-    loadSubmissions();
-  } else if (key === "1") {
+const onTabChange = (key: string) => {
+  if (key === "1") {
     loadQuestion();
+  } else if (key === "2") {
+    loadQuestionAnswer();
+  } else if (key === "3") {
+    loadSubmissions();
+  } else if (key === "4") {
+    // loadComments();
   }
 };
 
-/**
- * 提交代码
- */
 const form = ref<QuestionSubmitAddRequest>({
   language: LanguageEnum.JAVA,
   code: DefaultCodeEnum.java,
@@ -259,47 +534,424 @@ const onCodeChange = (v: string) => {
   form.value.code = v;
   // console.log(v);
 };
+/**
+ * 提交代码
+ */
 const onSubmit = async () => {
-  if (!question.value?.id) {
+  if (!questionVO.value?.id) {
     return;
   }
   const res = await QuestionControllerService.doQuestionSubmitUsingPost({
     ...form.value,
-    questionId: question.value?.id,
+    questionId: questionVO.value?.id,
   });
   if (res.code === 0) {
     message.success("提交成功");
+    activeKey.value = "3";
+    onTabChange("3"); // 手动调用以触发相关逻辑
   } else {
     message.error("提交失败" + res.message);
   }
 };
+
+const showAIAnalysis = async (submission: QuestionSubmitVO) => {
+  if (!submission) return;
+
+  aiAnalysisLoading.value = true;
+  aiModalTitle.value = submission.status === 3 ? "代码优化建议" : "错误分析";
+
+  try {
+    // 这里调用后端 AI 分析接口
+    const res = await QuestionControllerService.getAIAnalysisUsingPost({
+      submissionId: submission.id,
+      code: submission.code,
+      status: submission.status,
+      judgeInfo: submission.judgeInfo,
+    });
+
+    if (res.code === 0) {
+      aiAnalysisResult.value = res.data;
+    } else {
+      message.error("AI 分析失败：" + res.message);
+    }
+  } catch (error) {
+    message.error("AI 分析请求失败");
+  } finally {
+    aiAnalysisLoading.value = false;
+  }
+};
+
+const handleRowClick = (rowData: QuestionSubmitVO) => {
+  currentSubmission.value = rowData;
+  detailModalVisible.value = true;
+  // 重置 AI 分析结果
+  aiAnalysisResult.value = "";
+};
+
+/**
+ * 页码改变时的回调
+ */
+const onPageChange = (page: number) => {
+  current.value = page;
+  loadSubmissions();
+};
+
+/**
+ * 每页条数改变时的回调
+ */
+const onPageSizeChange = (size: number) => {
+  pageSize.value = size;
+  current.value = 1; // 切换每页条数时，重置为第一页
+  loadSubmissions();
+};
+
+/**
+ * 处理语言筛选变化
+ */
+const handleLanguageChange = () => {
+  current.value = 1; // 重置页码
+  loadSubmissions();
+};
 </script>
 
 <style scoped>
-#viewQuestionView {
-  margin: 0 auto;
+#doQuestionView {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
-/*调整a-tag*/
-#viewQuestionView .arco-space-horizontal .arco-space-item {
-  /*!important提升优先级*/
-  margin-bottom: 0 !important;
-}
-
-/* 隐藏滚动条但能滚动 */
-.leftDiv::-webkit-scrollbar {
-  display: none;
-}
-
-.rightDiv::-webkit-scrollbar {
-  display: none;
-}
-
-.leftDiv,
-.rightDiv {
+.leftDiv {
+  height: 100%;
+  width: 100%;
   background-color: #ffffff;
-  /* length具体尺寸*/
-  border-radius: 10px;
-  padding: 5px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.rightDiv {
+  height: 100%;
+  width: 100%;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Tabs 样式优化 */
+:deep(.arco-tabs) {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+:deep(.arco-tabs-nav) {
+  padding: 0 16px;
+  background-color: #fff;
+  border-bottom: 1px solid var(--color-neutral-3);
+}
+
+:deep(.arco-tabs-content) {
+  flex: 1;
+  width: 100%;
+  overflow: hidden;
+}
+
+:deep(.arco-tabs-pane) {
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* 标签页内容区域 */
+.tab-content {
+  height: calc(100% - 48px);
+  padding: 20px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* 自定义滚动条样式 */
+.tab-content::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.tab-content::-webkit-scrollbar-thumb {
+  background: var(--color-neutral-4);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.tab-content::-webkit-scrollbar-thumb:hover {
+  background: var(--color-neutral-5);
+}
+
+.tab-content::-webkit-scrollbar-track {
+  background: var(--color-neutral-2);
+  border-radius: 3px;
+}
+
+/* AI 分析区域滚动条 */
+.ai-analysis::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.ai-analysis::-webkit-scrollbar-thumb {
+  background: var(--color-neutral-4);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.ai-analysis::-webkit-scrollbar-thumb:hover {
+  background: var(--color-neutral-5);
+}
+
+.ai-analysis::-webkit-scrollbar-track {
+  background: var(--color-neutral-2);
+  border-radius: 3px;
+}
+
+/* 内容区域样式优化 */
+:deep(.arco-descriptions) {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 16px 0;
+  padding: 16px;
+  background-color: var(--color-fill-2);
+  border-radius: 4px;
+}
+
+:deep(.arco-descriptions-title) {
+  font-size: 15px;
+  color: var(--color-text-1);
+  margin-bottom: 16px;
+}
+
+:deep(.arco-descriptions-item-label) {
+  color: var(--color-text-2);
+}
+
+:deep(.arco-space) {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+:deep(.arco-tag) {
+  font-size: 13px;
+  padding: 2px 10px;
+  border-radius: 4px;
+}
+
+:deep(.bytemd) {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 16px;
+  border: 1px solid var(--color-neutral-3);
+  border-radius: 4px;
+}
+
+:deep(.markdown-body) {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+/* 表格区域滚动条 */
+:deep(.arco-table-body)::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+:deep(.arco-table-body)::-webkit-scrollbar-thumb {
+  background: var(--color-neutral-4);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+:deep(.arco-table-body)::-webkit-scrollbar-thumb:hover {
+  background: var(--color-neutral-5);
+}
+
+:deep(.arco-table-body)::-webkit-scrollbar-track {
+  background: var(--color-neutral-2);
+  border-radius: 3px;
+}
+
+/* Markdown 预览区域滚动条 */
+:deep(.markdown-body)::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+:deep(.markdown-body)::-webkit-scrollbar-thumb {
+  background: var(--color-neutral-4);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+:deep(.markdown-body)::-webkit-scrollbar-thumb:hover {
+  background: var(--color-neutral-5);
+}
+
+:deep(.markdown-body)::-webkit-scrollbar-track {
+  background: var(--color-neutral-2);
+  border-radius: 3px;
+}
+
+/* 表格样式优化 */
+:deep(.arco-table) {
+  border-radius: 4px;
+  border: 1px solid var(--color-neutral-3);
+}
+
+:deep(.arco-table-th) {
+  background-color: var(--color-fill-2) !important;
+}
+
+:deep(.arco-table-tr:hover) {
+  background-color: var(--color-fill-2);
+  cursor: pointer;
+}
+
+/* 按钮样式优化 */
+:deep(.arco-btn-primary) {
+  font-weight: 500;
+}
+
+:deep(.arco-btn-text:hover) {
+  background-color: var(--color-fill-2);
+}
+
+/* 代码编辑器区域 */
+:deep(.monaco-editor) {
+  border-radius: 4px;
+  border: 1px solid var(--color-neutral-3);
+}
+
+/* 代码编辑器滚动条样式 */
+:deep(.monaco-editor .scrollbar) {
+  width: 6px !important;
+}
+
+:deep(.monaco-editor .scrollbar .slider) {
+  background: var(--color-neutral-4) !important;
+  border-radius: 3px !important;
+}
+
+:deep(.monaco-editor .scrollbar .slider:hover) {
+  background: var(--color-neutral-5) !important;
+}
+
+:deep(.monaco-editor .scrollbar.horizontal) {
+  height: 6px !important;
+}
+
+:deep(.monaco-editor .scrollbar.horizontal .slider) {
+  height: 6px !important;
+}
+
+/* 右侧整体区域滚动条 */
+.rightDiv::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.rightDiv::-webkit-scrollbar-thumb {
+  background: var(--color-neutral-4);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.rightDiv::-webkit-scrollbar-thumb:hover {
+  background: var(--color-neutral-5);
+}
+
+.rightDiv::-webkit-scrollbar-track {
+  background: var(--color-neutral-2);
+  border-radius: 3px;
+}
+
+/* AI 分析区域 */
+.ai-analysis {
+  padding: 20px;
+  height: 100%;
+  overflow-y: auto;
+  border-left: 1px solid var(--color-neutral-3);
+}
+
+.empty-analysis {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--color-text-3);
+}
+
+.empty-analysis p {
+  margin-top: 8px;
+}
+
+/* 提交详情样式 */
+.submission-detail {
+  padding: 24px;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.detail-header h2 {
+  margin: 0;
+  font-size: 20px;
+  color: var(--color-text-1);
+}
+
+.submission-info {
+  margin-bottom: 24px;
+  padding: 16px;
+  background-color: var(--color-fill-2);
+  border-radius: 4px;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.info-items {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  color: var(--color-text-2);
+}
+
+/* 分割面板样式 */
+:deep(.arco-split-trigger) {
+  background-color: var(--color-neutral-2);
+  border: none;
+}
+
+:deep(.arco-split-trigger:hover) {
+  background-color: var(--color-neutral-3);
 }
 </style>

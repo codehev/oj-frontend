@@ -1,57 +1,65 @@
 <template>
   <!-- 提交记录页面 -->
   <div id="questionSubmitView">
-    <a-form :model="searchParams" layout="inline">
-      <a-form-item
-        field="questionId"
-        label="题目ID"
-        :show-colon="true"
-        style="min-width: 280px"
-      >
-        <a-input
-          v-model="searchParams.questionId"
-          placeholder="请输入题目ID..."
-        />
-      </a-form-item>
-      <a-form-item
-        field="language"
-        label="编程语言"
-        :show-colon="true"
-        style="min-width: 280px"
-      >
-        <a-select
-          v-model="searchParams.language"
-          :style="{ width: '160px' }"
-          placeholder="请选择编程语言..."
-          allow-clear
-        >
-          <a-option v-for="(language, key) in languageEnum" :key="key"
-            >{{ language }}
-          </a-option>
-        </a-select>
-      </a-form-item>
-      <!--      <a-form-item>-->
-      <!--        <a-button type="primary" @click="doSubmit">搜索</a-button>-->
-      <!--      </a-form-item>-->
-      <a-switch
-        style="float: right; margin-right: 16px"
-        v-model="searchParams.userId"
-        :checked-value="userInfo.id"
-        unchecked-value=""
-        @change="onSwitchChange"
-      >
-        <template #checked> 我的</template>
-        <template #unchecked> 全部</template>
-      </a-switch>
-      <a-button type="primary" shape="round" size="small" @click="onRefresh">
-        <template #icon>
-          <IconPark type="refresh" theme="outline" fill="#ffffff" />
-        </template>
-        <template #default>刷新</template>
-      </a-button>
-    </a-form>
+    <div class="search-form-container">
+      <a-form :model="searchParams" layout="inline" class="search-form">
+        <div class="form-left">
+          <a-form-item
+            field="questionId"
+            label="题目ID"
+            :show-colon="true"
+            class="form-item"
+          >
+            <a-input
+              v-model="searchParams.questionId"
+              placeholder="请输入题目ID..."
+              :style="{ width: '200px' }"
+              allow-clear
+            />
+          </a-form-item>
+          <a-form-item
+            field="language"
+            label="编程语言"
+            :show-colon="true"
+            class="form-item"
+          >
+            <a-select
+              v-model="searchParams.language"
+              :style="{ width: '200px' }"
+              placeholder="请选择编程语言..."
+              allow-clear
+            >
+              <a-option v-for="(language, key) in languageEnum" :key="key">
+                {{ language }}
+              </a-option>
+            </a-select>
+          </a-form-item>
+        </div>
+        <div class="form-right">
+          <a-switch
+            class="my-switch"
+            v-model="searchParams.userId"
+            :checked-value="userInfo.id"
+            unchecked-value=""
+            @change="onSwitchChange"
+          >
+            <template #checked>我的提交</template>
+            <template #unchecked>全部提交</template>
+          </a-switch>
+          <a-button
+            type="primary"
+            shape="round"
+            class="refresh-btn"
+            :loading="loading"
+            @click="onRefresh"
+          >
+            刷新
+          </a-button>
+        </div>
+      </a-form>
+    </div>
 
-    <a-divider :size="0" />
+    <a-divider style="margin: 16px 0" />
     <!--弹窗，显示提交代码-->
     <template>
       <a-modal v-model:visible="visible" @ok="handleOk" hide-cancel fullscreen>
@@ -325,9 +333,17 @@ const onSwitchChange = () => {
   searchParams.value = { ...searchParams.value, current: 1 };
 };
 
-const onRefresh = () => {
-  //即使原来页面也是1（数据与原来一样，但有重新赋值），也能监听得到改变
-  searchParams.value = { ...searchParams.value, current: 1 };
+const loading = ref(false);
+
+const onRefresh = async () => {
+  loading.value = true;
+  try {
+    //即使原来页面也是1（数据与原来一样，但有重新赋值），也能监听得到改变
+    searchParams.value = { ...searchParams.value, current: 1 };
+    await loadData();
+  } finally {
+    loading.value = false;
+  }
 };
 /**
  * 监听loadData()中的响应式变量，例如searchParams，改变时触发函数重新调用（页面重新加载）
@@ -353,19 +369,86 @@ const doSubmit = () => {
 #questionSubmitView {
   max-width: 1280px;
   margin: 0 auto;
+  padding: 20px;
+}
+
+.search-form-container {
+  background-color: var(--color-bg-2);
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.search-form {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.form-left {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.form-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.form-item {
+  margin-bottom: 0;
+}
+
+.my-switch {
+  min-width: 80px;
+  transition: all 0.2s ease;
+}
+
+.refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+  padding: 4px 16px;
+  transition: all 0.3s ease;
+}
+
+.refresh-btn:not(:disabled):hover {
+  transform: scale(1.02);
+}
+
+.refresh-btn :deep(.arco-btn-loading-icon) {
+  font-size: 14px;
 }
 
 .tableLink:link {
-  color: #0275d8;
+  color: rgb(var(--primary-6));
   text-decoration: none;
+  transition: color 0.2s ease;
 }
 
 .tableLink:visited {
-  color: #0275d8;
+  color: rgb(var(--primary-6));
 }
 
 .tableLink:hover {
-  color: #014c8c;
+  color: rgb(var(--primary-7));
   text-decoration: underline;
+}
+
+@media screen and (max-width: 768px) {
+  .search-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .form-right {
+    justify-content: flex-end;
+    margin-top: 16px;
+  }
 }
 </style>

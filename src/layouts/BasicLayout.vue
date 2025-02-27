@@ -3,7 +3,7 @@
     <!--vh是前端开发中的一个动态单位，表示相对于视口（Viewport）的高度。
     系统会将视口的宽度和高度分为100份，1vh就占用视口高度的百分之一。
     这个单位使得前端开发更加灵活，可以适应不同大小的视口，提高用户体验。-->
-    <a-layout style="min-height: 100vh">
+    <a-layout class="layout-container">
       <!--固定header，offset-top距离窗口顶部达到指定偏移量后触发-->
       <a-affix :offsetTop="0">
         <a-layout-header class="header">
@@ -14,10 +14,29 @@
         <router-view />
       </a-layout-content>
       <a-layout-footer class="footer">
-        OJ网站 ©2023 by
-        <a-link href="https://github.com/codehev" target="_blank"
-          >codehev
-        </a-link>
+        <div class="footer-content">
+          <div class="footer-links">
+            <a-link href="https://github.com/codehev" target="_blank">
+              <template #icon>
+                <icon-github />
+              </template>
+              GitHub
+            </a-link>
+            <a-divider direction="vertical" margin="12" />
+            <a-link href="https://arco.design" target="_blank">
+              <template #icon>
+                <icon-book />
+              </template>
+              文档
+            </a-link>
+          </div>
+          <div class="copyright">
+            OJ在线评测系统 © {{ new Date().getFullYear() }} by
+            <a-link href="https://github.com/codehev" target="_blank"
+              >codehev</a-link
+            >
+          </div>
+        </div>
       </a-layout-footer>
     </a-layout>
   </div>
@@ -25,6 +44,7 @@
 
 <script setup lang="ts">
 import GlobalHeader from "@/components/GlobalHeader.vue";
+import { IconGithub, IconBook } from "@arco-design/web-vue/es/icon";
 </script>
 
 <style scoped>
@@ -32,34 +52,82 @@ import GlobalHeader from "@/components/GlobalHeader.vue";
 /*#basicLayout {*/
 /*}*/
 
-#basicLayout .header {
-  /*background: red;*/
-  margin-bottom: 16px;
-  box-shadow: #eee 1px 1px 5px;
+.layout-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
 }
 
-#basicLayout .content {
-  /*渐变色*/
-  /*background: linear-gradient(to right, #bbb, #fff);*/
-  /*background-color: #dcd4d4;*/
+.header {
+  background: #fff;
   margin-bottom: 16px;
-  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  border-bottom: 1px solid var(--color-neutral-3);
 }
 
-#basicLayout .footer {
-  background: #efefef;
-  text-align: center;
-  padding: 8px;
+.content {
+  flex: 1;
+  margin-bottom: 16px;
+  padding: 0;
+  background: #fff;
+  transition: all 0.3s ease;
+}
 
-  /*position: sticky;它使得元素在页面滚动时相对于视口（viewport）固定，直到某个位置（距离窗口顶部（或底部）达到指定偏移量后触发）。
-  这种行为类似于position: relative;和position: fixed;的组合。
-  当一个元素被设置为position: sticky;时，它基于用户的滚动位置在相对定位和固定定位之间切换。
-  此处的作用是固定在底部*/
-  /*position: sticky;*/
-  /*检索或设置对象与其最近一个具有定位设置的父对象左边相关的位置。
-  此属性仅仅在对象的定位( position )属性被设置时可用。否则，此属性设置会被忽略。*/
-  /*  bottom: 0;
-    left: 0;
-    right: 0;*/
+.footer {
+  background: #fff;
+  padding: 16px 0;
+  border-top: 1px solid var(--color-neutral-3);
+  transition: all 0.3s ease;
+}
+
+.footer-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.footer-links :deep(.arco-link) {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.footer-links :deep(.arco-link:hover) {
+  background-color: var(--color-fill-2);
+}
+
+.copyright {
+  color: var(--color-text-3);
+  font-size: 14px;
+}
+
+.copyright :deep(.arco-link) {
+  transition: all 0.3s ease;
+}
+
+@media screen and (max-width: 768px) {
+  .footer-content {
+    padding: 0 16px;
+  }
+
+  .footer-links {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 }
 </style>

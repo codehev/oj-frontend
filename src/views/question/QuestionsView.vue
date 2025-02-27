@@ -1,27 +1,38 @@
 <template>
   <div id="questionsView">
-    <a-form :model="searchParams" layout="inline">
-      <a-form-item
-        field="title"
-        label="题目名称"
-        :show-colon="true"
-        style="min-width: 280px"
-      >
-        <a-input v-model="searchParams.title" placeholder="请输入题目名称..." />
-      </a-form-item>
-      <a-form-item
-        field="tags"
-        label="标签"
-        :show-colon="true"
-        style="min-width: 280px"
-      >
-        <a-input-tag v-model="searchParams.tags" placeholder="请输入标签..." />
-      </a-form-item>
-      <!--      <a-form-item>-->
-      <!--        <a-button type="primary" @click="doSubmit">搜索</a-button>-->
-      <!--      </a-form-item>-->
-    </a-form>
-    <a-divider :size="0" />
+    <div class="search-form-container">
+      <a-form :model="searchParams" layout="inline" class="search-form">
+        <div class="form-left">
+          <a-form-item
+            field="title"
+            label="题目名称"
+            :show-colon="true"
+            class="form-item"
+          >
+            <a-input
+              v-model="searchParams.title"
+              placeholder="请输入题目名称..."
+              :style="{ width: '200px' }"
+              allow-clear
+            />
+          </a-form-item>
+          <a-form-item
+            field="tags"
+            label="标签"
+            :show-colon="true"
+            class="form-item"
+          >
+            <a-input-tag
+              v-model="searchParams.tags"
+              placeholder="请输入标签..."
+              :style="{ width: '200px' }"
+            />
+          </a-form-item>
+        </div>
+      </a-form>
+    </div>
+
+    <a-divider style="margin: 16px 0" />
     <a-table
       :columns="columns"
       :data="dataList"
@@ -233,19 +244,53 @@ const doSubmit = () => {
 #questionsView {
   max-width: 1280px;
   margin: 0 auto;
+  padding: 20px;
+}
+
+.search-form-container {
+  background-color: var(--color-bg-2);
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.search-form {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.form-left {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.form-item {
+  margin-bottom: 0;
 }
 
 .tableLink:link {
-  color: #0275d8;
+  color: rgb(var(--primary-6));
   text-decoration: none;
+  transition: color 0.2s ease;
 }
 
 .tableLink:visited {
-  color: #0275d8;
+  color: rgb(var(--primary-6));
 }
 
 .tableLink:hover {
-  color: #014c8c;
+  color: rgb(var(--primary-7));
   text-decoration: underline;
+}
+
+@media screen and (max-width: 768px) {
+  .search-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
 </style>

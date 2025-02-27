@@ -1,28 +1,47 @@
 <template>
   <!-- 题目管理页面 -->
   <div id="manageQuestionView">
-    <a-button type="primary" style="float: right" @click="createQuestion"
-      >创建题目
-    </a-button>
-    <a-form :model="searchParams" layout="inline">
-      <a-form-item
-        field="title"
-        label="题目名称"
-        :show-colon="true"
-        style="min-width: 280px"
-      >
-        <a-input v-model="searchParams.title" placeholder="请输入题目名称..." />
-      </a-form-item>
-      <a-form-item
-        field="tags"
-        label="标签"
-        :show-colon="true"
-        style="min-width: 280px"
-      >
-        <a-input-tag v-model="searchParams.tags" placeholder="请输入标签..." />
-      </a-form-item>
-    </a-form>
-    <a-divider :size="0" />
+    <div class="search-form-container">
+      <a-form :model="searchParams" layout="inline" class="search-form">
+        <div class="form-left">
+          <a-form-item
+            field="title"
+            label="题目名称"
+            :show-colon="true"
+            class="form-item"
+          >
+            <a-input
+              v-model="searchParams.title"
+              placeholder="请输入题目名称..."
+              :style="{ width: '200px' }"
+              allow-clear
+            />
+          </a-form-item>
+          <a-form-item
+            field="tags"
+            label="标签"
+            :show-colon="true"
+            class="form-item"
+          >
+            <a-input-tag
+              v-model="searchParams.tags"
+              placeholder="请输入标签..."
+              :style="{ width: '200px' }"
+            />
+          </a-form-item>
+        </div>
+        <div class="form-right">
+          <a-button type="primary" class="create-btn" @click="createQuestion">
+            <template #icon>
+              <icon-plus />
+            </template>
+            创建题目
+          </a-button>
+        </div>
+      </a-form>
+    </div>
+
+    <a-divider style="margin: 16px 0" />
     <a-table
       :columns="columns"
       :data="dataList"
@@ -133,6 +152,7 @@ import { QuestionControllerService } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
 import moment from "moment";
+import { IconPlus } from "@arco-design/web-vue/es/icon";
 //搜索参数
 const searchParams = ref({
   title: "",
@@ -410,19 +430,64 @@ const getJudgeCaseCount = (judgeCase: string) => {
 #manageQuestionView {
   max-width: 1280px;
   margin: 0 auto;
+  padding: 20px;
+}
+
+.search-form-container {
+  background-color: var(--color-bg-2);
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.search-form {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.form-left {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.form-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.form-item {
+  margin-bottom: 0;
+}
+
+.create-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 16px;
+  transition: all 0.3s ease;
+}
+
+.create-btn:hover {
+  transform: scale(1.02);
 }
 
 .tableLink:link {
-  color: #0275d8;
+  color: rgb(var(--primary-6));
   text-decoration: none;
+  transition: color 0.2s ease;
 }
 
 .tableLink:visited {
-  color: #0275d8;
+  color: rgb(var(--primary-6));
 }
 
 .tableLink:hover {
-  color: #014c8c;
+  color: rgb(var(--primary-7));
   text-decoration: underline;
 }
 
@@ -439,7 +504,7 @@ const getJudgeCaseCount = (judgeCase: string) => {
 
 .case-scroll::-webkit-scrollbar-thumb {
   border-radius: 2px;
-  background-color: rgba(192, 196, 204, 0.5);
+  background-color: rgba(var(--gray-5), 0.5);
 }
 
 .case-scroll::-webkit-scrollbar-track {
@@ -448,6 +513,18 @@ const getJudgeCaseCount = (judgeCase: string) => {
 }
 
 .case-scroll:hover::-webkit-scrollbar-thumb {
-  background-color: #c0c4cc;
+  background-color: rgb(var(--gray-5));
+}
+
+@media screen and (max-width: 768px) {
+  .search-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .form-right {
+    justify-content: flex-end;
+    margin-top: 16px;
+  }
 }
 </style>
