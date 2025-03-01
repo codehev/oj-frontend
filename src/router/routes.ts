@@ -1,5 +1,6 @@
 import { RouteRecordRaw } from "vue-router";
 import ACCESS_ENUM from "@/enum/AccessEnum";
+import UserManagementView from "@/views/user/UserManagementView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -81,16 +82,6 @@ export const routes: Array<RouteRecordRaw> = [
       icon: "ecg",
     },
   },
-  /*{
-    path: "/view/question/:id",
-    name: "在线题目",
-    component: () => import("@/views/question/ViewQuestionView.vue"),
-    props: true, // 当 props 设置为 true 时，route.params 将被设置为组件的 props。
-    meta: {
-      access: ACCESS_ENUM.USER,
-      hideInMenu: true,
-    },
-  },*/
   {
     path: "/add/question",
     name: "创建题目",
@@ -111,11 +102,20 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/manage/question",
-    name: "管理题目",
+    name: "题目管理",
     component: () => import("@/views/question/ManageQuestionView.vue"),
     meta: {
       access: ACCESS_ENUM.ADMIN,
       icon: "dropbox",
+    },
+  },
+  {
+    path: "/manage/user",
+    name: "用户管理",
+    component: () => import("@/views/user/UserManagementView.vue"),
+    meta: {
+      access: ACCESS_ENUM.ADMIN,
+      icon: "user",
     },
   },
   {
