@@ -8,28 +8,22 @@ import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 
-export class FileControllerService {
+export class AiControllerService {
 
     /**
-     * uploadFile
-     * @param biz 
-     * @param file 
+     * analysisCodeByAI
+     * @param id id
      * @returns BaseResponse_string_ OK
-     * @returns any Created
      * @throws ApiError
      */
-    public static uploadFileUsingPost(
-biz?: string,
-file?: Blob,
-): CancelablePromise<BaseResponse_string_ | any> {
+    public static analysisCodeByAiUsingGet(
+id?: number,
+): CancelablePromise<BaseResponse_string_> {
         return __request(OpenAPI, {
-            method: 'POST',
-            url: '/api/file/upload',
+            method: 'GET',
+            url: '/api/analysisCodeByAI',
             query: {
-                'biz': biz,
-            },
-            formData: {
-                'file': file,
+                'id': id,
             },
             errors: {
                 401: `Unauthorized`,

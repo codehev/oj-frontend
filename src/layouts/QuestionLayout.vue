@@ -121,12 +121,12 @@
             </a-button>
           </a-popover>
           <a-popover content="上一题">
-            <a-button type="text" @click="router.back()">
+            <a-button type="text" @click="loadPreviousQuestion">
               <IconPark type="left" theme="filled" size="20" fill="#666" />
             </a-button>
           </a-popover>
           <a-popover content="下一题">
-            <a-button type="text" @click="router.back()">
+            <a-button type="text" @click="loadNextQuestion">
               <IconPark type="right" theme="filled" size="20" fill="#666" />
             </a-button>
           </a-popover>
@@ -178,6 +178,9 @@ const allDataLoaded = ref(false);
 // 加载状态，防止重复请求的标志
 const isLoading = ref(false);
 
+// 当前题目索引
+const currentQuestionIndex = ref(0);
+
 /**
  * 加载表格数据
  */
@@ -203,6 +206,40 @@ const loadData = async () => {
     message.error("加载失败，请重试");
   } finally {
     isLoading.value = false; // 重置加载状态
+  }
+};
+
+/**
+ * 加载上一题
+ */
+const loadPreviousQuestion = () => {
+  if (currentQuestionIndex.value > 0) {
+    currentQuestionIndex.value--;
+    // 根据索引加载题目
+    const question = dataList.value[currentQuestionIndex.value];
+    if (question) {
+      // 这里可以添加逻辑来显示当前题目
+      console.log("加载上一题:", question);
+      // 例如，您可以将题目内容设置到一个显示区域
+      // this.currentQuestion = question; // 假设您有一个 currentQuestion 变量来存储当前题目
+    }
+  }
+};
+
+/**
+ * 加载下一题
+ */
+const loadNextQuestion = () => {
+  if (currentQuestionIndex.value < dataList.value.length - 1) {
+    currentQuestionIndex.value++;
+    // 根据索引加载题目
+    const question = dataList.value[currentQuestionIndex.value];
+    if (question) {
+      // 这里可以添加逻辑来显示当前题目
+      console.log("加载下一题:", question);
+      // 例如，您可以将题目内容设置到一个显示区域
+      // this.currentQuestion = question; // 假设您有一个 currentQuestion 变量来存储当前题目
+    }
   }
 };
 
@@ -233,7 +270,7 @@ const handleScroll = (event: Event) => {
   const target = event.target as HTMLElement;
   const { scrollTop, clientHeight, scrollHeight } = target;
   if (scrollTop + clientHeight >= scrollHeight - 5) {
-    searchParams.value.current += 1; // 增加当前页码
+    (searchParams.value.current as number) += 1; // 使用类型断言；增加当前页码
     loadData(); // 加载数据
   }
 };

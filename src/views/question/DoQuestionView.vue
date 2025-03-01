@@ -28,7 +28,7 @@
                 />
                 题目描述
               </template>
-              <div class="tab-content">
+              <div class="tab-content" style="flex: 1; overflow-y: auto">
                 <a-space wrap>
                   <a-tag
                     v-for="(tag, index) in questionVO?.tags"
@@ -52,7 +52,10 @@
                     {{ questionVO?.judgeConfig?.stackLimit ?? 0 }}kb
                   </a-descriptions-item>
                 </a-descriptions>
-                <MdViewer :value="questionVO?.content || ''" />
+                <MdViewer
+                  :value="questionVO?.content || ''"
+                  style="height: 100%; width: 100%"
+                />
               </div>
             </a-tab-pane>
             <a-tab-pane key="2">
@@ -123,7 +126,7 @@
                   :data="submissions"
                   :columns="columns"
                   :pagination="{
-                    total: total,
+                    total: Number(total),
                     current: current,
                     pageSize: pageSize,
                     showTotal: true,
@@ -152,6 +155,10 @@
                   <template #judgeMemory="{ record }">
                     {{ record.judgeInfo?.memory }}kb
                   </template>
+                  <!-- 提交时间列 -->
+                  <template #createTime="{ record }">
+                    {{ formatTime(record.createTime) }}
+                  </template>
                 </a-table>
 
                 <!-- 提交详情弹窗 -->
@@ -161,8 +168,12 @@
                   :footer="false"
                   fullscreen
                   :mask-style="{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }"
+                  style="max-width: 100%; max-height: 100%"
                 >
-                  <div class="submission-detail">
+                  <div
+                    class="submission-detail"
+                    style="height: 100%; display: flex; flex-direction: column"
+                  >
                     <!-- 顶部操作栏 -->
                     <div class="detail-header">
                       <div class="left-section">
@@ -227,19 +238,26 @@
 
                     <!-- 代码和分析结果分栏 -->
                     <a-split
-                      :style="{ height: 'calc(100vh - 200px)' }"
+                      :style="{ height: 'calc(100% - 200px)' }"
                       :default-size="0.6"
                       min="0.3"
                       max="0.7"
                     >
                       <template #first>
-                        <div class="code-section">
+                        <div
+                          class="code-section"
+                          style="overflow: auto; height: 100%"
+                        >
                           <div class="section-header">
                             <h3>提交的代码</h3>
                             <a-button
                               type="primary"
                               size="small"
-                              @click="showAIAnalysis(currentSubmission)"
+                              @click="
+                                showAIAnalysis(
+                                  currentSubmission as QuestionSubmitVO
+                                )
+                              "
                             >
                               <template #icon>
                                 <icon-park
@@ -255,13 +273,15 @@
                           <CodeViewer
                             :value="currentSubmission?.code"
                             :language="currentSubmission?.language"
-                            :readonly="true"
-                            style="height: calc(100% - 50px)"
-                          />
+                            style="width: 100%; height: 100%"
+                          ></CodeViewer>
                         </div>
                       </template>
                       <template #second>
-                        <div class="ai-analysis">
+                        <div
+                          class="ai-analysis"
+                          style="overflow: auto; height: 100%"
+                        >
                           <h3>AI 分析结果</h3>
                           <a-spin :loading="aiAnalysisLoading">
                             <div
@@ -365,6 +385,7 @@ import {
   QuestionSubmitVO,
   QuestionVO,
   Question,
+  AiControllerService,
 } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
 import CodeEditor from "@/components/CodeEditor.vue";
@@ -416,6 +437,10 @@ const columns = [
     title: "语言",
     dataIndex: "language",
   },
+  {
+    title: "提交时间",
+    slotName: "createTime",
+  },
 ];
 
 const detailModalVisible = ref(false);
@@ -427,6 +452,7 @@ const total = ref(0);
 
 const searchParams = ref({
   language: undefined,
+  current: 1,
 });
 
 /**
@@ -503,11 +529,11 @@ const refreshSubmissions = async () => {
 };
 
 /**
- * 格式化日期
+ * 格式化时间
  */
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return date.toLocaleString(); // 格式化为本地时间字符串
+const formatTime = (timeString: string) => {
+  const date = new Date(timeString);
+  return date.toLocaleString(); // Format to local time string
 };
 
 onMounted(() => {
@@ -563,15 +589,11 @@ const showAIAnalysis = async (submission: QuestionSubmitVO) => {
 
   try {
     // 这里调用后端 AI 分析接口
-    const res = await QuestionControllerService.getAIAnalysisUsingPost({
-      submissionId: submission.id,
-      code: submission.code,
-      status: submission.status,
-      judgeInfo: submission.judgeInfo,
-    });
-
+    const res = await AiControllerService.analysisCodeByAiUsingGet(
+      submission.id
+    );
     if (res.code === 0) {
-      aiAnalysisResult.value = res.data;
+      aiAnalysisResult.value = res.data || "";
     } else {
       message.error("AI 分析失败：" + res.message);
     }
@@ -682,45 +704,48 @@ const handleLanguageChange = () => {
 }
 
 /* 自定义滚动条样式 */
-.tab-content::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+::-webkit-scrollbar {
+  width: 8px; /* 滚动条宽度 */
+  height: 8px; /* 滚动条高度 */
 }
 
-.tab-content::-webkit-scrollbar-thumb {
-  background: var(--color-neutral-4);
-  border-radius: 3px;
-  cursor: pointer;
+::-webkit-scrollbar-thumb {
+  background-color: #888; /* 滚动条滑块颜色 */
+  border-radius: 4px; /* 滚动条滑块圆角 */
 }
 
-.tab-content::-webkit-scrollbar-thumb:hover {
-  background: var(--color-neutral-5);
+::-webkit-scrollbar-thumb:hover {
+  background-color: #555; /* 滚动条滑块悬停颜色 */
 }
 
-.tab-content::-webkit-scrollbar-track {
-  background: var(--color-neutral-2);
-  border-radius: 3px;
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* 滚动条轨道颜色 */
+  border-radius: 4px; /* 滚动条轨道圆角 */
 }
 
-/* AI 分析区域滚动条 */
+/* 针对特定区域的滚动条样式 */
+.code-section::-webkit-scrollbar {
+  width: 8px;
+}
+
+.code-section::-webkit-scrollbar-thumb {
+  background-color: #888;
+}
+
+.code-section::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+
 .ai-analysis::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
 }
 
 .ai-analysis::-webkit-scrollbar-thumb {
-  background: var(--color-neutral-4);
-  border-radius: 3px;
-  cursor: pointer;
+  background-color: #888;
 }
 
 .ai-analysis::-webkit-scrollbar-thumb:hover {
-  background: var(--color-neutral-5);
-}
-
-.ai-analysis::-webkit-scrollbar-track {
-  background: var(--color-neutral-2);
-  border-radius: 3px;
+  background-color: #555;
 }
 
 /* 内容区域样式优化 */
@@ -907,7 +932,9 @@ const handleLanguageChange = () => {
 
 /* 提交详情样式 */
 .submission-detail {
-  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .detail-header {
@@ -954,5 +981,11 @@ const handleLanguageChange = () => {
 
 :deep(.arco-split-trigger:hover) {
   background-color: var(--color-neutral-3);
+}
+
+.code-section,
+.ai-analysis {
+  overflow: auto;
+  height: 100%;
 }
 </style>
