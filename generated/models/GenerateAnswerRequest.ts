@@ -4,13 +4,8 @@
 /* eslint-disable */
 
 import type { JudgeCase } from './JudgeCase';
-import type { JudgeConfig } from './JudgeConfig';
 
-export type QuestionAddRequest = {
-    answer?: string;
-    content?: string;
+export type GenerateAnswerRequest = {
     judgeCase?: Array<JudgeCase>;
-    judgeConfig?: JudgeConfig;
-    tags?: Array<string>;
-    title?: string;
+    questionContent?: string;
 };

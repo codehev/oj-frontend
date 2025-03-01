@@ -66,12 +66,22 @@
         :rules="[{ required: true, message: '答案是必填项' }]"
         validate-trigger="input"
       >
-        <!--我们自定义的代码编辑器组件不会被组件库识别，需要手动指定 value 和 handleChange 函数。-->
-        <MdEditor
-          class="mdEditor"
-          :value="form.answer"
-          :handle-change="onAnswerChange"
-        />
+        <a-space direction="vertical" style="width: 100%">
+          <a-button
+            type="primary"
+            @click="generateAnswer"
+            class="generate-button"
+            style="margin-bottom: 10px"
+          >
+            <IconPark type="magic" theme="filled" size="16" fill="#fff" />
+            AI生成答案
+          </a-button>
+          <MdEditor
+            class="mdEditor"
+            :value="form.answer"
+            :handle-change="onAnswerChange"
+          />
+        </a-space>
       </a-form-item>
       <a-form-item label="测试用例" :show-colon="true">
         <a-space direction="vertical">
@@ -219,8 +229,12 @@ import { onMounted, reactive } from "vue";
 import MdEditor from "@/components/MdEditor.vue";
 import message from "@arco-design/web-vue/es/message";
 import { useRoute } from "vue-router";
-import { QuestionControllerService } from "../../../generated";
+import {
+  AiControllerService,
+  QuestionControllerService,
+} from "../../../generated";
 import router from "@/router";
+import { IconPark } from "@icon-park/vue-next/es/all";
 
 const route = useRoute();
 // 如果页面地址包含 update，视为更新页面,includes()返回Boolean值
@@ -359,6 +373,38 @@ const doSubmit = async ({ values, errors }: any) => {
     }
   }
 };
+
+// 生成答案的方法
+const generateAnswer = async () => {
+  // 检查题目内容是否为空
+  if (!form.content.trim()) {
+    message.error("题目内容不能为空，请输入题目内容。");
+    return;
+  }
+
+  // 校验测试用例是否为空
+  for (const judgeCase of form.judgeCase) {
+    if (!judgeCase.input.trim() || !judgeCase.output.trim()) {
+      message.error("所有测试用例的输入和输出不能为空。");
+      return;
+    }
+  }
+
+  try {
+    const res = await AiControllerService.generateAnswerByAiUsingPost({
+      questionContent: form.content,
+      judgeCase: form.judgeCase,
+    });
+    if (res.code === 0) {
+      form.answer = res.data; // 将生成的答案填充到表单中
+      message.success("答案生成成功");
+    } else {
+      message.error("生成答案失败，" + res.message);
+    }
+  } catch (error) {
+    message.error("请求失败，请重试");
+  }
+};
 </script>
 
 <style scoped>
@@ -387,11 +433,16 @@ a-button[type="primary"] {
   background-color: #4caf50;
   border-color: #4caf50;
   color: white;
+  transition: background-color 0.3s, transform 0.2s;
 }
 
 a-button[type="primary"]:hover {
   background-color: #45a049;
   border-color: #45a049;
+}
+
+a-button[type="primary"]:active {
+  transform: scale(0.95);
 }
 
 a-button[type="outline"] {
