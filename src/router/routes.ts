@@ -66,20 +66,20 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: "/match",
-    name: "比赛",
-    component: () => import("@/views/MatchView.vue"),
-    meta: {
-      icon: "trophy",
-    },
-  },
-  {
     path: "/question_submit",
     name: "状态",
     component: () => import("@/views/question/QuestionSubmitView.vue"),
     meta: {
       access: ACCESS_ENUM.USER,
       icon: "ecg",
+    },
+  },
+  {
+    path: "/match",
+    name: "比赛",
+    component: () => import("@/views/MatchView.vue"),
+    meta: {
+      icon: "trophy",
     },
   },
   {
