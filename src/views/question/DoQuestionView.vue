@@ -241,16 +241,13 @@
 
                     <!-- 代码和分析结果分栏 -->
                     <a-split
-                      :style="{ height: 'calc(100% - 200px)' }"
+                      :style="{ height: 'calc(100% - 0px)' }"
                       :default-size="0.6"
                       min="0.3"
                       max="0.7"
                     >
                       <template #first>
-                        <div
-                          class="code-section"
-                          style="overflow: auto; height: 100%"
-                        >
+                        <div class="code-section">
                           <div class="section-header">
                             <h3>提交的代码</h3>
                             <a-button
@@ -273,23 +270,23 @@
                               AI 分析
                             </a-button>
                           </div>
-                          <CodeViewer
-                            :value="currentSubmission?.code"
-                            :language="currentSubmission?.language"
-                            style="width: 100%; height: 100%"
-                          ></CodeViewer>
+                          <div style="overflow-y: auto; height: 100%">
+                            <CodeViewer
+                              :value="currentSubmission?.code"
+                              :language="currentSubmission?.language"
+                              style="width: 100%; height: 100%"
+                            ></CodeViewer>
+                          </div>
                         </div>
                       </template>
                       <template #second>
-                        <div
-                          class="ai-analysis"
-                          style="overflow: auto; height: 100%"
-                        >
+                        <div class="ai-analysis">
                           <h3>AI 分析结果</h3>
                           <a-spin :loading="aiAnalysisLoading">
                             <div
                               v-if="aiAnalysisResult"
                               class="analysis-content"
+                              style="overflow-y: auto; height: 100%"
                             >
                               <MdViewer :value="aiAnalysisResult" />
                             </div>
@@ -641,6 +638,7 @@ const handleLanguageChange = () => {
 </script>
 
 <style scoped>
+/* 页面整体样式 */
 #doQuestionView {
   height: 100%;
   width: 100%;
@@ -648,18 +646,8 @@ const handleLanguageChange = () => {
   box-sizing: border-box;
 }
 
-.leftDiv {
-  height: 100%;
-  width: 100%;
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  box-sizing: border-box;
-}
-
+/* 左侧和右侧容器样式 */
+.leftDiv,
 .rightDiv {
   height: 100%;
   width: 100%;
@@ -670,10 +658,32 @@ const handleLanguageChange = () => {
   box-sizing: border-box;
 }
 
+/* 自定义滚动条样式 */
+.leftDiv::-webkit-scrollbar,
+.rightDiv::-webkit-scrollbar {
+  width: 8px; /* 滚动条宽度 */
+}
+
+.leftDiv::-webkit-scrollbar-thumb,
+.rightDiv::-webkit-scrollbar-thumb {
+  background-color: #888; /* 滚动条滑块颜色 */
+  border-radius: 4px; /* 滚动条滑块圆角 */
+}
+
+.leftDiv::-webkit-scrollbar-thumb:hover,
+.rightDiv::-webkit-scrollbar-thumb:hover {
+  background-color: #555; /* 滚动条滑块悬停颜色 */
+}
+
+.leftDiv::-webkit-scrollbar-track,
+.rightDiv::-webkit-scrollbar-track {
+  background: #f1f1f1; /* 滚动条轨道颜色 */
+  border-radius: 4px; /* 滚动条轨道圆角 */
+}
+
 /* Tabs 样式优化 */
 :deep(.arco-tabs) {
   height: 100%;
-  width: 100%;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -687,14 +697,6 @@ const handleLanguageChange = () => {
 
 :deep(.arco-tabs-content) {
   flex: 1;
-  width: 100%;
-  overflow: hidden;
-}
-
-:deep(.arco-tabs-pane) {
-  height: 100%;
-  width: 100%;
-  box-sizing: border-box;
   overflow: hidden;
 }
 
@@ -704,139 +706,6 @@ const handleLanguageChange = () => {
   padding: 20px;
   overflow-y: auto;
   box-sizing: border-box;
-}
-
-/* 自定义滚动条样式 */
-::-webkit-scrollbar {
-  width: 8px; /* 滚动条宽度 */
-  height: 8px; /* 滚动条高度 */
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: #888; /* 滚动条滑块颜色 */
-  border-radius: 4px; /* 滚动条滑块圆角 */
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background-color: #555; /* 滚动条滑块悬停颜色 */
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1; /* 滚动条轨道颜色 */
-  border-radius: 4px; /* 滚动条轨道圆角 */
-}
-
-/* 针对特定区域的滚动条样式 */
-.code-section::-webkit-scrollbar {
-  width: 8px;
-}
-
-.code-section::-webkit-scrollbar-thumb {
-  background-color: #888;
-}
-
-.code-section::-webkit-scrollbar-thumb:hover {
-  background-color: #555;
-}
-
-.ai-analysis::-webkit-scrollbar {
-  width: 8px;
-}
-
-.ai-analysis::-webkit-scrollbar-thumb {
-  background-color: #888;
-}
-
-.ai-analysis::-webkit-scrollbar-thumb:hover {
-  background-color: #555;
-}
-
-/* 内容区域样式优化 */
-:deep(.arco-descriptions) {
-  width: 100%;
-  box-sizing: border-box;
-  margin: 16px 0;
-  padding: 16px;
-  background-color: var(--color-fill-2);
-  border-radius: 4px;
-}
-
-:deep(.arco-descriptions-title) {
-  font-size: 15px;
-  color: var(--color-text-1);
-  margin-bottom: 16px;
-}
-
-:deep(.arco-descriptions-item-label) {
-  color: var(--color-text-2);
-}
-
-:deep(.arco-space) {
-  width: 100%;
-  box-sizing: border-box;
-}
-
-:deep(.arco-tag) {
-  font-size: 13px;
-  padding: 2px 10px;
-  border-radius: 4px;
-}
-
-:deep(.bytemd) {
-  width: 100%;
-  box-sizing: border-box;
-  margin-top: 16px;
-  border: 1px solid var(--color-neutral-3);
-  border-radius: 4px;
-}
-
-:deep(.markdown-body) {
-  width: 100%;
-  box-sizing: border-box;
-  font-size: 14px;
-  line-height: 1.8;
-}
-
-/* 表格区域滚动条 */
-:deep(.arco-table-body)::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-:deep(.arco-table-body)::-webkit-scrollbar-thumb {
-  background: var(--color-neutral-4);
-  border-radius: 3px;
-  cursor: pointer;
-}
-
-:deep(.arco-table-body)::-webkit-scrollbar-thumb:hover {
-  background: var(--color-neutral-5);
-}
-
-:deep(.arco-table-body)::-webkit-scrollbar-track {
-  background: var(--color-neutral-2);
-  border-radius: 3px;
-}
-
-/* Markdown 预览区域滚动条 */
-:deep(.markdown-body)::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-:deep(.markdown-body)::-webkit-scrollbar-thumb {
-  background: var(--color-neutral-4);
-  border-radius: 3px;
-  cursor: pointer;
-}
-
-:deep(.markdown-body)::-webkit-scrollbar-thumb:hover {
-  background: var(--color-neutral-5);
-}
-
-:deep(.markdown-body)::-webkit-scrollbar-track {
-  background: var(--color-neutral-2);
-  border-radius: 3px;
 }
 
 /* 表格样式优化 */
@@ -859,57 +728,10 @@ const handleLanguageChange = () => {
   font-weight: 500;
 }
 
-:deep(.arco-btn-text:hover) {
-  background-color: var(--color-fill-2);
-}
-
 /* 代码编辑器区域 */
 :deep(.monaco-editor) {
   border-radius: 4px;
   border: 1px solid var(--color-neutral-3);
-}
-
-/* 代码编辑器滚动条样式 */
-:deep(.monaco-editor .scrollbar) {
-  width: 6px !important;
-}
-
-:deep(.monaco-editor .scrollbar .slider) {
-  background: var(--color-neutral-4) !important;
-  border-radius: 3px !important;
-}
-
-:deep(.monaco-editor .scrollbar .slider:hover) {
-  background: var(--color-neutral-5) !important;
-}
-
-:deep(.monaco-editor .scrollbar.horizontal) {
-  height: 6px !important;
-}
-
-:deep(.monaco-editor .scrollbar.horizontal .slider) {
-  height: 6px !important;
-}
-
-/* 右侧整体区域滚动条 */
-.rightDiv::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-.rightDiv::-webkit-scrollbar-thumb {
-  background: var(--color-neutral-4);
-  border-radius: 3px;
-  cursor: pointer;
-}
-
-.rightDiv::-webkit-scrollbar-thumb:hover {
-  background: var(--color-neutral-5);
-}
-
-.rightDiv::-webkit-scrollbar-track {
-  background: var(--color-neutral-2);
-  border-radius: 3px;
 }
 
 /* AI 分析区域 */
@@ -918,19 +740,6 @@ const handleLanguageChange = () => {
   height: 100%;
   overflow-y: auto;
   border-left: 1px solid var(--color-neutral-3);
-}
-
-.empty-analysis {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 200px;
-  color: var(--color-text-3);
-}
-
-.empty-analysis p {
-  margin-top: 8px;
 }
 
 /* 提交详情样式 */
@@ -945,12 +754,6 @@ const handleLanguageChange = () => {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
-}
-
-.detail-header h2 {
-  margin: 0;
-  font-size: 20px;
-  color: var(--color-text-1);
 }
 
 .submission-info {
@@ -974,21 +777,5 @@ const handleLanguageChange = () => {
   gap: 24px;
   flex-wrap: wrap;
   color: var(--color-text-2);
-}
-
-/* 分割面板样式 */
-:deep(.arco-split-trigger) {
-  background-color: var(--color-neutral-2);
-  border: none;
-}
-
-:deep(.arco-split-trigger:hover) {
-  background-color: var(--color-neutral-3);
-}
-
-.code-section,
-.ai-analysis {
-  overflow: auto;
-  height: 100%;
 }
 </style>

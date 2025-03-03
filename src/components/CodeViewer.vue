@@ -106,7 +106,9 @@ onMounted(() => {
 
 <style scoped>
 #code-editor {
-  /*min-height: 400px;*/
+  min-height: 300px;
+  max-height: 80vh;
+  min-width: 200px;
   /*默认屏幕9/10高度*/
   height: 80vh;
 }
