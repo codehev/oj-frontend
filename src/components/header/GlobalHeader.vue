@@ -13,7 +13,7 @@
         class="main-menu"
       >
         <a-menu-item
-          key="0"
+          key="logo"
           :style="{ padding: 0, marginRight: '38px' }"
           disabled
         >
@@ -154,11 +154,6 @@ const selectedKeys = ref([route.path]); //默认主页(初始加载页面时从r
 //   console.log("from=" + from.path);
 //   selectedKeys.value = [to.path];
 //   console.log("selectedKeys222222=" + selectedKeys.value);
-// });
-// router.beforeEach((to, from, failure) => {
-//   console.log("to=" + to.path);
-//   console.log("from=" + from.path);
-//   selectedKeys.value = [to.path];
 // });
 
 /**
