@@ -279,12 +279,14 @@ const handleClick = () => {
   visible.value = true;
   dataList.value = [];
   allDataLoaded.value = false;
+  searchParams.value.current = 1;
   loadData();
 };
 const handleCancel = () => {
   visible.value = false;
   dataList.value = [];
   allDataLoaded.value = false;
+  searchParams.value.current = 1;
 };
 
 const doSearch = () => {
