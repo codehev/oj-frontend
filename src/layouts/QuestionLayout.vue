@@ -6,7 +6,7 @@
     <a-layout style="height: 100vh">
       <a-layout-header class="header">
         <a-drawer
-          :width="500"
+          :width="550"
           :visible="visible"
           placement="left"
           :footer="false"
@@ -17,18 +17,20 @@
           <!-- 搜索区域 -->
           <div class="search-form-container">
             <a-form :model="searchParams" layout="inline" class="search-form">
-              <div class="form-left">
+              <div class="form-left" style="display: flex; gap: 16px">
                 <a-form-item
                   field="title"
-                  label="题目名称"
+                  label="题目"
                   :show-colon="true"
                   class="form-item"
                 >
                   <a-input
                     v-model="searchParams.title"
                     placeholder="请输入题目名称..."
-                    :style="{ width: '200px' }"
+                    :style="{ width: '150px' }"
                     allow-clear
+                    @input="doSearch"
+                    @clear="doSearch"
                   />
                 </a-form-item>
                 <a-form-item
@@ -40,17 +42,9 @@
                   <a-input-tag
                     v-model="searchParams.tags"
                     placeholder="请输入标签..."
-                    :style="{ width: '200px' }"
+                    :style="{ width: '150px' }"
+                    @change="doSearch"
                   />
-                </a-form-item>
-                <a-form-item>
-                  <a-button type="primary" @click="doSearch">搜索</a-button>
-                  <a-button
-                    type="default"
-                    @click="resetSearch"
-                    style="margin-left: 8px"
-                    >重置</a-button
-                  >
                 </a-form-item>
               </div>
             </a-form>
