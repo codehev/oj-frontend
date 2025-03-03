@@ -121,7 +121,7 @@
 </template>
 <script setup lang="ts">
 import { routes } from "@/router/routes/routes";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { computed, ref } from "vue";
 import { useStore } from "vuex";
 import checkAccess from "@/access/checkAccess";
@@ -131,6 +131,7 @@ import { IconPark } from "@icon-park/vue-next/es/all";
 import { IconCode } from "@arco-design/web-vue/es/icon";
 
 const router = useRouter();
+const route = useRoute();
 /**
  * 点击菜单项更新路由
  */
@@ -139,18 +140,26 @@ const doMenuClick = (key: string) => {
   router.push({
     path: key,
   });
+  selectedKeys.value = [key];
 };
 
 /**
  * 每次点击菜单项更新路由后，更新菜单栏上的指示条（菜单栏高亮）
  * 目的是刷新页面后，菜单栏上的指示条（菜单栏高亮）保持不动，而不是直接消失
  */
-const selectedKeys = ref(["/"]); //默认主页
-router.afterEach((to, from, failure) => {
-  // console.log("path=" + to.path);
-  selectedKeys.value = [to.path];
-});
-// document.body.setAttribute("arco-theme", "dark");
+const selectedKeys = ref([route.path]); //默认主页(初始加载页面时从route.path获取当前路径，并设置为默认选中路径)
+// console.log("selectedKeys11111=" + selectedKeys.value);
+// router.afterEach((to, from, failure) => {
+//   console.log("to=" + to.path);
+//   console.log("from=" + from.path);
+//   selectedKeys.value = [to.path];
+//   console.log("selectedKeys222222=" + selectedKeys.value);
+// });
+// router.beforeEach((to, from, failure) => {
+//   console.log("to=" + to.path);
+//   console.log("from=" + from.path);
+//   selectedKeys.value = [to.path];
+// });
 
 /**
  * 自动登录
