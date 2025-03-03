@@ -1,6 +1,5 @@
 import { RouteRecordRaw } from "vue-router";
 import ACCESS_ENUM from "@/enum/AccessEnum";
-import UserManagementView from "@/views/user/UserManagementView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {

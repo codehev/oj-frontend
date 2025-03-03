@@ -3,9 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { JudgeCase } from './JudgeCase';
+import type { JudgeCase } from "./JudgeCase";
 
 export type GenerateAnswerRequest = {
-    judgeCase?: Array<JudgeCase>;
-    questionContent?: string;
+  judgeCase?: Array<JudgeCase>;
+  questionContent?: string;
 };
