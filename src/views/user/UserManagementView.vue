@@ -106,8 +106,8 @@
         </a-form-item>
         <a-form-item label="角色" field="userRole">
           <a-select v-model="newUser.userRole" placeholder="请选择角色">
-            <a-select-option value="user">用户</a-select-option>
-            <a-select-option value="admin">管理员</a-select-option>
+            <a-option value="user">用户</a-option>
+            <a-option value="admin">管理员</a-option>
           </a-select>
         </a-form-item>
       </a-form>
@@ -145,8 +145,8 @@
         </a-form-item>
         <a-form-item label="角色" field="userRole">
           <a-select v-model="editUserData.userRole" placeholder="请选择角色">
-            <a-select-option value="user">用户</a-select-option>
-            <a-select-option value="admin">管理员</a-select-option>
+            <a-option value="user">用户</a-option>
+            <a-option value="admin">管理员</a-option>
           </a-select>
         </a-form-item>
       </a-form>
