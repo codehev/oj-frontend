@@ -75,7 +75,7 @@
                 <div v-else>暂无题解</div>
               </div>
             </a-tab-pane>
-            <a-tab-pane key="3" title="提交记录">
+            <a-tab-pane key="3">
               <template #title>
                 <IconPark
                   type="history"
@@ -306,7 +306,7 @@
                 </a-modal>
               </div>
             </a-tab-pane>
-            <a-tab-pane key="4" title="评论">
+            <a-tab-pane key="4">
               <template #title>
                 <IconPark
                   type="comment"
