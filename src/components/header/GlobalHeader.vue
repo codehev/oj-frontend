@@ -226,6 +226,7 @@ const toUserSettings = () => {
 
 .main-menu {
   padding: 0 16px;
+  overflow: hidden;
 }
 
 .title-bar {
@@ -233,6 +234,7 @@ const toUserSettings = () => {
   align-items: center;
   gap: 12px;
   padding: 0 4px;
+  overflow: hidden;
 }
 
 .logo-wrapper {
@@ -275,6 +277,18 @@ const toUserSettings = () => {
   float: right;
   margin-right: 0;
   padding: 0 8px;
+  transition: background 0.3s ease;
+  display: flex;
+  align-items: center;
+  width: auto;
+  min-width: 100px;
+  max-width: 150px;
+  overflow: hidden;
+}
+
+.user-area:hover {
+  background: var(--color-fill-2);
+  border-radius: 4px;
 }
 
 .user-info {
@@ -284,11 +298,6 @@ const toUserSettings = () => {
   padding: 4px 8px;
   border-radius: 6px;
   cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.user-info:hover {
-  background: var(--color-fill-2);
 }
 
 .user-avatar {
@@ -318,16 +327,19 @@ const toUserSettings = () => {
 
 .dropdown-menu {
   min-width: 160px;
-  padding: 4px;
+  padding: 2px;
+  max-height: 200px;
+  overflow-y: auto;
 }
 
 .dropdown-item {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
+  padding: 4px 8px;
   border-radius: 4px;
   transition: all 0.2s ease;
+  line-height: 1.5;
 }
 
 :deep(.arco-dropdown-option:hover) {
