@@ -64,36 +64,37 @@
     <template>
       <a-modal v-model:visible="visible" @ok="handleOk" hide-cancel fullscreen>
         <template #title> {{ record?.questionVO?.title }}</template>
-        <div>
-          <div v-if="record?.judgeInfo?.message === '答案正确'">
-            <IconPark
-              type="check-one"
-              theme="filled"
-              size="30"
-              fill="#19be6b"
-            />
-            {{ record?.judgeInfo?.message }}
-            时间：{{ record?.judgeInfo?.time }} 内存：{{
-              record?.judgeInfo?.memory
-            }}
-            语言：{{ record?.language }} 作者：{{ record?.userVO?.userName }}
-          </div>
-          <div v-else>
-            <IconPark
-              type="close-one"
-              theme="filled"
-              size="30"
-              fill="#ed3f14"
-            />
-            {{ record?.judgeInfo?.message }}
-            时间：{{ record?.judgeInfo?.time }} 内存：{{
-              record?.judgeInfo?.memory
-            }}
-            语言：{{ record?.language }} 作者：{{ record?.userVO?.userName }}
+        <div class="submission-detail">
+          <div class="submission-info">
+            <div v-if="record?.judgeInfo?.message === '答案正确'">
+              <IconPark
+                type="check-one"
+                theme="filled"
+                size="30"
+                fill="#19be6b"
+              />
+              {{ record?.judgeInfo?.message }}
+            </div>
+            <div v-else>
+              <IconPark
+                type="close-one"
+                theme="filled"
+                size="30"
+                fill="#ed3f14"
+              />
+              {{ record?.judgeInfo?.message }}
+            </div>
+            <div class="info-items">
+              <span>时间：{{ record?.judgeInfo?.time }}ms</span>
+              <span>内存：{{ record?.judgeInfo?.memory }}kb</span>
+              <span>语言：{{ record?.language }}</span>
+              <span>作者：{{ record?.userVO?.userName }}</span>
+            </div>
           </div>
           <CodeViewer
             :value="record?.code"
             :language="record?.language"
+            class="code-viewer"
           ></CodeViewer>
         </div>
       </a-modal>
@@ -450,5 +451,27 @@ const doSubmit = () => {
     justify-content: flex-end;
     margin-top: 16px;
   }
+}
+
+.submission-detail {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 20px;
+  overflow-y: auto; /* 允许垂直滚动 */
+}
+
+.submission-info {
+  margin-bottom: 24px;
+  padding: 16px;
+  background-color: var(--color-fill-2);
+  border-radius: 4px;
+}
+
+.info-items {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  color: var(--color-text-2);
 }
 </style>
