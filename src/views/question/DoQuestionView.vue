@@ -197,31 +197,34 @@
                       <div
                         :class="[
                           'status',
-                          currentSubmission?.status === 3 ? 'success' : 'error',
+                          currentSubmission?.judgeInfo?.message === '答案正确'
+                            ? 'success'
+                            : 'error',
                         ]"
                       >
                         <IconPark
-                          :type="
-                            currentSubmission?.status === 3
-                              ? 'check-one'
-                              : 'close-one'
+                          v-if="
+                            currentSubmission?.judgeInfo?.message === '答案正确'
                           "
+                          type="check-one"
                           theme="filled"
                           size="24"
-                          :fill="
-                            currentSubmission?.status === 3
-                              ? '#19be6b'
-                              : '#ed3f14'
-                          "
+                          :fill="'#19be6b'"
                         />
-                        {{ STATUS_ENUM[currentSubmission?.status ?? 0] }}
+                        <IconPark
+                          v-else
+                          type="close-one"
+                          theme="filled"
+                          size="24"
+                          :fill="'#ed3f14'"
+                        />
+                        {{
+                          currentSubmission?.status != 2
+                            ? STATUS_ENUM[currentSubmission?.status ?? 0]
+                            : currentSubmission?.judgeInfo?.message
+                        }}
                       </div>
                       <div class="info-items">
-                        <span
-                          >结果：{{
-                            currentSubmission?.judgeInfo?.message
-                          }}</span
-                        >
                         <span
                           >时间：{{
                             currentSubmission?.judgeInfo?.time
