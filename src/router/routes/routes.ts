@@ -120,7 +120,7 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: "/about",
     name: "关于",
-    component: () => import("../views/AboutView.vue"),
+    component: () => import("../../views/AboutView.vue"),
     meta: {
       icon: "bill",
     },

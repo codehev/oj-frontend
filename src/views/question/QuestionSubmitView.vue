@@ -188,7 +188,7 @@ import statusEnum from "../../enum/StatusEnum";
 import { useStore } from "vuex";
 import { IconPark } from "@icon-park/vue-next/es/all";
 import AccessEnum from "@/enum/AccessEnum";
-import CodeViewer from "@/components/CodeViewer.vue";
+import CodeViewer from "@/components/code/CodeViewer.vue";
 
 /**
  * 查看代码（弹窗相关）

@@ -226,7 +226,7 @@
 
 <script setup lang="ts">
 import { onMounted, reactive } from "vue";
-import MdEditor from "@/components/MdEditor.vue";
+import MdEditor from "@/components/markdown/MdEditor.vue";
 import message from "@arco-design/web-vue/es/message";
 import { useRoute } from "vue-router";
 import {

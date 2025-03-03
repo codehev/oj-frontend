@@ -7,8 +7,8 @@
 </template>
 <script setup lang="ts">
 import { ref } from "vue";
-import MdEditor from "@/components/MdEditor.vue";
-import CodeEditor from "@/components/CodeEditor.vue";
+import MdEditor from "@/components/markdown/MdEditor.vue";
+import CodeEditor from "@/components/code/CodeEditor.vue";
 
 const mdValue = ref("");
 const onMdChange = (v: string) => {

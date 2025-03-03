@@ -388,9 +388,9 @@ import {
   AiControllerService,
 } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
-import CodeEditor from "@/components/CodeEditor.vue";
-import CodeViewer from "@/components/CodeViewer.vue";
-import MdViewer from "@/components/MdViewer.vue";
+import CodeEditor from "@/components/code/CodeEditor.vue";
+import CodeViewer from "@/components/code/CodeViewer.vue";
+import MdViewer from "@/components/markdown/MdViewer.vue";
 import LanguageEnum from "@/enum/LanguageEnum";
 import STATUS_ENUM from "@/enum/StatusEnum";
 import { DefaultCodeEnum } from "@/enum/DefaultCodeEnum";

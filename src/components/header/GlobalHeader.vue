@@ -120,12 +120,12 @@
   </a-row>
 </template>
 <script setup lang="ts">
-import { routes } from "@/router/routes";
+import { routes } from "@/router/routes/routes";
 import { useRouter } from "vue-router";
 import { computed, ref } from "vue";
 import { useStore } from "vuex";
 import checkAccess from "@/access/checkAccess";
-import { UserControllerService } from "../../generated";
+import { UserControllerService } from "../../../generated";
 import accessEnum from "@/enum/AccessEnum";
 import { IconPark } from "@icon-park/vue-next/es/all";
 import { IconCode } from "@arco-design/web-vue/es/icon";
