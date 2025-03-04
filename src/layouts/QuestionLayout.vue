@@ -207,7 +207,7 @@ const loadData = async () => {
  */
 const switchQuestion = async (direction: "next" | "previous" | "random") => {
   try {
-    // route.params.id是字符串，且实高精度的，如果用一个number类型变量接收，会丢失精度，用string类型接收，接口发送不了请求，只能直接传参发送
+    // route.params.id是题目id字符串，且是高精度的，如果用一个number类型变量接收，会丢失精度，用string类型接收，接口发送不了请求，只能直接传参发送
     const response = await QuestionControllerService.switchQuestionUsingGet(
       route.params.id as any,
       direction

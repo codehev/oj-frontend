@@ -148,13 +148,10 @@ const doMenuClick = (key: string) => {
  * 目的是刷新页面后，菜单栏上的指示条（菜单栏高亮）保持不动，而不是直接消失
  */
 const selectedKeys = ref([route.path]); //默认主页(初始加载页面时从route.path获取当前路径，并设置为默认选中路径)
-// console.log("selectedKeys11111=" + selectedKeys.value);
-// router.afterEach((to, from, failure) => {
-//   console.log("to=" + to.path);
-//   console.log("from=" + from.path);
-//   selectedKeys.value = [to.path];
-//   console.log("selectedKeys222222=" + selectedKeys.value);
-// });
+
+router.afterEach((to, from, failure) => {
+  document.title = (to.name as string) || "OJ在线判题系统";
+});
 
 /**
  * 自动登录

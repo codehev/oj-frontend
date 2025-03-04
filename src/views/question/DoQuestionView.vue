@@ -473,8 +473,8 @@ const loadQuestion = async () => {
     route.params.id as any
   );
   if (res.code === 0) {
-    questionVO.value = res.data; // 更新 questionVO
-    // await nextTick(); // 等待 DOM 更新
+    questionVO.value = res.data; // 更新题目信息
+    document.title = questionVO.value?.title ?? "做题页"; // 设置网页标题为题目名称
   } else {
     message.error("加载题目失败，" + res.message);
   }
