@@ -100,7 +100,7 @@
         这意味着间距可以根据屏幕尺寸进行自适应调整，以在不同设备上提供良好的用户体验。-->
         <a-space>
           <a-popover content="返回">
-            <a-button type="text" @click="router.back()">
+            <a-button type="text" @click="router.push('/questions')">
               <IconPark type="return" theme="filled" size="20" fill="#666" />
             </a-button>
           </a-popover>
@@ -115,17 +115,17 @@
             </a-button>
           </a-popover>
           <a-popover content="上一题">
-            <a-button type="text" @click="loadPreviousQuestion">
+            <a-button type="text" @click="switchQuestion('previous')">
               <IconPark type="left" theme="filled" size="20" fill="#666" />
             </a-button>
           </a-popover>
           <a-popover content="下一题">
-            <a-button type="text" @click="loadNextQuestion">
+            <a-button type="text" @click="switchQuestion('next')">
               <IconPark type="right" theme="filled" size="20" fill="#666" />
             </a-button>
           </a-popover>
           <a-popover content="随机一题">
-            <a-button type="text" @click="router.back()">
+            <a-button type="text" @click="switchQuestion('random')">
               <IconPark
                 type="shuffle-one"
                 theme="filled"
@@ -144,7 +144,7 @@
 </template>
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import {
   QuestionControllerService,
   QuestionQueryRequest,
@@ -154,6 +154,7 @@ import { IconPark } from "@icon-park/vue-next/es/all";
 
 const visible = ref(false);
 const router = useRouter();
+const route = useRoute();
 
 // 搜索参数
 const searchParams = ref<QuestionQueryRequest>({
@@ -171,9 +172,6 @@ const dataList = ref<any[]>([]); // 确保 dataList 的类型为数组
 const allDataLoaded = ref(false);
 // 加载状态，防止重复请求的标志
 const isLoading = ref(false);
-
-// 当前题目索引
-const currentQuestionIndex = ref(0);
 
 /**
  * 加载表格数据
@@ -204,36 +202,25 @@ const loadData = async () => {
 };
 
 /**
- * 加载上一题
+ * 切换题目
+ * @param direction 切换方向
  */
-const loadPreviousQuestion = () => {
-  if (currentQuestionIndex.value > 0) {
-    currentQuestionIndex.value--;
-    // 根据索引加载题目
-    const question = dataList.value[currentQuestionIndex.value];
-    if (question) {
-      // 这里可以添加逻辑来显示当前题目
-      console.log("加载上一题:", question);
-      // 例如，您可以将题目内容设置到一个显示区域
-      // this.currentQuestion = question; // 假设您有一个 currentQuestion 变量来存储当前题目
-    }
-  }
-};
+const switchQuestion = async (direction: "next" | "previous" | "random") => {
+  try {
+    // route.params.id是字符串，且实高精度的，如果用一个number类型变量接收，会丢失精度，用string类型接收，接口发送不了请求，只能直接传参发送
+    const response = await QuestionControllerService.switchQuestionUsingGet(
+      route.params.id as any,
+      direction
+    );
 
-/**
- * 加载下一题
- */
-const loadNextQuestion = () => {
-  if (currentQuestionIndex.value < dataList.value.length - 1) {
-    currentQuestionIndex.value++;
-    // 根据索引加载题目
-    const question = dataList.value[currentQuestionIndex.value];
-    if (question) {
-      // 这里可以添加逻辑来显示当前题目
-      console.log("加载下一题:", question);
-      // 例如，您可以将题目内容设置到一个显示区域
-      // this.currentQuestion = question; // 假设您有一个 currentQuestion 变量来存储当前题目
+    if (response.code === 0) {
+      const newQuestionId = response.data; // 假设返回的数据是新的题目 ID
+      router.push(`/view/question/${newQuestionId}`); // 切换路由
+    } else {
+      message.error("切换题目失败，" + response.message);
     }
+  } catch (error) {
+    message.error("切换题目请求失败，请重试");
   }
 };
 

@@ -161,10 +161,10 @@ const selectedKeys = ref([route.path]); //默认主页(初始加载页面时从r
  */
 var store = useStore();
 // console.log(store.state.user.loginUser);
-setTimeout(() => {
-  //远程获取登录信息，并更新本地vuex用户信息
-  store.dispatch("user/getLoginUser");
-}, 3000);
+// setTimeout(() => {
+//   //远程获取登录信息，并更新本地vuex用户信息
+//   store.dispatch("user/getLoginUser");
+// }, 3000);
 
 /**
  * 获取用户信息
