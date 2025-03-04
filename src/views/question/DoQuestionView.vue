@@ -53,6 +53,7 @@
                   </a-descriptions-item>
                 </a-descriptions>
                 <MdViewer
+                  :key="questionVO?.id"
                   :value="questionVO?.content || ''"
                   style="height: 100%; width: 100%"
                 />
@@ -378,7 +379,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, withDefaults, defineProps } from "vue";
+import {
+  ref,
+  onMounted,
+  watch,
+  withDefaults,
+  defineProps,
+  nextTick,
+} from "vue";
 import {
   QuestionControllerService,
   QuestionSubmitAddRequest,
@@ -397,8 +405,10 @@ import { DefaultCodeEnum } from "@/enum/DefaultCodeEnum";
 import { IconPark } from "@icon-park/vue-next/es/all";
 import { useStore } from "vuex";
 import ACCESS_ENUM from "@/enum/AccessEnum";
+import { useRoute } from "vue-router";
 
 const store = useStore();
+const route = useRoute();
 
 interface Props {
   id: string;
@@ -411,7 +421,6 @@ var question = ref<Question>();
 var submissions = ref<QuestionSubmitVO[]>([]); // 用于存储提交记录
 var loading = ref<boolean>(false); // 添加加载状态
 
-const aiModalVisible = ref(false);
 const aiModalTitle = ref("");
 const aiAnalysisResult = ref("");
 const aiAnalysisLoading = ref(false);
@@ -459,15 +468,17 @@ const searchParams = ref({
  * 加载题目信息
  */
 const loadQuestion = async () => {
-  //获取题目封装类
+  // loading.value = true; // 设置加载状态
   const res = await QuestionControllerService.getQuestionVoByIdUsingGet(
-    props.id as any
+    route.params.id as any
   );
   if (res.code === 0) {
-    questionVO.value = res.data;
+    questionVO.value = res.data; // 更新 questionVO
+    // await nextTick(); // 等待 DOM 更新
   } else {
     message.error("加载题目失败，" + res.message);
   }
+  // loading.value = false; // 重置加载状态
 };
 /**
  * 加载题目答案
@@ -537,8 +548,20 @@ const formatTime = (timeString: string) => {
 };
 
 onMounted(() => {
-  loadQuestion(); //加载题目信息
+  loadQuestion(); // 初始加载题目信息
+  // loadQuestionAnswer(); // 重新加载题目答案
+  // loadSubmissions(); // 重新加载提交记录
 });
+
+// 监听路由参数变化
+watch(
+  () => props.id,
+  (newId) => {
+    if (newId) {
+      loadQuestion(); // 重新加载题目信息
+    }
+  }
+);
 
 const onTabChange = (key: string) => {
   if (key === "1") {
