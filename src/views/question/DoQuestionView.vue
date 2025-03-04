@@ -557,6 +557,7 @@ watch(
   () => props.id,
   (newId) => {
     if (newId) {
+      activeKey.value = "1";
       loadQuestion(); // 重新加载题目信息
     }
   }
