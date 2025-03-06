@@ -3,9 +3,11 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type PostAddRequest = {
+export type PostCommentRequest = {
     content?: string;
-    tags?: Array<string>;
-    title?: string;
-    zone?: string;
+    createTime?: string;
+    id?: number;
+    parentId?: number;
+    postId?: number;
+    userId?: number;
 };

@@ -8,4 +8,5 @@ export type PostUpdateRequest = {
     id?: number;
     tags?: Array<string>;
     title?: string;
+    zone?: string;
 };

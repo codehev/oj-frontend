@@ -8,4 +8,5 @@ export type PostEditRequest = {
     id?: number;
     tags?: Array<string>;
     title?: string;
+    zone?: string;
 };

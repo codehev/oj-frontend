@@ -18,4 +18,6 @@ export type PostVO = {
     updateTime?: string;
     user?: UserVO;
     userId?: number;
+    viewNum?: number;
+    zone?: string;
 };

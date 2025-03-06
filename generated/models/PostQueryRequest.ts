@@ -17,4 +17,5 @@ export type PostQueryRequest = {
     tags?: Array<string>;
     title?: string;
     userId?: number;
+    zone?: string;
 };

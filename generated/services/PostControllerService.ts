@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { BaseResponse_boolean_ } from '../models/BaseResponse_boolean_';
+import type { BaseResponse_List_PostSimpleVo_ } from '../models/BaseResponse_List_PostSimpleVo_';
 import type { BaseResponse_long_ } from '../models/BaseResponse_long_';
 import type { BaseResponse_Page_PostVO_ } from '../models/BaseResponse_Page_PostVO_';
 import type { BaseResponse_PostVO_ } from '../models/BaseResponse_PostVO_';
@@ -76,6 +77,33 @@ postEditRequest: PostEditRequest,
             method: 'POST',
             url: '/api/post/edit',
             body: postEditRequest,
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+
+    /**
+     * 获取热门帖子（默认五个）
+     * @param limtNum 
+     * @param zone 
+     * @returns BaseResponse_List_PostSimpleVo_ OK
+     * @returns any Created
+     * @throws ApiError
+     */
+    public static getHotPostUsingPost(
+limtNum?: number,
+zone?: string,
+): CancelablePromise<BaseResponse_List_PostSimpleVo_ | any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/post/get/hotPost',
+            query: {
+                'limtNum': limtNum,
+                'zone': zone,
+            },
             errors: {
                 401: `Unauthorized`,
                 403: `Forbidden`,

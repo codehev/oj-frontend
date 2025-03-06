@@ -3,9 +3,12 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type PostAddRequest = {
-    content?: string;
-    tags?: Array<string>;
+export type PostSimpleVo = {
+    createTime?: string;
+    favourNum?: number;
+    id?: number;
+    thumbNum?: number;
     title?: string;
+    viewNum?: number;
     zone?: string;
 };
