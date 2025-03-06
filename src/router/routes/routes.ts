@@ -82,6 +82,22 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: "/post",
+    name: "帖子",
+    component: () => import("@/views/post/view/PostView.vue"),
+    meta: {
+      icon: "message",
+    },
+  },
+  {
+    path: "/post/detail",
+    name: "帖子详情",
+    component: () => import("@/views/post/info/PostDetailView.vue"),
+    meta: {
+      hideInMenu: true,
+    },
+  },
+  {
     path: "/add/question",
     name: "创建题目",
     component: () => import("@/views/question/AddQuestionView.vue"),
@@ -120,7 +136,7 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: "/about",
     name: "关于",
-    component: () => import("../../views/AboutView.vue"),
+    component: () => import("@/views/AboutView.vue"),
     meta: {
       icon: "bill",
     },

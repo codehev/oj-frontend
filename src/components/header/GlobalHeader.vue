@@ -8,7 +8,7 @@
       <!--菜单-->
       <a-menu
         mode="horizontal"
-        :selected-keys="selectedKeys"
+        v-model:selected-keys="selectedKeys"
         @menu-item-click="doMenuClick"
         class="main-menu"
       >
@@ -21,7 +21,7 @@
             <div class="logo-wrapper">
               <icon-code theme="filled" size="24" />
             </div>
-            <div class="title">在线评测</div>
+            <div class="title">Online Judge</div>
           </div>
         </a-menu-item>
         <a-menu-item
@@ -150,7 +150,7 @@ watch(route, (newRoute) => {
   // 每次刷新或路由跳转（页面跳转），更新菜单栏上的指示条（菜单栏高亮）
   selectedKeys.value = [newRoute.path];
   // 每次刷新或路由跳转（页面跳转），更新页面标题
-  document.title = (newRoute.name as string) || "OJ在线判题系统";
+  document.title = (newRoute.name as string) || "Online Judge";
 });
 
 /**
