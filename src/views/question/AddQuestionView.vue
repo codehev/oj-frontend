@@ -217,7 +217,7 @@
           <a-button type="primary" style="min-width: 200px" html-type="submit"
             >{{ isUpdatePage ? "更新" : "创建" }}题目
           </a-button>
-          <a-button @click="$refs.formRef.resetFields()">重置</a-button>
+          <a-button @click="formRef.resetFields()">重置</a-button>
         </a-space>
       </a-form-item>
     </a-form>
@@ -225,7 +225,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import MdEditor from "@/components/markdown/MdEditor.vue";
 import message from "@arco-design/web-vue/es/message";
 import { useRoute } from "vue-router";
@@ -235,6 +235,9 @@ import {
 } from "../../../generated";
 import router from "@/router";
 import { IconPark } from "@icon-park/vue-next/es/all";
+
+// 表单ref
+const formRef = ref();
 
 const route = useRoute();
 // 如果页面地址包含 update，视为更新页面,includes()返回Boolean值
