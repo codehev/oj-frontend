@@ -1,55 +1,40 @@
 <template>
   <!--  默认以文件名为组件名，使用ESLint时组件名只能多单词命名-->
   <div id="userLoginView">
-    <h2 style="margin-bottom: 32px">用户登录</h2>
+    <h2 class="form-title">用户登录</h2>
     <a-form
       :model="form"
       @submit="handleSubmit"
       label-align="left"
       size="large"
       auto-label-width
-      style="max-width: 480px; margin: 0 auto"
+      class="form-container"
     >
-      <a-form-item
-        field="userAccount"
-        label="账号"
-        :show-colon="true"
-        :rules="[
-          { required: true, message: '账号为必填字段' },
-          { minLength: 4, message: '账号长度不低于4位字符' },
-        ]"
-        :validate-trigger="['change', 'input']"
-      >
-        <a-input v-model="form.userAccount" placeholder="请输入账号..." />
+      <a-form-item field="userAccount" label="账号" :rules="accountRules">
+        <a-input
+          v-model="form.userAccount"
+          placeholder="请输入账号..."
+          class="input-field"
+        />
       </a-form-item>
-      <a-form-item
-        field="userPassword"
-        label="密码"
-        :show-colon="true"
-        :rules="[
-          { required: true, message: '密码为必填字段' },
-          { minLength: 8, message: '密码长度不低于8位字符' },
-        ]"
-        :validate-trigger="['change', 'input']"
-      >
+      <a-form-item field="userPassword" label="密码" :rules="passwordRules">
         <a-input-password
           v-model="form.userPassword"
           placeholder="请输入密码..."
           @keyup.enter="handleSubmit"
+          class="input-field"
         />
       </a-form-item>
-      <a-form-item field="autoLogin" style="text-aligt: center">
+      <a-form-item field="autoLogin">
         <a-checkbox v-model="autoLogin"> 自动登录</a-checkbox>
-        <div style="width: 70%; text-align: right">
-          <a style="cursor: pointer; color: #1677ff" @click="ToRegister"
-            >没有账号？去注册</a
-          >
+        <div class="register-link">
+          <a @click="ToRegister">没有账号？去注册</a>
         </div>
       </a-form-item>
       <a-form-item>
-        <a-button type="primary" html-type="submit" style="width: 380px"
-          >登录
-        </a-button>
+        <a-button type="primary" html-type="submit" class="submit-button"
+          >登录</a-button
+        >
       </a-form-item>
     </a-form>
   </div>
@@ -70,6 +55,16 @@ const form = reactive({
 
 let autoLogin = ref(false);
 
+const accountRules = [
+  { required: true, message: "账号为必填字段" },
+  { minLength: 4, message: "账号长度不低于4位字符" },
+];
+
+const passwordRules = [
+  { required: true, message: "密码为必填字段" },
+  { minLength: 8, message: "密码长度不低于8位字符" },
+];
+
 /**
  * 跳转到注册页面
  * @constructor
@@ -89,9 +84,7 @@ const handleSubmit = async ({ values, errors }: any) => {
   // console.log(data);
   // alert(JSON.stringify(data.value));
   // await UserControllerService.userLoginUsingPost(data.value);
-  if (errors != undefined && Object.keys(errors).length > 0) {
-    return;
-  }
+  if (errors) return;
   const res = await UserControllerService.userLoginUsingPost(form);
   if (res.code === 0) {
     // alert(res.data);
@@ -109,4 +102,35 @@ const handleSubmit = async ({ values, errors }: any) => {
   }
 };
 </script>
-<style scoped></style>
+<style scoped>
+.form-title {
+  margin-bottom: 32px;
+}
+
+.form-container {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.input-field {
+  border-radius: 4px; /* 圆角 */
+  border: 1px solid #d9d9d9; /* 边框颜色 */
+  transition: border-color 0.3s; /* 边框颜色过渡 */
+}
+
+.input-field:focus {
+  border-color: #1677ff; /* 聚焦时的边框颜色 */
+  box-shadow: 0 0 5px rgba(22, 119, 255, 0.5); /* 聚焦时的阴影效果 */
+}
+
+.register-link {
+  width: 70%;
+  text-align: right;
+  cursor: pointer;
+  color: #1677ff;
+}
+
+.submit-button {
+  width: 380px;
+}
+</style>

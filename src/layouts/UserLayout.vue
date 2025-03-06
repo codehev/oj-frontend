@@ -9,13 +9,9 @@
         这意味着间距可以根据屏幕尺寸进行自适应调整，以在不同设备上提供良好的用户体验。-->
         <a-space>
           <icon-code theme="filled" size="24" />
-          <div style="font-weight: 600; font-size: 33px">Online Judge</div>
+          <div class="title">Online Judge</div>
         </a-space>
-        <div
-          style="color: rgba(0, 0, 0, 0.65); font-size: 14px; margin-top: 8px"
-        >
-          一个编程题目评测系统
-        </div>
+        <div class="subtitle">一个编程题目评测系统</div>
       </a-layout-header>
       <a-layout-content class="content">
         <router-view />
@@ -36,7 +32,7 @@ import { IconCode } from "@arco-design/web-vue/es/icon";
 #userLayout {
   text-align: center;
   background-image: url("https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/V-_oS6r-i7wAAAAAAAAAAAAAFl94AQBr");
-  background-size: 100% 100%;
+  background-size: cover;
   /*background: url("https://gw.alipayobjects.com/zos/rmsportal/FfdJeJRQWjEeGTpqgBKj.png")*/
   /*  0% 0% / 100% 100%;*/
 }
@@ -71,5 +67,16 @@ import { IconCode } from "@arco-design/web-vue/es/icon";
     bottom: 0;
     left: 0;
     right: 0;*/
+}
+
+.title {
+  font-weight: 600;
+  font-size: 33px;
+}
+
+.subtitle {
+  color: rgba(0, 0, 0, 0.65);
+  font-size: 14px;
+  margin-top: 8px;
 }
 </style>
