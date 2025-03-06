@@ -116,13 +116,12 @@
         </div>
       </a-menu>
     </a-col>
-    <!--    <a-col flex="100px"> 6666666666666666</a-col>-->
   </a-row>
 </template>
 <script setup lang="ts">
 import { routes } from "@/router/routes/routes";
 import { useRouter, useRoute } from "vue-router";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useStore } from "vuex";
 import checkAccess from "@/access/checkAccess";
 import { UserControllerService } from "../../../generated";
@@ -140,17 +139,18 @@ const doMenuClick = (key: string) => {
   router.push({
     path: key,
   });
-  selectedKeys.value = [key];
+  // // 更新菜单栏上的指示条（菜单栏高亮）
+  // selectedKeys.value = [key];
 };
 
-/**
- * 每次点击菜单项更新路由后，更新菜单栏上的指示条（菜单栏高亮）
- * 目的是刷新页面后，菜单栏上的指示条（菜单栏高亮）保持不动，而不是直接消失
- */
-const selectedKeys = ref([route.path]); //默认主页(初始加载页面时从route.path获取当前路径，并设置为默认选中路径)
+////初始加载页面时从route.path获取当前路径，并设置为默认选中路径
+const selectedKeys = ref([route.path]);
 
-router.afterEach((to, from, failure) => {
-  document.title = (to.name as string) || "OJ在线判题系统";
+watch(route, (newRoute) => {
+  // 每次刷新或路由跳转（页面跳转），更新菜单栏上的指示条（菜单栏高亮）
+  selectedKeys.value = [newRoute.path];
+  // 每次刷新或路由跳转（页面跳转），更新页面标题
+  document.title = (newRoute.name as string) || "OJ在线判题系统";
 });
 
 /**
