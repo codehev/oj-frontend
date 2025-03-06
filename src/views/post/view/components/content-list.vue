@@ -22,7 +22,7 @@
                 <a-space size="mini">
                   <icon-eye />
                   <span style="font-size: 12px">
-                    {{ item.viewNum }}
+                    {{ item.viewNum ?? "---" }}
                   </span>
                 </a-space>
               </div>
@@ -30,7 +30,7 @@
                 <a-space size="mini">
                   <icon-thumb-up />
                   <span style="font-size: 12px">
-                    {{ item.thumbNum }}
+                    {{ item.thumbNum ?? "---" }}
                   </span>
                 </a-space>
               </div>
@@ -38,7 +38,7 @@
                 <a-space size="mini">
                   <icon-star />
                   <span style="font-size: 12px">
-                    {{ item.favourNum }}
+                    {{ item.favourNum ?? "---" }}
                   </span>
                 </a-space>
               </div>
@@ -46,7 +46,9 @@
           </template>
           <template #extra>
             <span style="font-size: 12px">{{
-              dayjs(item.createTime).format("YYYY-MM-DD HH:mm:ss")
+              item.createTime
+                ? dayjs(item.createTime).format("YYYY-MM-DD HH:mm:ss")
+                : "---"
             }}</span>
           </template>
           <a-list-item-meta :title="item.title">
@@ -56,13 +58,15 @@
               </a-typography-text>
             </template>
             <template #avatar>
+              <!-- 气泡卡片（悬浮框） -->
               <a-popover>
                 <template #content>
                   <a-space size="medium">
-                    <a-avatar :image-url="item.userAvatar" />
+                    <a-avatar :image-url="item?.user?.userAvatar" />
                     <a-space direction="vertical">
+                      <!-- 排版 -->
                       <a-typography-title bold style="font-size: 17px">
-                        {{ item.userName }}
+                        {{ item?.user?.userName ?? "---" }}
                       </a-typography-title>
                       <a-typography-paragraph
                         type="secondary"
@@ -77,12 +81,12 @@
                           },
                         }"
                       >
-                        {{ item.content }}
+                        {{ item?.user?.userProfile ?? "---" }}
                       </a-typography-paragraph>
                     </a-space>
                   </a-space>
                 </template>
-                <a-avatar shape="square" :image-url="item.userAvatar" />
+                <a-avatar shape="square" :image-url="item?.user?.userAvatar" />
               </a-popover>
             </template>
           </a-list-item-meta>

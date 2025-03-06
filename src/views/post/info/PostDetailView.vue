@@ -52,9 +52,13 @@ import BreadcrumbComponent from "@/components/breadcrumb/BreadcrumbComponent.vue
 import { PostControllerService, PostVO } from "../../../../generated";
 import { Message } from "@arco-design/web-vue";
 
-const postInfoRef = ref<HTMLElement | null>(null);
+// 帖子信息容器(要滚动的容器)
+const postInfoRef = ref<HTMLElement>();
+// 帖子信息
 const postVO = ref<PostVO>({});
+// 帖子详情
 const postDetailRef = ref();
+// 路由
 const route = useRoute();
 // const postId = Number(route.query.postId);
 
@@ -76,6 +80,7 @@ interface Head {
 }
 
 const headers = ref<Head[]>([]);
+// 获取目录
 const handleGetCatalog = (titleList: HeadList[]) => {
   // TODO: 实现子目录
   headers.value = titleList.map((item) => {

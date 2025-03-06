@@ -87,12 +87,13 @@ import {
   IconClockCircle,
   IconEye,
 } from "@arco-design/web-vue/es/icon";
+
 const props = defineProps<{
   postInfo: PostVO;
 }>();
 
 const emit = defineEmits(["catalog-change"]);
-
+// 获取目录
 const handleGetCatalog = (catalog: string) => {
   emit("catalog-change", catalog);
 };
