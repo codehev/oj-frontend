@@ -8,8 +8,8 @@
         <!--a-space组件可以提供不同大小的间距，并且支持响应式布局。
         这意味着间距可以根据屏幕尺寸进行自适应调整，以在不同设备上提供良好的用户体验。-->
         <a-space>
-          <img src="../assets/logo.jpeg" class="logo" />
-          <div style="font-weight: 600; font-size: 33px">OJ</div>
+          <icon-code theme="filled" size="24" />
+          <div style="font-weight: 600; font-size: 33px">Online Judge</div>
         </a-space>
         <div
           style="color: rgba(0, 0, 0, 0.65); font-size: 14px; margin-top: 8px"
@@ -20,15 +20,16 @@
       <a-layout-content class="content">
         <router-view />
       </a-layout-content>
-      <a-layout-footer class="footer"
-        >OJ网站 ©2023 by
-        <a-link href="https://github.com/codehev" target="_blank"
-          >codehev
-        </a-link>
+      <a-layout-footer class="footer">
+        <FooterComponent />
       </a-layout-footer>
     </a-layout>
   </div>
 </template>
+<script setup lang="ts">
+import FooterComponent from "@/components/footer/FooterComponent.vue";
+import { IconCode } from "@arco-design/web-vue/es/icon";
+</script>
 <style scoped>
 /*scoped样式只在当前vue文件下起作用*/
 
@@ -61,8 +62,8 @@
 
 #userLayout .footer {
   /*background: #efefef;*/
-  padding: 8px;
-  text-align: center;
+  /* padding: 8px; */
+  /* text-align: center; */
   /*position: sticky;它使得元素在页面滚动时相对于视口（viewport）固定，直到某个位置。
   这种行为类似于position: relative;和position: fixed;的组合。
   当一个元素被设置为position: sticky;时，它基于用户的滚动位置在相对定位和固定定位之间切换。*/

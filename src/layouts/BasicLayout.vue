@@ -7,7 +7,7 @@
       <!--固定header，offset-top距离窗口顶部达到指定偏移量后触发-->
       <a-affix :offsetTop="0">
         <a-layout-header class="header">
-          <GlobalHeader />
+          <HeaderComponent />
         </a-layout-header>
       </a-affix>
       <a-layout-content class="content">
@@ -19,8 +19,8 @@
 </template>
 
 <script setup lang="ts">
-import GlobalHeader from "@/components/header/HeaderComponent.vue";
-import FooterComponent from "@/components/FooterComponent.vue";
+import HeaderComponent from "@/components/header/HeaderComponent.vue";
+import FooterComponent from "@/components/footer/FooterComponent.vue";
 </script>
 
 <style scoped>
