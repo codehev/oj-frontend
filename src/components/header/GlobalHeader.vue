@@ -1,7 +1,7 @@
 <template>
   <!--栅格布局，Flex 用法：通过设置 Col 组件的 flex 属性，可以任意配置 flex 布局。
   通过 align 来进行垂直布局。-->
-  <a-row id="globalHeader" class="grid-demo" align="center" :wrap="false">
+  <a-row id="globalHeader" class="grid-demo" :wrap="false">
     <!--:wrap="false",关闭换行，当窗口缩小时，不会把"未登录"这块的字挤压到第二行，
     :是为了把false识别出属性而非字符串-->
     <a-col flex="auto">
