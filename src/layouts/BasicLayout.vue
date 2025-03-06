@@ -13,38 +13,14 @@
       <a-layout-content class="content">
         <router-view />
       </a-layout-content>
-      <a-layout-footer class="footer">
-        <div class="footer-content">
-          <div class="footer-links">
-            <a-link href="https://github.com/codehev" target="_blank">
-              <template #icon>
-                <icon-github />
-              </template>
-              GitHub
-            </a-link>
-            <a-divider direction="vertical" margin="12" />
-            <a-link href="https://arco.design" target="_blank">
-              <template #icon>
-                <icon-book />
-              </template>
-              文档
-            </a-link>
-          </div>
-          <div class="copyright">
-            OJ在线评测系统 © {{ new Date().getFullYear() }} by
-            <a-link href="https://github.com/codehev" target="_blank"
-              >codehev</a-link
-            >
-          </div>
-        </div>
-      </a-layout-footer>
+      <FooterComponent />
     </a-layout>
   </div>
 </template>
 
 <script setup lang="ts">
-import GlobalHeader from "@/components/header/GlobalHeader.vue";
-import { IconGithub, IconBook } from "@arco-design/web-vue/es/icon";
+import GlobalHeader from "@/components/header/HeaderComponent.vue";
+import FooterComponent from "@/components/FooterComponent.vue";
 </script>
 
 <style scoped>

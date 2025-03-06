@@ -7,4 +7,12 @@ module.exports = defineConfig({
   chainWebpack(config) {
     config.plugin("monaco").use(new MonacoWebpackPlugin());
   },
+  pages: {
+    index: {
+      entry: "src/main.ts",
+      template: "public/index.html",
+      filename: "index.html",
+      title: "Online Judge",
+    },
+  },
 });
