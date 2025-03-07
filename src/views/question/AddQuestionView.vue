@@ -1,7 +1,7 @@
 <template>
   <!-- 添加或更新题目页面 -->
   <div id="addQuestionView">
-    <a-button type="text" @click="router.back()">返回</a-button>
+    <BreadcrumbComponent :items="items" />
     <h2 style="text-align: center">
       {{ isUpdatePage ? "更新题目" : "创建题目" }}
     </h2>
@@ -233,8 +233,9 @@ import {
   AiControllerService,
   QuestionControllerService,
 } from "../../../generated";
-import router from "@/router";
 import { IconPark } from "@icon-park/vue-next/es/all";
+import BreadcrumbComponent from "@/components/breadcrumb/BreadcrumbComponent.vue";
+import { BreadcrumbItem } from "@/components/breadcrumb/types";
 
 // 表单ref
 const formRef = ref();
@@ -242,6 +243,19 @@ const formRef = ref();
 const route = useRoute();
 // 如果页面地址包含 update，视为更新页面,includes()返回Boolean值
 const isUpdatePage = route.path.includes("update");
+const items = ref<BreadcrumbItem[]>([
+  {
+    path: "/manage/question",
+    name: "题目管理",
+  },
+  {
+    path: isUpdatePage ? "/update/question" : "/add/question",
+    name: isUpdatePage ? "更新题目" : "创建题目",
+    query: {
+      id: route.query.id as string,
+    },
+  },
+]);
 
 let form = reactive({
   title: "",

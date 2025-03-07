@@ -1,6 +1,5 @@
 <template>
   <div class="container-post">
-    <BreadcrumbComponent :items="['帖子', '列表']" />
     <a-row :gutter="10">
       <a-col :flex="1">
         <post-list />
@@ -17,7 +16,6 @@
 <script setup lang="ts">
 import PostList from "@/views/post/view/components/post-list.vue";
 import PostHotList from "@/views/post/view/components/post-hot-list.vue";
-import BreadcrumbComponent from "@/components/breadcrumb/BreadcrumbComponent.vue";
 </script>
 
 <style scoped lang="less">

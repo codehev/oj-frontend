@@ -1,5 +1,6 @@
 <template>
   <div id="userManagementView">
+    <BreadcrumbComponent :items="items" />
     <div class="search-form-container">
       <a-form :model="searchParams" layout="inline" class="search-form">
         <a-form-item
@@ -156,11 +157,14 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { UserControllerService } from "../../../generated";
+import { UserControllerService, UserQueryRequest } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
 import moment from "moment";
+import BreadcrumbComponent from "@/components/breadcrumb/BreadcrumbComponent.vue";
+import { BreadcrumbItem } from "@/components/breadcrumb/types";
+import { TableColumnData } from "@arco-design/web-vue/es/table";
 
-const searchParams = ref({
+const searchParams = ref<UserQueryRequest>({
   userAccount: "",
   userName: "",
   pageSize: 10,
@@ -184,6 +188,13 @@ const newUser = ref({
 });
 const editUserData = ref<any>({});
 
+const items = ref<BreadcrumbItem[]>([
+  {
+    path: "/manage/user",
+    name: "用户管理",
+  },
+]);
+
 const loadData = async () => {
   const res = await UserControllerService.listUserVoByPageUsingPost(
     searchParams.value
@@ -200,7 +211,7 @@ onMounted(() => {
   loadData();
 });
 
-const columns = [
+const columns = ref<TableColumnData[]>([
   {
     title: "用户头像",
     slotName: "userAvatar",
@@ -225,7 +236,7 @@ const columns = [
     title: "操作",
     slotName: "action",
   },
-];
+]);
 
 const onPageChange = (page: number) => {
   searchParams.value.current = page;

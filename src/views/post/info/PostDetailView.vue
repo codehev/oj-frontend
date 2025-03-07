@@ -1,11 +1,12 @@
 <template>
   <div ref="postInfoRef" class="container-info">
-    <BreadcrumbComponent :items="['帖子', '详情']" />
     <a-row :gutter="10">
       <a-col :span="1">
         <post-actions :post-info="postVO" />
       </a-col>
       <a-col flex="1">
+        <!-- 面包屑 -->
+        <BreadcrumbComponent :items="items" />
         <post-detail
           ref="postDetailRef"
           :post-info="postVO"
@@ -51,7 +52,7 @@ import PostActions from "@/views/post/info/components/post-actions.vue";
 import BreadcrumbComponent from "@/components/breadcrumb/BreadcrumbComponent.vue";
 import { PostControllerService, PostVO } from "../../../../generated";
 import { Message } from "@arco-design/web-vue";
-
+import { BreadcrumbItem } from "@/components/breadcrumb/types";
 // 帖子信息容器(要滚动的容器)
 const postInfoRef = ref<HTMLElement>();
 // 帖子信息
@@ -61,6 +62,15 @@ const postDetailRef = ref();
 // 路由
 const route = useRoute();
 // const postId = Number(route.query.postId);
+
+const items = ref<BreadcrumbItem[]>([
+  { path: "/post", name: "帖子" },
+  {
+    path: "/post/detail",
+    name: "详情",
+    query: { postId: route.query.postId as string },
+  },
+]);
 
 const getPostInfo = async () => {
   const res = await PostControllerService.getPostVoByIdUsingGet(

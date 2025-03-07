@@ -76,7 +76,7 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: "/match",
     name: "比赛",
-    component: () => import("@/views/MatchView.vue"),
+    component: () => import("@/views/match/MatchView.vue"),
     meta: {
       icon: "trophy",
     },
@@ -144,7 +144,7 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: "/noAuth",
     name: "无权限",
-    component: () => import("@/views/NoAuthView.vue"),
+    component: () => import("@/views/exception/NoAuthView.vue"),
     meta: {
       hideInMenu: true, //仅是在菜单栏上隐藏，依旧可以通过router跳转该页面
     },

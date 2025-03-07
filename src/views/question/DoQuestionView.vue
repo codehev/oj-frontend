@@ -273,8 +273,8 @@
                           </div>
                           <div style="overflow-y: auto; height: 100%">
                             <CodeViewer
-                              :value="currentSubmission?.code"
-                              :language="currentSubmission?.language"
+                              :value="currentSubmission?.code || ''"
+                              :language="currentSubmission?.language || 'java'"
                               style="width: 100%; height: 100%"
                             ></CodeViewer>
                           </div>
@@ -366,8 +366,8 @@
                   width: '100%',
                   margin: '16px',
                 }"
-                :value="form.code"
-                :language="form.language"
+                :value="form.code || ''"
+                :language="form.language || 'java'"
                 :handle-change="onCodeChange"
               />
             </a-tab-pane>
@@ -379,14 +379,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ref,
-  onMounted,
-  watch,
-  withDefaults,
-  defineProps,
-  nextTick,
-} from "vue";
+import { ref, onMounted, watch, withDefaults, defineProps } from "vue";
 import {
   QuestionControllerService,
   QuestionSubmitAddRequest,
@@ -406,6 +399,7 @@ import { IconPark } from "@icon-park/vue-next/es/all";
 import { useStore } from "vuex";
 import ACCESS_ENUM from "@/enum/AccessEnum";
 import { useRoute } from "vue-router";
+import { TableColumnData, TableData } from "@arco-design/web-vue/es/table";
 
 const store = useStore();
 const route = useRoute();
@@ -425,7 +419,7 @@ const aiModalTitle = ref("");
 const aiAnalysisResult = ref("");
 const aiAnalysisLoading = ref(false);
 
-const columns = [
+const columns = ref<TableColumnData[]>([
   {
     title: "状态",
     slotName: "status",
@@ -450,7 +444,7 @@ const columns = [
     title: "提交时间",
     slotName: "createTime",
   },
-];
+]);
 
 const detailModalVisible = ref(false);
 const currentSubmission = ref<QuestionSubmitVO>();
@@ -563,7 +557,7 @@ watch(
   }
 );
 
-const onTabChange = (key: string) => {
+const onTabChange = (key: string | number) => {
   if (key === "1") {
     loadQuestion();
   } else if (key === "2") {
@@ -627,7 +621,7 @@ const showAIAnalysis = async (submission: QuestionSubmitVO) => {
   }
 };
 
-const handleRowClick = (rowData: QuestionSubmitVO) => {
+const handleRowClick = (rowData: QuestionSubmitVO & TableData) => {
   currentSubmission.value = rowData;
   detailModalVisible.value = true;
   // 重置 AI 分析结果

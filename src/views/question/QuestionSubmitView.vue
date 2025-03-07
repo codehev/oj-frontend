@@ -1,6 +1,7 @@
 <template>
   <!-- 提交记录页面 -->
   <div id="questionSubmitView">
+    <BreadcrumbComponent :items="items" />
     <div class="search-form-container">
       <a-form :model="searchParams" layout="inline" class="search-form">
         <div class="form-left">
@@ -11,7 +12,7 @@
             class="form-item"
           >
             <a-input
-              v-model="searchParams.questionId"
+              v-model="questionIdModel"
               placeholder="请输入题目ID..."
               :style="{ width: '200px' }"
               allow-clear
@@ -92,8 +93,8 @@
             </div>
           </div>
           <CodeViewer
-            :value="record?.code"
-            :language="record?.language"
+            :value="record?.code || 'java'"
+            :language="record?.language || 'java'"
             class="code-viewer"
           ></CodeViewer>
         </div>
@@ -189,7 +190,16 @@ import { useStore } from "vuex";
 import { IconPark } from "@icon-park/vue-next/es/all";
 import AccessEnum from "@/enum/AccessEnum";
 import CodeViewer from "@/components/code/CodeViewer.vue";
+import BreadcrumbComponent from "@/components/breadcrumb/BreadcrumbComponent.vue";
+import { BreadcrumbItem } from "@/components/breadcrumb/types";
+import { TableColumnData } from "@arco-design/web-vue/es/table";
 
+const items = ref<BreadcrumbItem[]>([
+  {
+    path: "/question_submit",
+    name: "状态",
+  },
+]);
 /**
  * 查看代码（弹窗相关）
  */
@@ -259,7 +269,7 @@ onMounted(() => {
 /**
  * 要展示的列，以及设置列属性
  */
-const columns = [
+const columns = ref<TableColumnData[]>([
   {
     title: "#",
     slotName: "id",
@@ -302,7 +312,7 @@ const columns = [
       sortDirections: ["ascend", "descend"],
     },
   },
-];
+]);
 
 /**
  * 跳转到做题页面
@@ -364,6 +374,17 @@ const doSubmit = () => {
   };
   // loadData(); //可以不需要调用，监听loadData()中的变量，searchParams
 };
+
+// 计算属性
+const questionIdModel = computed({
+  get: () =>
+    searchParams.value.questionId !== undefined
+      ? String(searchParams.value.questionId)
+      : "",
+  set: (value) => {
+    searchParams.value.questionId = value ? Number(value) : undefined; // 将字符串转换回数字
+  },
+});
 </script>
 
 <style scoped>

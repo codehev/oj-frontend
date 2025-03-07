@@ -6,6 +6,7 @@
       </a-affix>
     </a-col>
     <a-col :flex="1">
+      <BreadcrumbComponent :items="items" />
       <content-list :zone="tabValue" />
     </a-col>
   </a-row>
@@ -15,6 +16,10 @@
 import TabList from "@/views/post/view/components/tab-list.vue";
 import ContentList from "@/views/post/view/components/content-list.vue";
 import { ref } from "vue";
+import BreadcrumbComponent from "@/components/breadcrumb/BreadcrumbComponent.vue";
+import { BreadcrumbItem } from "@/components/breadcrumb/types";
+
+const items = ref<BreadcrumbItem[]>([{ path: "/post", name: "帖子" }]);
 
 const tabValue = ref("");
 const getTabValue = (value: string) => {

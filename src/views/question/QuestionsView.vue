@@ -1,5 +1,6 @@
 <template>
   <div id="questionsView">
+    <BreadcrumbComponent :items="items" />
     <div class="search-form-container">
       <a-form :model="searchParams" layout="inline" class="search-form">
         <div class="form-left">
@@ -106,7 +107,9 @@ import {
 import message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
 import moment from "moment";
-
+import BreadcrumbComponent from "@/components/breadcrumb/BreadcrumbComponent.vue";
+import { BreadcrumbItem } from "@/components/breadcrumb/types";
+import { TableColumnData } from "@arco-design/web-vue/es/table";
 //搜索参数
 const searchParams = ref<QuestionQueryRequest>({
   title: "",
@@ -118,6 +121,13 @@ const searchParams = ref<QuestionQueryRequest>({
 const total = ref(0);
 //表格数据
 const dataList = ref([]);
+
+const items = ref<BreadcrumbItem[]>([
+  {
+    path: "/questions",
+    name: "题目",
+  },
+]);
 
 /**
  * 加载表格数据
@@ -141,7 +151,7 @@ onMounted(() => {
 /**
  * 要展示的列，以及设置列属性
  */
-const columns = [
+const columns = ref<TableColumnData[]>([
   {
     title: "题号",
     dataIndex: "id",
@@ -192,7 +202,7 @@ const columns = [
   //   title: "操作",
   //   slotName: "optional",
   // },
-];
+]);
 
 /**
  * 跳转到做题页面

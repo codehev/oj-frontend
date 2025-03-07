@@ -7,7 +7,7 @@
 import * as monaco from "monaco-editor";
 import { defineProps, onMounted, ref, toRaw, watch, withDefaults } from "vue";
 import LanguageEnum from "@/enum/LanguageEnum";
-import { LanguageValue, DefaultCodeEnum } from "@/enum/DefaultCodeEnum";
+import { DefaultCodeEnum } from "@/enum/DefaultCodeEnum";
 
 const codeEditorRef = ref(); //div的ref对象
 const codeEditor = ref(); //代码编辑器实例
