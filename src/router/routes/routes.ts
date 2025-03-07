@@ -125,6 +125,15 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: "/manage/post",
+    name: "帖子管理",
+    component: () => import("@/views/post/control/ManagePost.vue"),
+    meta: {
+      access: ACCESS_ENUM.ADMIN,
+      icon: "message",
+    },
+  },
+  {
     path: "/manage/user",
     name: "用户管理",
     component: () => import("@/views/user/UserManagementView.vue"),
