@@ -1,80 +1,73 @@
 <template>
   <div class="container-edit-post">
-    <Breadcrumb :items="['帖子', '帖子管理', '编辑帖子']" />
-    <a-drawer
-      :width="380"
-      :visible="visible"
-      title="基础信息"
-      @cancel="handleCloseDrawer"
-    >
-      <template #footer>
-        <a-button type="primary" @click="handleCloseDrawer">确定</a-button>
-      </template>
-      <a-form ref="formRef" :model="post">
-        <a-form-item
-          field="title"
-          label="标题"
-          style="width: 20vw"
-          :rules="[
-            {
-              required: true,
-              message: '请输入标题',
-            },
-          ]"
-        >
-          <a-input v-model="post.title" placeholder="请输入标题" size="large" />
-        </a-form-item>
-        <a-form-item
-          field="zone"
-          label="分区"
-          style="width: 20vw"
-          :rules="[
-            {
-              required: true,
-            },
-          ]"
-        >
-          <a-select
-            v-model="post.zone"
-            placeholder="请选择分区"
-            allow-clear
-            :options="zoneOptions"
-          ></a-select>
-        </a-form-item>
-        <a-form-item
-          field="tags"
-          label="标签"
-          style="width: 20vw"
-          :rules="[
-            {
-              required: true,
-            },
-          ]"
-        >
-          <a-input-tag
-            v-model="post.tags"
-            allow-clear
-            placeholder="请输入标签并回车"
-          />
-        </a-form-item>
-      </a-form>
-    </a-drawer>
-    <div class="base-info-button">
-      <a-space>
-        <a-popconfirm content="确定要发布吗？" @ok="handleSubmit">
-          <a-button type="primary">
-            <template #icon>
-              <icon-share-internal />
-            </template>
-            发布
-          </a-button>
-        </a-popconfirm>
-        <a-button type="primary" @click="handleOpenDrawer">基础信息</a-button>
-      </a-space>
-    </div>
+    <BreadcrumbComponent :items="items" />
+    <a-form ref="formRef" :model="postUpdateRequest">
+      <a-row style="margin-bottom: 10px">
+        <a-col :span="24" style="text-align: right">
+          <a-button type="primary" html-type="submit" @click="handleSubmit">{{
+            isUpdatePage ? "更新帖子" : "发布帖子"
+          }}</a-button>
+        </a-col>
+      </a-row>
+      <a-row :gutter="16">
+        <a-col :span="8">
+          <a-form-item
+            field="title"
+            label="标题"
+            :rules="[
+              {
+                required: true,
+                message: '请输入标题',
+              },
+            ]"
+          >
+            <a-input
+              v-model="postUpdateRequest.title"
+              placeholder="请输入标题"
+              size="large"
+            />
+          </a-form-item>
+        </a-col>
+        <a-col :span="8">
+          <a-form-item
+            field="zone"
+            label="分区"
+            :rules="[
+              {
+                required: true,
+              },
+            ]"
+          >
+            <a-select
+              v-model="postUpdateRequest.zone"
+              placeholder="请选择分区"
+              allow-clear
+              :options="zoneOptions"
+            ></a-select>
+          </a-form-item>
+        </a-col>
+        <a-col :span="8">
+          <a-form-item
+            field="tags"
+            label="标签"
+            :rules="[
+              {
+                required: false,
+              },
+            ]"
+          >
+            <a-input-tag
+              v-model="postUpdateRequest.tags"
+              allow-clear
+              placeholder="请输入标签并回车"
+            />
+          </a-form-item>
+        </a-col>
+      </a-row>
+    </a-form>
     <MdEditor
-      v-model="post.content"
-      placeholder="请输入内容（支持 Markdown）"
+      v-model="postUpdateRequest.content"
+      placeholder="请输入内容（Markdown格式）"
       :preview="false"
       :auto-detect-code="true"
       @onUploadImg="onUploadImg"
@@ -84,13 +77,29 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { OjPostUpdateRequest } from "@/api/gen-api";
 import { SelectOptionData } from "@arco-design/web-vue/es/select/interface";
 import { MdEditor } from "md-editor-v3";
-import { OjPostService } from "@/api/gen-api/services/OjPostService.ts";
 import { Message } from "@arco-design/web-vue";
 import { useRoute, useRouter } from "vue-router";
-
+import BreadcrumbComponent from "@/components/breadcrumb/BreadcrumbComponent.vue";
+import { BreadcrumbItem } from "@/components/breadcrumb/types";
+import {
+  PostUpdateRequest,
+  PostControllerService,
+} from "../../../../../generated";
+// 如果页面地址包含 update，视为更新页面,includes()返回Boolean值
+const route = useRoute();
+const isUpdatePage = route.path.includes("update");
+const items = ref<BreadcrumbItem[]>([
+  { path: "/manage/post", name: "帖子管理" },
+  {
+    path: isUpdatePage ? "/update/post" : "/add/post",
+    name: isUpdatePage ? "更新帖子" : "创建帖子",
+    query: {
+      id: route.query.id as string,
+    },
+  },
+]);
 const formRef = ref();
 const zoneOptions = ref<SelectOptionData[]>([
   {
@@ -114,9 +123,9 @@ const zoneOptions = ref<SelectOptionData[]>([
     value: "aigc",
   },
 ]);
-const route = useRoute();
-const post = ref<OjPostUpdateRequest>({
-  id: Number(route.query.id),
+
+const postUpdateRequest = ref<PostUpdateRequest>({
+  id: 0,
   title: "",
   content: "",
   tags: [],
@@ -129,26 +138,51 @@ const handleOpenDrawer = () => {
 const handleCloseDrawer = () => {
   visible.value = false;
 };
+const onUploadImg = (file: File) => {
+  console.log(file);
+};
 
 const router = useRouter();
-const handleSubmit = () => {
-  OjPostService.update(post.value).then((res) => {
-    if (res.result) {
-      Message.success("发布成功");
-      router.push({ name: "PostControl" });
+const handleSubmit = async () => {
+  if (isUpdatePage) {
+    const res = await PostControllerService.updatePostUsingPost(
+      postUpdateRequest.value
+    );
+    if (res.code === 0) {
+      Message.success("更新成功");
+      router.back();
+    } else {
+      Message.error("更新失败," + res.message);
     }
-  });
+  } else {
+    const res = await PostControllerService.addPostUsingPost(
+      postUpdateRequest.value
+    );
+    if (res.code === 0) {
+      Message.success("发布成功");
+      router.back();
+    } else {
+      Message.error("发布失败," + res.message);
+    }
+  }
+};
+
+const loadData = async () => {
+  //获取题目id
+  const id = route.query.id as string;
+  //避免创建题目时调用
+  if (!id || id == "") {
+    return;
+  }
+  const res = await PostControllerService.getPostVoByIdUsingGet(id as any);
+  if (res.code === 0) {
+    postUpdateRequest.value = { tags: res.data?.tagList, ...res.data };
+  } else {
+    Message.error("获取帖子失败," + res.message);
+  }
 };
 onMounted(() => {
-  OjPostService.getInfo(String(post.value.id)).then((res) => {
-    if (res.result) {
-      const { title, content, tags, zone } = res.result;
-      post.value.title = title;
-      post.value.content = content;
-      post.value.tags = tags;
-      post.value.zone = zone;
-    }
-  });
+  loadData();
 });
 </script>
 

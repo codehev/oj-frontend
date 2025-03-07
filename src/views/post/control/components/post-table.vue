@@ -143,9 +143,6 @@ const columns: TableColumnData[] = [
     align: "center",
     slotName: "User",
     width: 200,
-    sortable: {
-      sortDirections: ["ascend", "descend"],
-    },
   },
   {
     title: "头像",
@@ -159,9 +156,6 @@ const columns: TableColumnData[] = [
     dataIndex: "title",
     align: "center",
     width: 200,
-    sortable: {
-      sortDirections: ["ascend", "descend"],
-    },
   },
   {
     title: "分区",
@@ -180,18 +174,27 @@ const columns: TableColumnData[] = [
     dataIndex: "thumbNum",
     align: "center",
     width: 100,
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
   },
   {
     title: "收藏数",
     dataIndex: "favourNum",
     align: "center",
     width: 100,
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
   },
   {
     title: "观看数",
     dataIndex: "viewNum",
     align: "center",
     width: 100,
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
   },
   {
     slotName: "Controls",
@@ -258,7 +261,7 @@ const router = useRouter();
  * 编辑帖子
  */
 const handleEdit = (record: PostVO) => {
-  router.push({ name: "EditPost", query: { id: record.id } });
+  router.push({ path: "/update/post", query: { id: record.id } });
 };
 
 /**

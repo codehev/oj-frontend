@@ -98,6 +98,15 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: "/manage/question",
+    name: "题目管理",
+    component: () => import("@/views/question/ManageQuestionView.vue"),
+    meta: {
+      access: ACCESS_ENUM.ADMIN,
+      icon: "dropbox",
+    },
+  },
+  {
     path: "/add/question",
     name: "创建题目",
     component: () => import("@/views/question/AddQuestionView.vue"),
@@ -116,21 +125,30 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: "/manage/question",
-    name: "题目管理",
-    component: () => import("@/views/question/ManageQuestionView.vue"),
-    meta: {
-      access: ACCESS_ENUM.ADMIN,
-      icon: "dropbox",
-    },
-  },
-  {
     path: "/manage/post",
     name: "帖子管理",
     component: () => import("@/views/post/control/ManagePost.vue"),
     meta: {
       access: ACCESS_ENUM.ADMIN,
       icon: "message",
+    },
+  },
+  {
+    path: "/add/post",
+    name: "创建帖子",
+    component: () => import("@/views/post/control/components/edit-post.vue"),
+    meta: {
+      access: ACCESS_ENUM.ADMIN,
+      hideInMenu: true,
+    },
+  },
+  {
+    path: "/update/post",
+    name: "更新帖子",
+    component: () => import("@/views/post/control/components/edit-post.vue"),
+    meta: {
+      access: ACCESS_ENUM.ADMIN,
+      hideInMenu: true,
     },
   },
   {
@@ -158,20 +176,4 @@ export const routes: Array<RouteRecordRaw> = [
       hideInMenu: true, //仅是在菜单栏上隐藏，依旧可以通过router跳转该页面
     },
   },
-  // {
-  //   path: "/hide",
-  //   name: "隐藏页面",
-  //   component: () => import("@/views/NoAuthView.vue"),
-  //   meta: {
-  //     hideInMenu: true, //仅是在菜单栏上隐藏，依旧可以通过router跳转该页面
-  //   },
-  // },
-  // {
-  //   path: "/admin",
-  //   name: "管理员可见",
-  //   component: () => import("@/views/AdminView.vue"),
-  //   meta: {
-  //     access: ACCESS_ENUM.ADMIN,
-  //   },
-  // },
 ];
