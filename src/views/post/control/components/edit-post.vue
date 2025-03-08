@@ -30,7 +30,7 @@
         </a-col>
         <a-col :span="8">
           <a-form-item
-            field="zone"
+            field="zoneId"
             label="分区"
             :rules="[
               {
@@ -39,7 +39,7 @@
             ]"
           >
             <a-select
-              v-model="postUpdateRequest.zone"
+              v-model="postUpdateRequest.zoneId"
               placeholder="请选择分区"
               allow-clear
               :options="zoneOptions"
@@ -87,8 +87,8 @@ import {
   PostUpdateRequest,
   PostControllerService,
   FileControllerService,
+  PostZoneControllerService,
 } from "../../../../../generated";
-import axios from "axios";
 // 如果页面地址包含 update，视为更新页面,includes()返回Boolean值
 const route = useRoute();
 const isUpdatePage = route.path.includes("update");
@@ -103,35 +103,32 @@ const items = ref<BreadcrumbItem[]>([
   },
 ]);
 const formRef = ref();
-const zoneOptions = ref<SelectOptionData[]>([
-  {
-    label: "综合",
-    value: "synthesis",
-  },
-  {
-    label: "前端",
-    value: "frontend",
-  },
-  {
-    label: "后端",
-    value: "backend",
-  },
-  {
-    label: "鸿蒙",
-    value: "harmony",
-  },
-  {
-    label: "AIGC",
-    value: "aigc",
-  },
-]);
+const zoneOptions = ref<SelectOptionData[]>([]);
+
+// 加载分区列表
+const loadZoneList = async () => {
+  try {
+    const res = await PostZoneControllerService.listPostZoneUsingGet();
+    if (res.code === 0 && res.data) {
+      // 转换为下拉框所需的格式
+      zoneOptions.value = res.data.map((zone) => ({
+        label: zone.zoneName || "",
+        value: zone.id?.toString() || "",
+      }));
+    } else {
+      Message.error("获取分区列表失败，" + res.message);
+    }
+  } catch (error) {
+    Message.error("获取分区列表失败");
+  }
+};
 
 const postUpdateRequest = ref<PostUpdateRequest>({
   id: 0,
   title: "",
   content: "",
   tags: [],
-  zone: "",
+  zoneId: undefined,
 });
 
 const onUploadImg = async (
@@ -199,6 +196,7 @@ const loadData = async () => {
   }
 };
 onMounted(() => {
+  loadZoneList(); // 加载分区列表
   loadData();
 });
 </script>

@@ -3,10 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type PostEditRequest = {
-    content?: string;
+export type PostZoneUpdateRequest = {
+    description?: string;
     id?: number;
-    tags?: Array<string>;
-    title?: string;
-    zoneId?: number;
+    sort?: number;
+    zoneName?: string;
 };

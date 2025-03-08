@@ -19,7 +19,7 @@
           <a-col :span="8">
             <a-form-item field="zone" label="分区">
               <a-select
-                v-model="searchParams.zone"
+                v-model="searchParams.zoneId"
                 placeholder="请选择帖子分区"
                 allow-clear
                 :options="zoneOptions"
@@ -57,6 +57,17 @@
     </a-col>
   </a-row>
   <a-divider style="margin-top: 12px" />
+
+  <!-- 添加分区管理按钮 -->
+  <div class="operation-wrapper">
+    <a-button type="primary" @click="openZoneDrawer">
+      <template #icon>
+        <icon-plus />
+      </template>
+      分区管理
+    </a-button>
+  </div>
+
   <a-table
     bordered
     row-key="id"
@@ -100,6 +111,55 @@
       </a-popconfirm>
     </template>
   </a-table>
+
+  <!-- 分区管理抽屉 -->
+  <a-drawer
+    :visible="zoneDrawerVisible"
+    :width="500"
+    title="分区管理"
+    @cancel="zoneDrawerVisible = false"
+    @ok="zoneDrawerVisible = false"
+    unmountOnClose
+  >
+    <template #footer>
+      <div style="text-align: right">
+        <a-space>
+          <a-button @click="zoneDrawerVisible = false">取消</a-button>
+          <a-button type="primary" @click="saveZoneChanges">保存</a-button>
+        </a-space>
+      </div>
+    </template>
+
+    <div class="zone-management-container">
+      <a-button type="primary" style="margin-bottom: 16px" @click="addNewZone">
+        <template #icon>
+          <icon-plus />
+        </template>
+        添加分区
+      </a-button>
+
+      <a-table
+        :columns="zoneColumns"
+        :data="editablePostZoneList"
+        :pagination="false"
+        bordered
+      >
+        <template #zoneName="{ record }">
+          <a-input v-model="record.zoneName" placeholder="请输入分区名称" />
+        </template>
+        <template #description="{ record }">
+          <a-input v-model="record.description" placeholder="请输入分区描述" />
+        </template>
+        <template #operation="{ record }">
+          <a-button type="text" status="danger" @click="removeZone(record)">
+            <template #icon>
+              <icon-delete />
+            </template>
+          </a-button>
+        </template>
+      </a-table>
+    </div>
+  </a-drawer>
 </template>
 
 <script setup lang="ts">
@@ -111,31 +171,16 @@ import {
   PostVO,
   PostQueryRequest,
   PostControllerService,
+  PostZoneControllerService,
 } from "../../../../../generated";
-import { IconSearch, IconRefresh } from "@arco-design/web-vue/es/icon";
+import {
+  IconSearch,
+  IconRefresh,
+  IconPlus,
+  IconDelete,
+} from "@arco-design/web-vue/es/icon";
 
-const zoneOptions = ref<SelectOptionData[]>([
-  {
-    label: "综合",
-    value: "synthesis",
-  },
-  {
-    label: "前端",
-    value: "frontend",
-  },
-  {
-    label: "后端",
-    value: "backend",
-  },
-  {
-    label: "鸿蒙",
-    value: "harmony",
-  },
-  {
-    label: "AIGC",
-    value: "aigc",
-  },
-]);
+const zoneOptions = ref<SelectOptionData[]>([]);
 const columns: TableColumnData[] = [
   {
     title: "作者",
@@ -159,7 +204,7 @@ const columns: TableColumnData[] = [
   },
   {
     title: "分区",
-    dataIndex: "zone",
+    dataIndex: "postZone.zoneName",
     align: "center",
     width: 150,
   },
@@ -210,7 +255,7 @@ const searchParams = ref<PostQueryRequest>({
   current: 1,
   pageSize: 10,
   title: "",
-  zone: "",
+  zoneId: undefined,
   tags: [],
 });
 const total = ref(0);
@@ -272,15 +317,175 @@ const reset = () => {
     current: 1,
     pageSize: 10,
     title: "",
-    zone: "",
+    zoneId: undefined,
     tags: [],
   };
   loadPostList();
 };
 
+// 分区管理相关
+const zoneDrawerVisible = ref(false);
+const editablePostZoneList = ref<SelectOptionData[]>([]);
+
+const zoneColumns: TableColumnData[] = [
+  {
+    title: "分区名称",
+    dataIndex: "zoneName",
+    slotName: "zoneName",
+  },
+  {
+    title: "分区描述",
+    dataIndex: "description",
+    slotName: "description",
+  },
+  {
+    title: "操作",
+    slotName: "operation",
+    width: 80,
+  },
+];
+
+// 加载分区列表
+const loadZoneList = async () => {
+  try {
+    const res = await PostZoneControllerService.listPostZoneUsingGet();
+    if (res.code === 0 && res.data) {
+      // 转换为下拉框所需的格式
+      zoneOptions.value = res.data.map((zone) => ({
+        label: zone.zoneName || "",
+        value: zone.id?.toString() || "",
+      }));
+    } else {
+      Message.error("获取分区列表失败，" + res.message);
+    }
+  } catch (error) {
+    console.error("获取分区列表出错", error);
+    Message.error("获取分区列表失败");
+  }
+};
+
+// 打开分区管理抽屉
+const openZoneDrawer = async () => {
+  try {
+    // 获取完整的分区信息用于编辑
+    const res = await PostZoneControllerService.listPostZoneUsingGet();
+    if (res.code === 0 && res.data) {
+      // 转换为表格编辑所需的格式
+      editablePostZoneList.value = res.data.map((zone) => ({
+        id: zone.id,
+        zoneName: zone.zoneName || "",
+        description: zone.description || "",
+        sort: zone.sort || 0,
+      }));
+      zoneDrawerVisible.value = true;
+    } else {
+      Message.error("获取分区列表失败，" + res.message);
+    }
+  } catch (error) {
+    console.error("获取分区列表出错", error);
+    Message.error("获取分区列表失败");
+  }
+};
+
+// 添加新分区
+const addNewZone = () => {
+  editablePostZoneList.value.push({
+    id: undefined,
+    zoneName: "",
+    description: "",
+    sort: 0,
+  });
+};
+
+// 移除分区
+const removeZone = (record: any) => {
+  const index = editablePostZoneList.value.findIndex(
+    (item) => item.id === record.id
+  );
+  if (index !== -1) {
+    editablePostZoneList.value.splice(index, 1);
+  }
+};
+
+// 保存分区更改
+const saveZoneChanges = async () => {
+  // 验证数据有效性
+  const isValid = editablePostZoneList.value.every((item) => item.zoneName);
+
+  if (!isValid) {
+    Message.error("分区名称不能为空");
+    return;
+  }
+
+  try {
+    // 获取当前的分区列表，用于比较删除项
+    const res = await PostZoneControllerService.listPostZoneUsingGet();
+    if (res.code !== 0) {
+      throw new Error("获取分区列表失败");
+    }
+
+    const currentZones = res.data || [];
+
+    // 处理删除的分区（在原列表中但不在编辑列表中的项）
+    const deletedZones = currentZones.filter(
+      (originalZone) =>
+        !editablePostZoneList.value.some(
+          (editedZone) => originalZone.id && editedZone.id === originalZone.id
+        )
+    );
+
+    // 处理新增和更新的分区
+    for (const zone of editablePostZoneList.value) {
+      if (zone.id) {
+        // 更新现有分区
+        await PostZoneControllerService.updatePostZoneUsingPost({
+          id: zone.id,
+          zoneName: zone.zoneName,
+          description: zone.description,
+          sort: zone.sort,
+        });
+      } else {
+        // 添加新分区
+        await PostZoneControllerService.addPostZoneUsingPost({
+          zoneName: zone.zoneName,
+          description: zone.description,
+          sort: zone.sort,
+        });
+      }
+    }
+
+    // 删除已移除的分区
+    for (const zone of deletedZones) {
+      if (zone.id) {
+        await PostZoneControllerService.deletePostZoneUsingPost({
+          id: zone.id,
+        });
+      }
+    }
+
+    // 重新加载分区列表
+    await loadZoneList();
+    Message.success("分区保存成功");
+    zoneDrawerVisible.value = false;
+  } catch (error) {
+    Message.error("保存分区失败，请重试");
+  }
+};
+
 onMounted(() => {
+  loadZoneList(); // 加载分区列表
   loadPostList();
 });
 </script>
 
-<style scoped lang="less"></style>
+<style scoped lang="less">
+.operation-wrapper {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.zone-management-container {
+  padding: 16px;
+}
+</style>

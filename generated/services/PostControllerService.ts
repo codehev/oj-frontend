@@ -88,21 +88,21 @@ postEditRequest: PostEditRequest,
     /**
      * 获取热门帖子（默认五个）
      * @param limtNum 
-     * @param zone 
+     * @param zoneId 
      * @returns BaseResponse_List_PostSimpleVo_ OK
      * @returns any Created
      * @throws ApiError
      */
     public static getHotPostUsingPost(
 limtNum?: number,
-zone?: string,
+zoneId?: number,
 ): CancelablePromise<BaseResponse_List_PostSimpleVo_ | any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/post/get/hotPost',
             query: {
                 'limtNum': limtNum,
-                'zone': zone,
+                'zoneId': zoneId,
             },
             errors: {
                 401: `Unauthorized`,

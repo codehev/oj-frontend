@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import type { PostZone } from './PostZone';
 import type { UserVO } from './UserVO';
 
 export type PostVO = {
@@ -12,6 +13,7 @@ export type PostVO = {
     hasFavour?: boolean;
     hasThumb?: boolean;
     id?: number;
+    postZone?: PostZone;
     tagList?: Array<string>;
     thumbNum?: number;
     title?: string;
@@ -19,5 +21,5 @@ export type PostVO = {
     user?: UserVO;
     userId?: number;
     viewNum?: number;
-    zone?: string;
+    zoneId?: number;
 };

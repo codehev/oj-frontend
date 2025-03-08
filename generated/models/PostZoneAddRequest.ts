@@ -3,9 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type PostAddRequest = {
-    content?: string;
-    tags?: Array<string>;
-    title?: string;
-    zoneId?: number;
+export type PostZoneAddRequest = {
+    description?: string;
+    sort?: number;
+    zoneName?: string;
 };

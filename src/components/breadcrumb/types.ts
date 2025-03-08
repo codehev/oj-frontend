@@ -7,4 +7,4 @@ export interface BreadcrumbItem {
   name: string;
   disabled?: boolean;
   query?: QueryParams;
-} 
+}
