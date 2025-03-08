@@ -4,9 +4,9 @@
     <a-form ref="formRef" :model="postUpdateRequest">
       <a-row style="margin-bottom: 10px">
         <a-col :span="24" style="text-align: right">
-          <a-button type="primary" html-type="submit" @click="handleSubmit">{{
-            isUpdatePage ? "更新帖子" : "发布帖子"
-          }}</a-button>
+          <a-button type="primary" html-type="submit" @click="handleSubmit">
+            {{ isUpdatePage ? "更新帖子" : "发布帖子" }}
+          </a-button>
         </a-col>
       </a-row>
       <a-row :gutter="16">
