@@ -120,7 +120,7 @@ export const routes: Array<RouteRecordRaw> = [
     name: "更新题目",
     component: () => import("@/views/question/AddQuestionView.vue"),
     meta: {
-      access: ACCESS_ENUM.USER,
+      access: ACCESS_ENUM.ADMIN,
       hideInMenu: true, //仅是在菜单栏上隐藏，依旧可以通过router跳转该页面
     },
   },
@@ -138,7 +138,7 @@ export const routes: Array<RouteRecordRaw> = [
     name: "创建帖子",
     component: () => import("@/views/post/control/components/edit-post.vue"),
     meta: {
-      access: ACCESS_ENUM.ADMIN,
+      access: ACCESS_ENUM.USER,
       hideInMenu: true,
     },
   },
