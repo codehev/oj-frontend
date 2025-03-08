@@ -86,7 +86,9 @@ import { BreadcrumbItem } from "@/components/breadcrumb/types";
 import {
   PostUpdateRequest,
   PostControllerService,
+  FileControllerService,
 } from "../../../../../generated";
+import axios from "axios";
 // 如果页面地址包含 update，视为更新页面,includes()返回Boolean值
 const route = useRoute();
 const isUpdatePage = route.path.includes("update");
@@ -131,15 +133,30 @@ const postUpdateRequest = ref<PostUpdateRequest>({
   tags: [],
   zone: "",
 });
-const visible = ref(true);
-const handleOpenDrawer = () => {
-  visible.value = true;
-};
-const handleCloseDrawer = () => {
-  visible.value = false;
-};
-const onUploadImg = (file: File) => {
-  console.log(file);
+
+const onUploadImg = async (
+  files: File[],
+  callback: (urls: string[]) => void
+) => {
+  try {
+    const uploadPromises = files.map(async (file: File) => {
+      const res = await FileControllerService.uploadFileToMinioUsingPost(
+        "post_image",
+        file
+      );
+      if (res.code === 0) {
+        return res.data;
+      } else {
+        Message.error("上传失败:" + res.message);
+        throw new Error(res.message);
+      }
+    });
+
+    const results = await Promise.all(uploadPromises);
+    callback(results);
+  } catch (error) {
+    console.error("文件上传过程中发生错误:", error);
+  }
 };
 
 const router = useRouter();
