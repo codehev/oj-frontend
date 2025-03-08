@@ -121,9 +121,9 @@ const props = defineProps({
     type: String,
     default: "",
   },
-  zone: {
+  zoneId: {
     type: String,
-    default: "",
+    default: undefined,
   },
   tag: {
     type: String,
@@ -132,7 +132,7 @@ const props = defineProps({
 });
 const searchParams = ref<PostQueryRequest>({
   title: "",
-  zone: "",
+  zoneId: undefined,
   tags: [],
   current: 1,
   pageSize: 10,
@@ -142,14 +142,20 @@ const postVOList = ref<PostVO[]>([]);
 const totalPage = ref();
 
 watch(
-  () => props.zone,
+  () => props.zoneId,
   () => {
-    if (props.zone) {
-      searchParams.value.current = 1;
-      searchParams.value.zone = props.zone;
-      postVOList.value = [];
-      getPostList();
+    // 重置分页和清空列表
+    searchParams.value.current = 1;
+    postVOList.value = [];
+
+    // 如果有zoneId，则按分区过滤，否则不过滤
+    if (props.zoneId) {
+      searchParams.value.zoneId = props.zoneId as any;
+    } else {
+      searchParams.value.zoneId = undefined; // 清除zoneId筛选条件
     }
+
+    getPostList();
   }
 );
 
