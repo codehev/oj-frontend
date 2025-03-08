@@ -105,7 +105,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch, defineProps } from "vue";
+import { onMounted, ref, watch, defineProps, defineExpose } from "vue";
 import { Message } from "@arco-design/web-vue";
 import { IconEye, IconThumbUp, IconStar } from "@arco-design/web-vue/es/icon";
 import { useRouter } from "vue-router";
@@ -140,6 +140,24 @@ const searchParams = ref<PostQueryRequest>({
 
 const postVOList = ref<PostVO[]>([]);
 const totalPage = ref();
+
+// 根据关键词搜索帖子
+const searchByKeyword = (keyword: string) => {
+  // 重置分页和清空列表
+  searchParams.value.current = 1;
+  postVOList.value = [];
+
+  // 设置搜索关键词
+  searchParams.value.searchText = keyword;
+
+  // 执行搜索
+  getPostList();
+};
+
+// 暴露方法给父组件调用
+defineExpose({
+  searchByKeyword,
+});
 
 watch(
   () => props.zoneId,

@@ -93,10 +93,13 @@ import {
 const route = useRoute();
 const isUpdatePage = route.path.includes("update");
 const items = ref<BreadcrumbItem[]>([
-  { path: "/manage/post", name: "帖子管理" },
+  {
+    path: isUpdatePage ? "/manage/post" : "/post",
+    name: isUpdatePage ? "帖子管理" : "帖子",
+  },
   {
     path: isUpdatePage ? "/update/post" : "/add/post",
-    name: isUpdatePage ? "更新帖子" : "创建帖子",
+    name: isUpdatePage ? "更新帖子" : "发布帖子",
     query: {
       id: route.query.id as string,
     },
