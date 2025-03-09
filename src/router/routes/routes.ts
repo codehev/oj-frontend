@@ -39,7 +39,8 @@ export const routes: Array<RouteRecordRaw> = [
       {
         path: "/view/question/:id",
         name: "在线题目",
-        component: () => import("@/views/question/DoQuestionView.vue"),
+        component: () =>
+          import("@/views/question/doQuestion/DoQuestionView.vue"),
         props: true, // 当 props 设置为 true 时，route.params 将被设置为组件的 props。
         meta: {
           access: ACCESS_ENUM.USER,
