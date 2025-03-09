@@ -40,10 +40,16 @@
         </a-col>
       </a-row>
     </div>
+    <!-- 空评论列表 -->
+    <a-result
+      v-if="!loading && commentList.length === 0"
+      status="404"
+      subtitle="还没有评论哦~ 点击评论输入第一条评论"
+    />
 
     <!-- 评论列表 -->
     <inner-post-comment
-      v-if="!loading"
+      v-if="!loading && commentList.length > 0"
       :comments="commentList"
       @comment-deleted="handleCommentDeleted"
       @update-parent-status="handleUpdateParentStatus"

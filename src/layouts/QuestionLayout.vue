@@ -99,9 +99,14 @@
         <!--a-space组件可以提供不同大小的间距，并且支持响应式布局。
         这意味着间距可以根据屏幕尺寸进行自适应调整，以在不同设备上提供良好的用户体验。-->
         <a-space>
-          <a-popover content="返回">
+          <a-popover content="题目列表">
             <a-button type="text" @click="router.push('/questions')">
-              <IconPark type="return" theme="filled" size="20" fill="#666" />
+              <IconPark
+                type="all-application"
+                theme="filled"
+                size="20"
+                fill="#666"
+              />
             </a-button>
           </a-popover>
           <a-popover content="题库">
