@@ -41,7 +41,7 @@ import { IconPark } from "@icon-park/vue-next/es/all";
 
 const props = defineProps({
   submissionId: {
-    type: [Number, String],
+    type: [String],
     default: "",
   },
   status: {
@@ -68,7 +68,7 @@ const requestAnalysis = async () => {
   try {
     // 调用AI分析接口
     const res = await AiControllerService.analysisCodeByAiUsingGet(
-      Number(props.submissionId)
+      props.submissionId as any
     );
 
     if (res.code === 0) {

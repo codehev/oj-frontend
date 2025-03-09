@@ -81,7 +81,7 @@
         <template #second>
           <!-- 使用AI分析组件 -->
           <AiCodeAnalysis
-            :submissionId="submission?.id"
+            :submissionId="submission?.id?.toString()"
             :status="submission?.status || 0"
           />
         </template>
