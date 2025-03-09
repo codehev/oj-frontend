@@ -5,6 +5,7 @@
 import type { BaseResponse_boolean_ } from '../models/BaseResponse_boolean_';
 import type { BaseResponse_List_PostCommentVO_ } from '../models/BaseResponse_List_PostCommentVO_';
 import type { BaseResponse_long_ } from '../models/BaseResponse_long_';
+import type { BaseResponse_Page_PostCommentVO_ } from '../models/BaseResponse_Page_PostCommentVO_';
 import type { PostCommentRequest } from '../models/PostCommentRequest';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -20,7 +21,7 @@ export class PostCommentControllerService {
      * @throws ApiError
      */
     public static getNumUsingGet(
-postId: string,
+postId: number,
 ): CancelablePromise<BaseResponse_long_> {
         return __request(OpenAPI, {
             method: 'GET',
@@ -37,19 +38,54 @@ postId: string,
     }
 
     /**
-     * 根据父节点id获取帖子子评论
+     * 获取评论列表，支持根评论和子评论
+     * @param postId postId
      * @param parentId parentId
      * @returns BaseResponse_List_PostCommentVO_ OK
      * @throws ApiError
      */
-    public static listChildrenUsingGet(
-parentId: string,
+    public static listUsingGet(
+postId: number,
+parentId?: number,
 ): CancelablePromise<BaseResponse_List_PostCommentVO_> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/api/post/comment/listChildren',
+            url: '/api/post/comment/list',
             query: {
                 'parentId': parentId,
+                'postId': postId,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+
+    /**
+     * 分页获取评论列表，支持根评论和子评论
+     * @param postId postId
+     * @param current current
+     * @param pageSize pageSize
+     * @param parentId parentId
+     * @returns BaseResponse_Page_PostCommentVO_ OK
+     * @throws ApiError
+     */
+    public static pageUsingGet(
+postId: number,
+current: number = 1,
+pageSize: number = 10,
+parentId?: number,
+): CancelablePromise<BaseResponse_Page_PostCommentVO_> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/post/comment/page',
+            query: {
+                'current': current,
+                'pageSize': pageSize,
+                'parentId': parentId,
+                'postId': postId,
             },
             errors: {
                 401: `Unauthorized`,

@@ -19,6 +19,7 @@
             placeholder="搜索帖子标题或内容"
             search-button
             style="width: 80%"
+            @keyup.enter="enterSearch"
             @search="handleSearch"
           >
             <template #prefix>
@@ -61,6 +62,11 @@ const getTabValue = (value: string | null) => {
 };
 
 // 搜索帖子
+const enterSearch = () => {
+  if (contentListRef.value) {
+    contentListRef.value.searchByKeyword(searchKeyword);
+  }
+};
 const handleSearch = (keyword: string) => {
   if (contentListRef.value) {
     contentListRef.value.searchByKeyword(keyword);

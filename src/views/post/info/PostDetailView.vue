@@ -12,6 +12,16 @@
           :post-info="postVO"
           @catalog-change="handleGetCatalog"
         />
+        <!-- 添加评论区到页面底部 -->
+        <div class="comment-section">
+          <a-divider>
+            <a-space>
+              <icon-message />
+              评论区
+            </a-space>
+          </a-divider>
+          <post-comment :post-id="route.query.postId as string" />
+        </div>
       </a-col>
       <a-col :span="4">
         <a-space direction="vertical">
@@ -49,9 +59,11 @@ import UserInfoCard from "@/views/post/info/components/user-info-card.vue";
 import { HeadList } from "md-editor-v3/lib/types/MdEditor/type";
 import { nanoid } from "nanoid";
 import PostActions from "@/views/post/info/components/post-actions.vue";
+import PostComment from "@/views/post/info/components/post-comment.vue";
 import BreadcrumbComponent from "@/components/breadcrumb/BreadcrumbComponent.vue";
 import { PostControllerService, PostVO } from "../../../../generated";
 import { Message } from "@arco-design/web-vue";
+import { IconMessage } from "@arco-design/web-vue/es/icon";
 import { BreadcrumbItem } from "@/components/breadcrumb/types";
 // 帖子信息容器(要滚动的容器)
 const postInfoRef = ref<HTMLElement>();
@@ -61,7 +73,6 @@ const postVO = ref<PostVO>({});
 const postDetailRef = ref();
 // 路由
 const route = useRoute();
-// const postId = Number(route.query.postId);
 
 const items = ref<BreadcrumbItem[]>([
   { path: "/post", name: "帖子" },
@@ -110,5 +121,9 @@ onMounted(() => {
 <style scoped lang="less">
 .container-info {
   padding: 0 20px 20px;
+}
+
+.comment-section {
+  margin-top: 20px;
 }
 </style>

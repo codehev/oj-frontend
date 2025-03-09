@@ -14,6 +14,7 @@ export type { BaseResponse_List_PostSimpleVo_ } from './models/BaseResponse_List
 export type { BaseResponse_List_PostZoneVO_ } from './models/BaseResponse_List_PostZoneVO_';
 export type { BaseResponse_LoginUserVO_ } from './models/BaseResponse_LoginUserVO_';
 export type { BaseResponse_long_ } from './models/BaseResponse_long_';
+export type { BaseResponse_Page_PostCommentVO_ } from './models/BaseResponse_Page_PostCommentVO_';
 export type { BaseResponse_Page_PostVO_ } from './models/BaseResponse_Page_PostVO_';
 export type { BaseResponse_Page_PostZoneVO_ } from './models/BaseResponse_Page_PostZoneVO_';
 export type { BaseResponse_Page_Question_ } from './models/BaseResponse_Page_Question_';
@@ -36,6 +37,7 @@ export type { JudgeConfig } from './models/JudgeConfig';
 export type { JudgeInfo } from './models/JudgeInfo';
 export type { LoginUserVO } from './models/LoginUserVO';
 export type { OrderItem } from './models/OrderItem';
+export type { Page_PostCommentVO_ } from './models/Page_PostCommentVO_';
 export type { Page_PostVO_ } from './models/Page_PostVO_';
 export type { Page_PostZoneVO_ } from './models/Page_PostZoneVO_';
 export type { Page_Question_ } from './models/Page_Question_';

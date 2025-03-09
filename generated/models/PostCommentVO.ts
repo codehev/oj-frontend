@@ -4,7 +4,6 @@
 /* eslint-disable */
 
 export type PostCommentVO = {
-    children?: Array<PostCommentVO>;
     content?: string;
     createTime?: string;
     expandedFlag?: boolean;

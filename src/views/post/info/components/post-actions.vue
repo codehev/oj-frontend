@@ -1,13 +1,4 @@
 <template>
-  <a-drawer
-    v-model:visible="visible"
-    :width="500"
-    unmountOnClose
-    :footer="false"
-  >
-    <template #title>评论区</template>
-    <post-comment />
-  </a-drawer>
   <a-affix :offset-top="200">
     <a-space direction="vertical" size="large">
       <a-badge
@@ -62,7 +53,7 @@
         :count="Number(commentNum)"
         :dotStyle="{ background: '#E5E6EB', color: '#86909C' }"
       >
-        <a-button class="affix-button" shape="circle" @click="visible = true">
+        <a-button class="affix-button" shape="circle" @click="scrollToComment">
           <icon-message />
         </a-button>
       </a-badge>
@@ -88,7 +79,6 @@ import {
   IconReply,
   IconExclamationCircleFill,
 } from "@arco-design/web-vue/es/icon";
-import PostComment from "@/views/post/info/components/post-comment.vue";
 import { useRoute } from "vue-router";
 import {
   PostCommentControllerService,
@@ -99,7 +89,7 @@ import {
 import { useRouter } from "vue-router";
 
 const router = useRouter();
-const visible = ref(false);
+const route = useRoute();
 
 const props = defineProps<{
   postInfo: PostVO;
@@ -125,8 +115,9 @@ watch(
 const commentNum = ref<number>(0);
 // 获取评论数
 onMounted(async () => {
-  const postId = useRoute().query.postId as string;
-  const res = await PostCommentControllerService.getNumUsingGet(postId);
+  const res = await PostCommentControllerService.getNumUsingGet(
+    route.query.postId as any
+  );
   if (res.code === 0) {
     commentNum.value = res.data as number;
   } else {
@@ -134,10 +125,18 @@ onMounted(async () => {
   }
 });
 
+// 滚动到评论区
+const scrollToComment = () => {
+  const commentSection = document.querySelector(".comment-section");
+  if (commentSection) {
+    commentSection.scrollIntoView({ behavior: "smooth" });
+  }
+};
+
 // 点赞
 const handleThumb = async () => {
   var res = await PostThumbControllerService.doThumbUsingPost({
-    postId: post.value.id,
+    postId: post.value.id as any,
   });
   if (res.code === 0) {
     const thumbChange = res.data;
@@ -157,7 +156,7 @@ const handleThumb = async () => {
 // 收藏
 const handleFavour = async () => {
   const res = await PostFavourControllerService.doPostFavourUsingPost({
-    postId: post.value.id,
+    postId: post.value.id as any,
   });
   if (res.code === 0) {
     const favourChange = res.data;
