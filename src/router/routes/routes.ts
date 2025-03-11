@@ -93,7 +93,7 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: "/post/detail",
     name: "帖子详情",
-    component: () => import("@/views/post/info/PostDetailView.vue"),
+    component: () => import("@/views/post/detail/PostDetailView.vue"),
     meta: {
       hideInMenu: true,
     },
@@ -128,7 +128,7 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: "/manage/post",
     name: "帖子管理",
-    component: () => import("@/views/post/control/ManagePost.vue"),
+    component: () => import("@/views/post/manage/ManagePost.vue"),
     meta: {
       access: ACCESS_ENUM.ADMIN,
       icon: "message",
@@ -137,7 +137,7 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: "/add/post",
     name: "创建帖子",
-    component: () => import("@/views/post/control/components/edit-post.vue"),
+    component: () => import("@/views/post/manage/components/edit-post.vue"),
     meta: {
       access: ACCESS_ENUM.USER,
       hideInMenu: true,
@@ -146,7 +146,7 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: "/update/post",
     name: "更新帖子",
-    component: () => import("@/views/post/control/components/edit-post.vue"),
+    component: () => import("@/views/post/manage/components/edit-post.vue"),
     meta: {
       access: ACCESS_ENUM.ADMIN,
       hideInMenu: true,

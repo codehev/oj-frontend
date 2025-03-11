@@ -158,7 +158,7 @@ import QuestionDescription from "./components/QuestionDescription.vue";
 import QuestionAnswers from "./components/QuestionAnswers.vue";
 import SubmissionHistory from "./components/SubmissionHistory.vue";
 import SubmissionDetail from "./components/SubmissionDetail.vue";
-import QuestionComment from "@/views/question/components/question-comment.vue";
+import QuestionComment from "@/views/question/doQuestion/components/question-comment.vue";
 
 const route = useRoute();
 

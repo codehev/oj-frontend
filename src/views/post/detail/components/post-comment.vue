@@ -69,7 +69,7 @@
 import { nextTick, onMounted, ref, defineProps } from "vue";
 import { IconMessage } from "@arco-design/web-vue/es/icon";
 import { Message } from "@arco-design/web-vue";
-import InnerPostComment from "@/views/post/info/components/inner-post-comment.vue";
+import InnerPostComment from "@/views/post/detail/components/inner-post-comment.vue";
 import {
   PostCommentControllerService,
   PostCommentVO,

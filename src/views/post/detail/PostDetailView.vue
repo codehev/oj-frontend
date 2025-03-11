@@ -52,14 +52,14 @@
 </template>
 
 <script setup lang="ts">
-import PostDetail from "@/views/post/info/components/post-detail.vue";
+import PostDetail from "@/views/post/detail/components/post-detail.vue";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
-import UserInfoCard from "@/views/post/info/components/user-info-card.vue";
+import UserInfoCard from "@/views/post/detail/components/user-info-card.vue";
 import { HeadList } from "md-editor-v3/lib/types/MdEditor/type";
 import { nanoid } from "nanoid";
-import PostActions from "@/views/post/info/components/post-actions.vue";
-import PostComment from "@/views/post/info/components/post-comment.vue";
+import PostActions from "@/views/post/detail/components/post-actions.vue";
+import PostComment from "@/views/post/detail/components/post-comment.vue";
 import BreadcrumbComponent from "@/components/breadcrumb/BreadcrumbComponent.vue";
 import { PostControllerService, PostVO } from "../../../../generated";
 import { Message } from "@arco-design/web-vue";

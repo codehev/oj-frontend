@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import PostTable from "@/views/post/control/components/post-table.vue";
+import PostTable from "@/views/post/manage/components/post-table.vue";
 import BreadcrumbComponent from "@/components/breadcrumb/BreadcrumbComponent.vue";
 import { BreadcrumbItem } from "@/components/breadcrumb/types";
 import { ref } from "vue";

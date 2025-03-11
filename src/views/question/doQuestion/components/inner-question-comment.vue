@@ -116,7 +116,7 @@ import {
   QuestionCommentRequest,
   QuestionCommentVO,
   QuestionCommentControllerService,
-} from "../../../../generated";
+} from "../../../../../generated";
 import dayjs from "dayjs";
 import store from "@/store";
 

@@ -69,11 +69,11 @@
 import { onMounted, ref, defineProps, watch } from "vue";
 import { IconMessage } from "@arco-design/web-vue/es/icon";
 import { Message } from "@arco-design/web-vue";
-import InnerQuestionComment from "@/views/question/components/inner-question-comment.vue";
+import InnerQuestionComment from "@/views/question/doQuestion/components/inner-question-comment.vue";
 import {
   QuestionCommentControllerService,
   QuestionCommentVO,
-} from "../../../../generated";
+} from "../../../../../generated";
 
 const props = defineProps<{
   questionId?: string;
