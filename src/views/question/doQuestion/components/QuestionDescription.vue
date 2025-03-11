@@ -1,5 +1,5 @@
 <template>
-  <div class="tab-content" style="flex: 1; overflow-y: auto">
+  <div class="question-desc-container">
     <a-space wrap>
       <a-tag v-for="(tag, index) in questionVO?.tags" :key="index" color="green"
         >{{ tag }}
@@ -22,11 +22,13 @@
       :value="questionVO?.content || ''"
       style="height: 100%; width: 100%"
     /> -->
-    <MdPreview
-      v-if="questionVO?.content !== ''"
-      :modelValue="questionVO?.content"
-    />
-    <a-result v-else status="404" subtitle="暂无题目描述"> </a-result>
+    <div class="md-content-wrapper">
+      <MdPreview
+        v-if="questionVO?.content !== ''"
+        :modelValue="questionVO?.content"
+      />
+      <a-result v-else status="404" subtitle="暂无题目描述"> </a-result>
+    </div>
   </div>
 </template>
 
@@ -43,11 +45,67 @@ defineProps({
 });
 </script>
 
-<style scoped>
-.tab-content {
-  height: calc(100% - 48px);
+<style>
+/* 使用全局样式确保可以影响到md-editor-v3内部组件 */
+/* 注意：移除scoped属性，以便样式可以渗透到组件内部 */
+.question-desc-container {
+  height: calc(100vh - 150px);
   padding: 20px;
-  overflow-y: auto;
-  box-sizing: border-box;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.md-content-wrapper {
+  flex: 1;
+  margin-top: 16px;
+  overflow: auto;
+  position: relative;
+  height: 100%;
+}
+
+/* 确保MdPreview内部滚动容器具有正确的高度 */
+.md-content-wrapper .md-editor-preview-wrapper {
+  height: 100% !important;
+  overflow-y: auto !important;
+}
+
+/* 调整Markdown内容区域样式 */
+.md-content-wrapper .md-editor-preview {
+  height: 100%;
+  overflow: auto !important;
+  padding: 10px;
+  padding-bottom: 30px; /* 增加底部间距防止内容被遮挡 */
+  border: 1px solid #e6e6e6;
+  border-radius: 4px;
+}
+
+/* 确保内容区域底部有足够空间 */
+.md-content-wrapper .md-editor-preview > div:last-child {
+  margin-bottom: 20px;
+}
+
+/* 自定义滚动条样式 */
+.md-content-wrapper::-webkit-scrollbar,
+.md-editor-preview::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.md-content-wrapper::-webkit-scrollbar-thumb,
+.md-editor-preview::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 4px;
+}
+
+.md-content-wrapper::-webkit-scrollbar-thumb:hover,
+.md-editor-preview::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+
+.md-content-wrapper::-webkit-scrollbar-track,
+.md-editor-preview::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
 }
 </style>
