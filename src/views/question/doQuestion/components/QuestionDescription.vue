@@ -49,16 +49,17 @@ defineProps({
 /* 使用全局样式确保可以影响到md-editor-v3内部组件 */
 /* 注意：移除scoped属性，以便样式可以渗透到组件内部 */
 .question-desc-container {
-  height: calc(100vh - 150px);
-  padding: 20px;
+  height: calc(100vh - 110px);
+  padding: 5px 20px 20px 20px; /* 减小顶部内边距 */
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  margin-top: 0; /* 确保容器顶部没有外边距 */
 }
 
 .md-content-wrapper {
   flex: 1;
-  margin-top: 16px;
+  margin-top: 10px; /* 减小内容区域顶部的边距 */
   overflow: auto;
   position: relative;
   height: 100%;
