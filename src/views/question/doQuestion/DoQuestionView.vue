@@ -70,7 +70,7 @@
                 />
                 评论
               </template>
-              暂无评论
+              <QuestionComment :questionId="questionVO?.id?.toString()" />
             </a-tab-pane>
           </a-tabs>
         </div>
@@ -158,6 +158,7 @@ import QuestionDescription from "./components/QuestionDescription.vue";
 import QuestionAnswers from "./components/QuestionAnswers.vue";
 import SubmissionHistory from "./components/SubmissionHistory.vue";
 import SubmissionDetail from "./components/SubmissionDetail.vue";
+import QuestionComment from "@/views/question/components/question-comment.vue";
 
 const route = useRoute();
 
