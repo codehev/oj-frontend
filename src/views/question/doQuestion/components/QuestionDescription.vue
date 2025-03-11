@@ -17,18 +17,23 @@
         {{ questionVO?.judgeConfig?.stackLimit ?? 0 }}kb
       </a-descriptions-item>
     </a-descriptions>
-    <MdViewer
+    <!-- <MdViewer
       :key="questionVO?.id"
       :value="questionVO?.content || ''"
       style="height: 100%; width: 100%"
+    /> -->
+    <MdPreview
+      v-if="questionVO?.content !== ''"
+      :modelValue="questionVO?.content"
     />
+    <a-result v-else status="404" subtitle="暂无题目描述"> </a-result>
   </div>
 </template>
 
 <script setup lang="ts">
 import { defineProps } from "vue";
 import { QuestionVO } from "../../../../../generated";
-import MdViewer from "@/components/markdown/MdViewer.vue";
+import { MdPreview } from "md-editor-v3";
 
 defineProps({
   questionVO: {
