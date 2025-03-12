@@ -68,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch, defineProps } from "vue";
+import { onMounted, ref, watch, defineProps, defineEmits } from "vue";
 import { Message } from "@arco-design/web-vue";
 import {
   IconThumbUp,
@@ -81,7 +81,6 @@ import {
 } from "@arco-design/web-vue/es/icon";
 import { useRoute } from "vue-router";
 import {
-  PostCommentControllerService,
   PostFavourControllerService,
   PostThumbControllerService,
   PostVO,
@@ -91,9 +90,14 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const route = useRoute();
 
+// 发出事件
+const emit = defineEmits(["reload-comment-count"]);
+
 const props = defineProps<{
   postInfo: PostVO;
+  commentNum?: number; // 接收父组件传来的评论数
 }>();
+
 // 帖子信息
 const post = ref<PostVO>({
   thumbNum: 0,
@@ -102,6 +106,7 @@ const post = ref<PostVO>({
   hasThumb: false,
   hasFavour: false,
 });
+
 // 监听帖子信息
 watch(
   () => props.postInfo,
@@ -112,18 +117,6 @@ watch(
     deep: true,
   }
 );
-const commentNum = ref<number>(0);
-// 获取评论数
-onMounted(async () => {
-  const res = await PostCommentControllerService.getNumUsingGet(
-    route.query.postId as any
-  );
-  if (res.code === 0) {
-    commentNum.value = res.data as number;
-  } else {
-    Message.error("获取评论数失败");
-  }
-});
 
 // 滚动到评论区
 const scrollToComment = () => {

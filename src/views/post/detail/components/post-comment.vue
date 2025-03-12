@@ -53,6 +53,7 @@
       :comments="commentList"
       @comment-deleted="handleCommentDeleted"
       @update-parent-status="handleUpdateParentStatus"
+      @comment-count-changed="onCommentCountChanged"
     />
 
     <!-- 骨架屏 -->
@@ -66,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onMounted, ref, defineProps } from "vue";
+import { nextTick, onMounted, ref, defineProps, defineEmits } from "vue";
 import { IconMessage } from "@arco-design/web-vue/es/icon";
 import { Message } from "@arco-design/web-vue";
 import InnerPostComment from "@/views/post/detail/components/inner-post-comment.vue";
@@ -79,10 +80,18 @@ const props = defineProps<{
   postId: string;
 }>();
 
+// 定义触发的事件
+const emit = defineEmits(["comment-count-changed"]);
+
 const commentVisible = ref(false);
 const commentContent = ref("");
 const commentList = ref<PostCommentVO[]>([]);
 const loading = ref(false);
+
+// 处理内部评论组件触发的评论数变化事件
+const onCommentCountChanged = () => {
+  emit("comment-count-changed");
+};
 
 // 提交评论
 const submitComment = async () => {
@@ -95,6 +104,9 @@ const submitComment = async () => {
     commentVisible.value = false;
     commentContent.value = "";
     getRootComment();
+
+    // 添加评论成功后，触发评论数变化事件
+    emit("comment-count-changed");
   } else {
     Message.error("评论失败，" + res.message);
   }
@@ -108,6 +120,9 @@ const handleCommentDeleted = (commentId: number, parentId?: number) => {
   const index = commentList.value.findIndex((c) => c.id === commentId);
   if (index !== -1) {
     commentList.value.splice(index, 1);
+
+    // 删除评论后，触发评论数变化事件
+    emit("comment-count-changed");
   }
 
   // 如果有父评论ID并且删除的是子评论，检查父评论状态

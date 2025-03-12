@@ -2,7 +2,11 @@
   <div ref="postInfoRef" class="container-info">
     <a-row :gutter="10">
       <a-col :span="1">
-        <post-actions :post-info="postVO" />
+        <post-actions
+          :post-info="postVO"
+          :comment-num="commentNum"
+          @reload-comment-count="loadCommentCount"
+        />
       </a-col>
       <a-col flex="1">
         <!-- 面包屑 -->
@@ -20,7 +24,10 @@
               评论区
             </a-space>
           </a-divider>
-          <post-comment :post-id="route.query.postId as string" />
+          <post-comment
+            :post-id="route.query.postId as string"
+            @comment-count-changed="loadCommentCount"
+          />
         </div>
       </a-col>
       <a-col :span="4">
@@ -61,7 +68,11 @@ import { nanoid } from "nanoid";
 import PostActions from "@/views/post/detail/components/post-actions.vue";
 import PostComment from "@/views/post/detail/components/post-comment.vue";
 import BreadcrumbComponent from "@/components/breadcrumb/BreadcrumbComponent.vue";
-import { PostControllerService, PostVO } from "../../../../generated";
+import {
+  PostControllerService,
+  PostVO,
+  PostCommentControllerService,
+} from "../../../../generated";
 import { Message } from "@arco-design/web-vue";
 import { IconMessage } from "@arco-design/web-vue/es/icon";
 import { BreadcrumbItem } from "@/components/breadcrumb/types";
@@ -73,6 +84,8 @@ const postVO = ref<PostVO>({});
 const postDetailRef = ref();
 // 路由
 const route = useRoute();
+// 评论数
+const commentNum = ref<number>(0);
 
 const items = ref<BreadcrumbItem[]>([
   { path: "/post", name: "帖子" },
@@ -82,6 +95,24 @@ const items = ref<BreadcrumbItem[]>([
     query: { postId: route.query.postId as string },
   },
 ]);
+
+/**
+ * 加载评论数量
+ */
+const loadCommentCount = async () => {
+  try {
+    const res = await PostCommentControllerService.getNumUsingGet(
+      route.query.postId as any
+    );
+    if (res.code === 0) {
+      commentNum.value = res.data as number;
+    } else {
+      console.error("获取评论数失败:", res.message);
+    }
+  } catch (error) {
+    console.error("获取评论数失败:", error);
+  }
+};
 
 const getPostInfo = async () => {
   const res = await PostControllerService.getPostVoByIdUsingGet(
@@ -115,6 +146,7 @@ const handleGetCatalog = (titleList: HeadList[]) => {
 
 onMounted(() => {
   getPostInfo();
+  loadCommentCount(); // 初始加载评论数
 });
 </script>
 

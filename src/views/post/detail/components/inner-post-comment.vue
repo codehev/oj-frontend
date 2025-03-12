@@ -93,6 +93,8 @@
       v-if="isCommentExpanded(comment)"
       :comments="commentChildrenMap[comment.id || ''] || []"
       @comment-deleted="handleChildCommentDeleted"
+      @update-parent-status="emit('update-parent-status', $event)"
+      @comment-count-changed="emit('comment-count-changed')"
     />
   </a-comment>
 </template>
@@ -135,7 +137,8 @@ const props = defineProps({
 // 定义事件
 const emit = defineEmits([
   "comment-deleted",
-  "update-parent-status", // 添加新事件，用于更新父评论状态
+  "update-parent-status", // 更新父评论状态
+  "comment-count-changed", // 添加评论数变化事件
 ]);
 
 // 本地维护的评论列表，用于处理删除等操作
@@ -236,6 +239,9 @@ const handleChildCommentDeleted = async (
 
   // 向上级组件传递删除事件，带上父评论ID信息
   emit("comment-deleted", commentId, parentId);
+
+  // 触发评论数变化事件，通知父组件更新评论数
+  emit("comment-count-changed");
 };
 
 /**
@@ -262,6 +268,9 @@ const handleConfirmDelete = async (comment: PostCommentVO) => {
 
       // 通过事件通知父组件删除评论，传递父评论ID
       emit("comment-deleted", comment.id, comment.parentId);
+
+      // 触发评论数变化事件，通知父组件更新评论数
+      emit("comment-count-changed");
 
       // 如果删除的评论有子评论，也要清理它们的映射
       if (comment.id && commentChildrenMap[comment.id + ""]) {
@@ -445,6 +454,9 @@ const doRecoverComment = async (comment: PostCommentVO) => {
         await loadChildComments(comment.id + "", comment.postId + "");
       }
     }
+
+    // 触发评论数变化事件，通知父组件更新评论数
+    emit("comment-count-changed");
 
     // 回复成功后不自动展开子评论
   } else {
