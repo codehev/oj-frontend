@@ -133,22 +133,26 @@
       <!--用户-->
       <template #userName="{ record }">
         <router-link
+          v-if="record.userVO?.userName"
           class="tableLink"
           :to="{
             path: `/user/home/${record.userId}`,
           }"
-          >{{ record.userVO.userName }}
+          >{{ record.userVO?.userName || "--" }}
         </router-link>
+        <span v-else>用户丢失</span>
       </template>
       <!--题目-->
       <template #title="{ record }">
         <router-link
+          v-if="record.questionVO?.title"
           class="tableLink"
           :to="{
             path: `/view/question/${record.questionId}`,
           }"
-          >{{ record.questionVO.title }}
+          >{{ record.questionVO?.title || "--" }}
         </router-link>
+        <span v-else>题目丢失</span>
       </template>
       <!--判题状态-->
       <template #status="{ record }">
