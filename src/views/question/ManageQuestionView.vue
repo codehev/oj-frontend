@@ -132,15 +132,15 @@
       <template #optional="{ record }">
         <a-space direction="vertical">
           <a-button type="text" size="mini" @click="doUpdate(record.id)"
-            >修改
-          </a-button>
-          <a-button
-            type="text"
-            status="danger"
-            size="mini"
-            @click="doDelete(record.id)"
-            >删除
-          </a-button>
+            >修改</a-button
+          >
+          <a-popconfirm
+            content="确定要删除这个题目吗？删除后将无法恢复！"
+            @ok="doDelete(record.id)"
+            position="br"
+          >
+            <a-button type="text" status="danger" size="mini">删除</a-button>
+          </a-popconfirm>
         </a-space>
       </template>
     </a-table>
@@ -349,7 +349,7 @@ const doUpdate = (id: number) => {
 const doDelete = async (id: number) => {
   const res = await QuestionControllerService.deleteQuestionUsingPost({ id });
   if (res.code === 0) {
-    message.success(res.message);
+    message.success("删除成功");
     //更新题目列表
     loadData();
   } else {
