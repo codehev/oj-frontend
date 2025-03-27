@@ -140,7 +140,7 @@
           }"
           >{{ record.userVO?.userName || "--" }}
         </router-link>
-        <span v-else>用户丢失</span>
+        <span v-else style="color: red">用户丢失</span>
       </template>
       <!--题目-->
       <template #title="{ record }">
@@ -152,7 +152,7 @@
           }"
           >{{ record.questionVO?.title || "--" }}
         </router-link>
-        <span v-else>题目丢失</span>
+        <span v-else style="color: red">题目丢失</span>
       </template>
       <!--判题状态-->
       <template #status="{ record }">
