@@ -31,7 +31,9 @@
           <a-button type="primary" @click="loadData">搜索</a-button>
         </a-form-item>
         <a-form-item class="add-user-button">
-          <a-button type="primary" @click="showAddUserModal">添加用户</a-button>
+          <a-button type="primary" @click="showUserModal('add')"
+            >添加用户</a-button
+          >
         </a-form-item>
       </a-form>
     </div>
@@ -72,7 +74,7 @@
       </template>
       <template #action="{ record }">
         <a-space direction="horizontal">
-          <a-button type="text" @click="showEditUserModal(record)"
+          <a-button type="text" @click="showUserModal('edit', record)"
             >修改</a-button
           >
           <a-popconfirm
@@ -100,77 +102,66 @@
       </template>
     </a-table>
 
-    <!-- 添加用户模态框 -->
+    <!-- 合并后的用户模态框 -->
     <a-modal
-      v-model:visible="isAddUserModalVisible"
-      title="添加用户"
-      @ok="addUser"
-      @cancel="isAddUserModalVisible = false"
+      v-model:visible="isUserModalVisible"
+      :title="modalType === 'add' ? '添加用户' : '编辑用户'"
+      @ok="handleUserModalOk"
+      @cancel="isUserModalVisible = false"
     >
-      <a-form :model="newUser" layout="vertical">
+      <a-form :model="userForm" layout="vertical">
         <a-form-item
           label="账号"
           field="userAccount"
           :rules="[{ required: true, message: '账号为必填字段' }]"
         >
-          <a-input v-model="newUser.userAccount" placeholder="请输入账号..." />
+          <a-input v-model="userForm.userAccount" placeholder="请输入账号..." />
         </a-form-item>
         <a-form-item
           label="密码"
           field="userPassword"
-          :rules="[{ required: true, message: '密码为必填字段' }]"
+          :rules="[
+            { required: modalType === 'add', message: '密码为必填字段' },
+          ]"
         >
           <a-input-password
-            v-model="newUser.userPassword"
-            placeholder="请输入密码..."
+            v-model="userForm.userPassword"
+            :placeholder="
+              modalType === 'add' ? '请输入密码...' : '留空则不修改密码...'
+            "
           />
         </a-form-item>
-        <a-form-item label="昵称" field="userName">
-          <a-input v-model="newUser.userName" placeholder="请输入昵称..." />
-        </a-form-item>
-        <a-form-item label="角色" field="userRole">
-          <a-select v-model="newUser.userRole" placeholder="请选择角色">
-            <a-option value="user">用户</a-option>
-            <a-option value="admin">管理员</a-option>
-          </a-select>
-        </a-form-item>
-      </a-form>
-    </a-modal>
-
-    <!-- 编辑用户模态框 -->
-    <a-modal
-      v-model:visible="isEditUserModalVisible"
-      title="编辑用户"
-      @ok="editUser"
-      @cancel="isEditUserModalVisible = false"
-    >
-      <a-form :model="editUserData" layout="vertical">
         <a-form-item
-          label="账号"
-          field="userAccount"
-          :rules="[{ required: true, message: '账号为必填字段' }]"
+          label="确认密码"
+          field="checkPassword"
+          :rules="[
+            { required: modalType === 'add', message: '确认密码为必填字段' },
+            {
+              validator: (value) => {
+                if (userForm.userPassword && value !== userForm.userPassword) {
+                  return false;
+                }
+                return true;
+              },
+              message: '两次输入的密码不一致',
+            },
+          ]"
         >
-          <a-input
-            v-model="editUserData.userAccount"
-            placeholder="请输入账号..."
-          />
-        </a-form-item>
-        <a-form-item label="密码" field="userPassword">
           <a-input-password
-            v-model="editUserData.userPassword"
-            placeholder="请输入密码..."
+            v-model="userForm.checkPassword"
+            :placeholder="
+              modalType === 'add' ? '请再次输入密码...' : '留空则不修改密码...'
+            "
           />
         </a-form-item>
         <a-form-item label="昵称" field="userName">
-          <a-input
-            v-model="editUserData.userName"
-            placeholder="请输入昵称..."
-          />
+          <a-input v-model="userForm.userName" placeholder="请输入昵称..." />
         </a-form-item>
         <a-form-item label="角色" field="userRole">
-          <a-select v-model="editUserData.userRole" placeholder="请选择角色">
+          <a-select v-model="userForm.userRole" placeholder="请选择角色">
             <a-option value="user">用户</a-option>
             <a-option value="admin">管理员</a-option>
+            <a-option value="vip">会员</a-option>
           </a-select>
         </a-form-item>
       </a-form>
@@ -199,18 +190,19 @@ const dataList = ref([]);
 const roleEnum = {
   user: "用户",
   admin: "管理员",
+  vip: "会员",
   ban: "禁用",
 };
 
-const isAddUserModalVisible = ref(false);
-const isEditUserModalVisible = ref(false);
-const newUser = ref({
+const isUserModalVisible = ref(false);
+const modalType = ref("add");
+const userForm = ref({
   userAccount: "",
   userPassword: "",
+  checkPassword: "",
   userName: "",
   userRole: "user",
 });
-const editUserData = ref<any>({});
 
 const items = ref<BreadcrumbItem[]>([
   {
@@ -277,42 +269,41 @@ const onPageSizeChange = (pageSize: number) => {
   loadData();
 };
 
-const showAddUserModal = () => {
-  newUser.value = {
-    userAccount: "",
-    userPassword: "",
-    userName: "",
-    userRole: "user",
-  };
-  isAddUserModalVisible.value = true;
-};
-
-const addUser = async () => {
-  const res = await UserControllerService.addUserUsingPost(newUser.value);
-  if (res.code === 0) {
-    message.success("用户添加成功");
-    isAddUserModalVisible.value = false;
-    loadData();
+const showUserModal = (type: string, record?: any) => {
+  modalType.value = type;
+  if (type === "edit") {
+    userForm.value = { ...record };
   } else {
-    message.error("添加用户失败，" + res.message);
+    userForm.value = {
+      userAccount: "",
+      userPassword: "",
+      checkPassword: "",
+      userName: "",
+      userRole: "user",
+    };
   }
+  isUserModalVisible.value = true;
 };
 
-const showEditUserModal = (record: any) => {
-  editUserData.value = { ...record };
-  isEditUserModalVisible.value = true;
-};
-
-const editUser = async () => {
-  const res = await UserControllerService.updateUserUsingPost(
-    editUserData.value
-  );
-  if (res.code === 0) {
-    message.success("用户信息更新成功");
-    isEditUserModalVisible.value = false;
-    loadData();
+const handleUserModalOk = async () => {
+  if (modalType.value === "add") {
+    const res = await UserControllerService.addUserUsingPost(userForm.value);
+    if (res.code === 0) {
+      message.success("用户添加成功");
+      isUserModalVisible.value = false;
+      loadData();
+    } else {
+      message.error("添加用户失败，" + res.message);
+    }
   } else {
-    message.error("更新用户信息失败，" + res.message);
+    const res = await UserControllerService.updateUserUsingPost(userForm.value);
+    if (res.code === 0) {
+      message.success("用户信息更新成功");
+      isUserModalVisible.value = false;
+      loadData();
+    } else {
+      message.error("更新用户信息失败，" + res.message);
+    }
   }
 };
 
