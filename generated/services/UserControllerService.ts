@@ -260,6 +260,33 @@ userRegisterRequest: UserRegisterRequest,
     }
 
     /**
+     * toggleUserStatus
+     * @param enabled enabled
+     * @param userId userId
+     * @returns BaseResponse_boolean_ OK
+     * @returns any Created
+     * @throws ApiError
+     */
+    public static toggleUserStatusUsingPost(
+enabled: boolean,
+userId: number,
+): CancelablePromise<BaseResponse_boolean_ | any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/user/toggle-status',
+            query: {
+                'enabled': enabled,
+                'userId': userId,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+
+    /**
      * updateUser
      * @param userUpdateRequest userUpdateRequest
      * @returns BaseResponse_boolean_ OK

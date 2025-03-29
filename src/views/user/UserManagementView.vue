@@ -62,17 +62,37 @@
       <template #userRole="{ record }">
         <span>{{ roleEnum[record.userRole as keyof typeof roleEnum] }}</span>
       </template>
+      <template #userStatus="{ record }">
+        <a-tag :color="record.userRole === 'ban' ? 'red' : 'green'">
+          {{ record.userRole === "ban" ? "禁用" : "启用" }}
+        </a-tag>
+      </template>
       <template #createTime="{ record }">
         {{ moment(record.createTime).format("YYYY-MM-DD h:mm:ss") }}
       </template>
       <template #action="{ record }">
         <a-space direction="horizontal">
           <a-button type="text" @click="showEditUserModal(record)"
-            >修改
-          </a-button>
+            >修改</a-button
+          >
+          <a-popconfirm
+            :content="
+              record.userRole === 'ban'
+                ? '确定要启用该用户吗？'
+                : '确定要禁用该用户吗？'
+            "
+            @ok="toggleUserStatus(record)"
+          >
+            <a-button
+              type="text"
+              :status="record.userRole === 'ban' ? 'success' : 'danger'"
+            >
+              {{ record.userRole === "ban" ? "启用" : "禁用" }}
+            </a-button>
+          </a-popconfirm>
           <a-button type="text" status="danger" @click="deleteUser(record.id)"
-            >删除
-          </a-button>
+            >删除</a-button
+          >
         </a-space>
       </template>
     </a-table>
@@ -176,6 +196,7 @@ const dataList = ref([]);
 const roleEnum = {
   user: "用户",
   admin: "管理员",
+  ban: "禁用",
 };
 
 const isAddUserModalVisible = ref(false);
@@ -227,6 +248,10 @@ const columns = ref<TableColumnData[]>([
   {
     title: "角色",
     slotName: "userRole",
+  },
+  {
+    title: "状态",
+    slotName: "userStatus",
   },
   {
     title: "创建时间",
@@ -295,6 +320,20 @@ const deleteUser = async (id: number) => {
     loadData();
   } else {
     message.error("删除用户失败，" + res.message);
+  }
+};
+
+const toggleUserStatus = async (record: any) => {
+  const enabled = record.userRole === "ban";
+  const res = await UserControllerService.toggleUserStatusUsingPost(
+    enabled,
+    record.id
+  );
+  if (res.code === 0) {
+    message.success(enabled ? "用户启用成功" : "用户禁用成功");
+    loadData();
+  } else {
+    message.error(enabled ? "启用用户失败" : "禁用用户失败，" + res.message);
   }
 };
 </script>
