@@ -106,14 +106,17 @@
     <a-modal
       v-model:visible="isUserModalVisible"
       :title="modalType === 'add' ? '添加用户' : '编辑用户'"
-      @ok="handleUserModalOk"
+      :on-before-ok="handleUserModalOk"
       @cancel="isUserModalVisible = false"
     >
-      <a-form :model="userForm" layout="vertical">
+      <a-form :model="userForm" layout="vertical" ref="userFormRef">
         <a-form-item
           label="账号"
           field="userAccount"
-          :rules="[{ required: true, message: '账号为必填字段' }]"
+          :rules="[
+            { required: true, message: '账号为必填字段' },
+            { minLength: 4, message: '账号长度不能小于4' },
+          ]"
         >
           <a-input v-model="userForm.userAccount" placeholder="请输入账号..." />
         </a-form-item>
@@ -122,6 +125,24 @@
           field="userPassword"
           :rules="[
             { required: modalType === 'add', message: '密码为必填字段' },
+            {
+              minLength: modalType === 'add' ? 8 : 0,
+              message: '密码长度不能小于8',
+            },
+            {
+              validator: (value) => {
+                if (
+                  modalType === 'edit' &&
+                  value &&
+                  value.length > 0 &&
+                  value.length < 8
+                ) {
+                  return false;
+                }
+                return true;
+              },
+              message: '密码长度不能小于8',
+            },
           ]"
         >
           <a-input-password
@@ -138,12 +159,29 @@
             { required: modalType === 'add', message: '确认密码为必填字段' },
             {
               validator: (value) => {
+                if (modalType === 'edit' && !userForm.userPassword) {
+                  return true;
+                }
                 if (userForm.userPassword && value !== userForm.userPassword) {
                   return false;
                 }
                 return true;
               },
               message: '两次输入的密码不一致',
+            },
+            {
+              validator: (value) => {
+                if (
+                  modalType === 'edit' &&
+                  value &&
+                  value.length > 0 &&
+                  value.length < 8
+                ) {
+                  return false;
+                }
+                return true;
+              },
+              message: '确认密码长度不能小于8',
             },
           ]"
         >
@@ -171,6 +209,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { FormInstance } from "@arco-design/web-vue/es/form";
 import { UserControllerService, UserQueryRequest } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
 import moment from "moment";
@@ -203,6 +242,8 @@ const userForm = ref({
   userName: "",
   userRole: "user",
 });
+
+const userFormRef = ref<FormInstance>();
 
 const items = ref<BreadcrumbItem[]>([
   {
@@ -286,24 +327,49 @@ const showUserModal = (type: string, record?: any) => {
 };
 
 const handleUserModalOk = async () => {
-  if (modalType.value === "add") {
-    const res = await UserControllerService.addUserUsingPost(userForm.value);
-    if (res.code === 0) {
-      message.success("用户添加成功");
-      isUserModalVisible.value = false;
-      loadData();
-    } else {
-      message.error("添加用户失败，" + res.message);
+  try {
+    // 在表单校验前，先手动检查密码和确认密码是否一致
+    if (userForm.value.userPassword) {
+      if (userForm.value.userPassword !== userForm.value.checkPassword) {
+        message.error("密码和确认密码不一致");
+        return false;
+      }
     }
-  } else {
-    const res = await UserControllerService.updateUserUsingPost(userForm.value);
-    if (res.code === 0) {
-      message.success("用户信息更新成功");
-      isUserModalVisible.value = false;
-      loadData();
-    } else {
-      message.error("更新用户信息失败，" + res.message);
+
+    // 表单校验，validate成功时返回的是undefined，失败时返回错误信息
+    const errors = await userFormRef.value?.validate();
+    // 如果有错误信息则阻止模态框关闭
+    if (errors) {
+      return false; // 返回false阻止模态框关闭
     }
+
+    // 校验通过后执行后续操作
+    if (modalType.value === "add") {
+      const res = await UserControllerService.addUserUsingPost(userForm.value);
+      if (res.code === 0) {
+        message.success("用户添加成功");
+        loadData();
+        return true; // 返回true允许模态框关闭
+      } else {
+        message.error("添加用户失败，" + res.message);
+        return false; // 添加失败时阻止模态框关闭
+      }
+    } else {
+      const res = await UserControllerService.updateUserUsingPost(
+        userForm.value
+      );
+      if (res.code === 0) {
+        message.success("用户信息更新成功");
+        loadData();
+        return true; // 返回true允许模态框关闭
+      } else {
+        message.error("更新用户信息失败，" + res.message);
+        return false; // 更新失败时阻止模态框关闭
+      }
+    }
+  } catch (error) {
+    message.error("表单验证失败，请检查输入");
+    return false; // 发生错误时阻止模态框关闭
   }
 };
 
