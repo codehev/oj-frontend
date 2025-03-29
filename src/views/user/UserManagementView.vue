@@ -90,9 +90,12 @@
               {{ record.userRole === "ban" ? "启用" : "禁用" }}
             </a-button>
           </a-popconfirm>
-          <a-button type="text" status="danger" @click="deleteUser(record.id)"
-            >删除</a-button
+          <a-popconfirm
+            content="确定要删除该用户吗？"
+            @ok="deleteUser(record.id)"
           >
+            <a-button type="text" status="danger">删除</a-button>
+          </a-popconfirm>
         </a-space>
       </template>
     </a-table>
