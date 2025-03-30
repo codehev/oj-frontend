@@ -10,6 +10,18 @@
           >{{ tag }}</a-tag
         >
       </div>
+      <div
+        v-if="questionVO && (questionVO as any).difficulty !== undefined"
+        class="difficulty-container"
+      >
+        <span class="difficulty-label">难度：</span>
+        <a-tag
+          :color="getDifficultyColor((questionVO as any).difficulty)"
+          size="small"
+        >
+          {{ getDifficultyText((questionVO as any).difficulty) }}
+        </a-tag>
+      </div>
       <div class="judge-conditions">
         <span class="condition-label">判题条件：</span>
         <span class="condition-item"
@@ -44,6 +56,34 @@ defineProps({
     required: true,
   },
 });
+
+// 根据难度获取对应的文本
+const getDifficultyText = (difficulty: number): string => {
+  switch (difficulty) {
+    case 0:
+      return "简单";
+    case 1:
+      return "中等";
+    case 2:
+      return "困难";
+    default:
+      return "未知";
+  }
+};
+
+// 根据难度获取对应的颜色
+const getDifficultyColor = (difficulty: number): string => {
+  switch (difficulty) {
+    case 0:
+      return "success";
+    case 1:
+      return "warning";
+    case 2:
+      return "error";
+    default:
+      return "default";
+  }
+};
 </script>
 
 <style>
@@ -66,6 +106,19 @@ defineProps({
 
 .tags-container {
   margin-bottom: 4px;
+}
+
+/* 添加难度样式 */
+.difficulty-container {
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.difficulty-label {
+  font-size: 12px;
+  color: #666;
+  margin-right: 4px;
 }
 
 .judge-conditions {

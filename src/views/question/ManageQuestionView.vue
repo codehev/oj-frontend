@@ -56,6 +56,7 @@
         showJumper: true,
         showPageSize: true,
       }"
+      :scroll="{ x: 1500 }"
       @page-change="onPageChange"
       @page-size-change="onPageSizeChange"
     >
@@ -69,10 +70,16 @@
           >{{ record.title }}
         </router-link>
       </template>
+      <!--难度-->
+      <template #difficulty="{ record }">
+        <a-tag :color="getDifficultyColor(record.difficulty)" size="small">
+          {{ getDifficultyText(record.difficulty) }}
+        </a-tag>
+      </template>
       <!--标签-->
       <template #tags="{ record }">
         <a-space wrap>
-          <a-tag v-for="(tag, index) of record.tags" :key="index" color="green"
+          <a-tag v-for="(tag, index) of record.tags" :key="index" color="purple"
             >{{ tag }}
           </a-tag>
         </a-space>
@@ -94,8 +101,8 @@
       <template #judgeCase="{ record }">
         <a-popover position="right">
           <a-button type="text" size="mini"
-            >查看用例({{ getJudgeCaseCount(record.judgeCase) }})</a-button
-          >
+            >查看用例({{ getJudgeCaseCount(record.judgeCase) }})
+          </a-button>
           <template #content>
             <div class="case-scroll">
               <a-descriptions
@@ -132,8 +139,8 @@
       <template #optional="{ record }">
         <a-space direction="vertical">
           <a-button type="text" size="mini" @click="doUpdate(record.id)"
-            >修改</a-button
-          >
+            >修改
+          </a-button>
           <a-popconfirm
             content="确定要删除这个题目吗？删除后将无法恢复！"
             @ok="doDelete(record.id)"
@@ -228,11 +235,18 @@ onMounted(() => {
  * 要展示的列，以及设置列属性
  */
 const columns = ref<TableColumnData[]>([
+  // {
+  //   title: "id",
+  //   dataIndex: "id",
+  //   ellipsis: true,
+  //   tooltip: true,
+  // },
   {
-    title: "id",
-    dataIndex: "id",
+    title: "题号",
+    dataIndex: "number",
     ellipsis: true,
     tooltip: true,
+    width: 100,
   },
   {
     title: "题目",
@@ -245,16 +259,28 @@ const columns = ref<TableColumnData[]>([
     },
   },
   {
+    title: "难度",
+    slotName: "difficulty",
+    ellipsis: true,
+    tooltip: true,
+    width: 80,
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
+  },
+  {
     title: "标签",
     slotName: "tags",
     ellipsis: true,
     tooltip: true,
+    width: 150,
   },
   {
     title: "提交数",
     dataIndex: "submitNum",
     ellipsis: true,
     tooltip: true,
+    width: 90,
     sortable: {
       sortDirections: ["ascend", "descend"],
     },
@@ -264,6 +290,7 @@ const columns = ref<TableColumnData[]>([
     dataIndex: "acceptedNum",
     ellipsis: true,
     tooltip: true,
+    width: 90,
     sortable: {
       sortDirections: ["ascend", "descend"],
     },
@@ -273,18 +300,21 @@ const columns = ref<TableColumnData[]>([
     slotName: "judgeConfig",
     dataIndex: "judgeConfig",
     ellipsis: true,
+    width: 110,
   },
   {
     title: "判题用例",
     slotName: "judgeCase",
     dataIndex: "judgeCase",
     ellipsis: true,
+    width: 110,
   },
   {
     title: "创建用户",
     slotName: "userName",
     ellipsis: true,
     tooltip: true,
+    width: 100,
     sortable: {
       sortDirections: ["ascend", "descend"],
     },
@@ -294,6 +324,7 @@ const columns = ref<TableColumnData[]>([
     slotName: "createTime",
     ellipsis: true,
     tooltip: true,
+    width: 160,
     sortable: {
       sortDirections: ["ascend", "descend"],
     },
@@ -303,6 +334,7 @@ const columns = ref<TableColumnData[]>([
     slotName: "updateTime",
     ellipsis: true,
     tooltip: true,
+    width: 160,
     sortable: {
       sortDirections: ["ascend", "descend"],
     },
@@ -310,6 +342,8 @@ const columns = ref<TableColumnData[]>([
   {
     title: "操作",
     slotName: "optional",
+    fixed: "right",
+    width: 100,
   },
 ]);
 /**
@@ -436,6 +470,38 @@ const getJudgeCaseCount = (judgeCase: string) => {
   const cases = parseJudgeCase(judgeCase);
   return cases.length;
 };
+
+/**
+ * 根据难度获取对应的文本
+ */
+const getDifficultyText = (difficulty: number): string => {
+  switch (difficulty) {
+    case 0:
+      return "简单";
+    case 1:
+      return "中等";
+    case 2:
+      return "困难";
+    default:
+      return "未知";
+  }
+};
+
+/**
+ * 根据难度获取对应的颜色
+ */
+const getDifficultyColor = (difficulty: number): string => {
+  switch (difficulty) {
+    case 0:
+      return "green";
+    case 1:
+      return "orange";
+    case 2:
+      return "red";
+    default:
+      return "gray";
+  }
+};
 </script>
 
 <style scoped>
@@ -443,6 +509,31 @@ const getJudgeCaseCount = (judgeCase: string) => {
   max-width: 1280px;
   margin: 0 auto;
   padding: 20px;
+}
+
+/* 表格容器样式 */
+:deep(.arco-table-container) {
+  overflow-x: auto;
+  margin-bottom: 16px;
+}
+
+/* 自定义滚动条样式 */
+:deep(.arco-table-body)::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+:deep(.arco-table-body)::-webkit-scrollbar-thumb {
+  background-color: rgba(var(--gray-5), 0.5);
+  border-radius: 4px;
+}
+
+:deep(.arco-table-body)::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+:deep(.arco-table-body):hover::-webkit-scrollbar-thumb {
+  background-color: rgb(var(--gray-5));
 }
 
 .search-form-container {

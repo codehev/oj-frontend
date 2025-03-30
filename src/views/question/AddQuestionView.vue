@@ -8,6 +8,22 @@
     <a-form ref="formRef" :model="form" @submit="doSubmit">
       <!--:show-colon="true"显示冒号-->
       <a-form-item
+        field="number"
+        label="题号"
+        :show-colon="true"
+        :rules="[
+          { required: true, message: '题号是必填项' },
+          { maxLength: 16, message: '必须小于16个字符' },
+        ]"
+        :validate-trigger="['change', 'input']"
+      >
+        <a-input
+          v-model="form.number"
+          placeholder="请输入题号"
+          :style="{ maxWidth: '350px' }"
+        />
+      </a-form-item>
+      <a-form-item
         field="title"
         label="标题"
         :show-colon="true"
@@ -23,6 +39,19 @@
           placeholder="请输入标题"
           :style="{ maxWidth: '350px' }"
         />
+      </a-form-item>
+      <a-form-item
+        field="difficulty"
+        label="难度"
+        :show-colon="true"
+        :rules="[{ required: true, message: '难度是必填项' }]"
+        :validate-trigger="['change']"
+      >
+        <a-radio-group v-model="form.difficulty" :style="{ maxWidth: '350px' }">
+          <a-radio :value="0">简单</a-radio>
+          <a-radio :value="1">中等</a-radio>
+          <a-radio :value="2">困难</a-radio>
+        </a-radio-group>
       </a-form-item>
       <a-form-item
         field="tags"
@@ -236,6 +265,7 @@ import {
 import { IconPark } from "@icon-park/vue-next/es/all";
 import BreadcrumbComponent from "@/components/breadcrumb/BreadcrumbComponent.vue";
 import { BreadcrumbItem } from "@/components/breadcrumb/types";
+import router from "@/router";
 
 // 表单ref
 const formRef = ref();
@@ -259,6 +289,8 @@ const items = ref<BreadcrumbItem[]>([
 
 let form = reactive({
   title: "",
+  number: "",
+  difficulty: 0,
   tags: [],
   answer: "",
   content: "",
@@ -378,6 +410,7 @@ const doSubmit = async ({ values, errors }: any) => {
     const res = await QuestionControllerService.updateQuestionUsingPost(form);
     if (res.code === 0) {
       message.success("更新成功");
+      router.push("/manage/question");
     } else {
       message.error("更新失败，" + res.message);
     }
@@ -385,6 +418,7 @@ const doSubmit = async ({ values, errors }: any) => {
     const res = await QuestionControllerService.addQuestionUsingPost(form);
     if (res.code === 0) {
       message.success("创建成功");
+      router.push("/manage/question");
     } else {
       message.error("创建失败，" + res.message);
     }

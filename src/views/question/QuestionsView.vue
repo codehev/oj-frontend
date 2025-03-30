@@ -66,10 +66,16 @@
       <!--标签-->
       <template #tags="{ record }">
         <a-space wrap>
-          <a-tag v-for="(tag, index) of record.tags" :key="index" color="green"
+          <a-tag v-for="(tag, index) of record.tags" :key="index" color="purple"
             >{{ tag }}
           </a-tag>
         </a-space>
+      </template>
+      <!--难度-->
+      <template #difficulty="{ record }">
+        <a-tag :color="getDifficultyColor(record.difficulty)" size="small">
+          {{ getDifficultyText(record.difficulty) }}
+        </a-tag>
       </template>
       <!--通过率-->
       <template #acceptedRate="{ record }">
@@ -156,8 +162,8 @@ onMounted(() => {
 const columns = ref<TableColumnData[]>([
   {
     title: "题号",
-    dataIndex: "id",
-    width: 200,
+    dataIndex: "number",
+    width: 100,
     sortable: {
       sortDirections: ["ascend", "descend"],
     },
@@ -165,7 +171,15 @@ const columns = ref<TableColumnData[]>([
   {
     title: "题目名称",
     slotName: "title",
-    width: 300,
+    width: 200,
+    sortable: {
+      sortDirections: ["ascend", "descend"],
+    },
+  },
+  {
+    title: "难度",
+    slotName: "difficulty", // 使用插槽
+    width: 90,
     sortable: {
       sortDirections: ["ascend", "descend"],
     },
@@ -242,6 +256,38 @@ watchEffect(() => {
   loadData();
   // console.log("watchEffect配置的回调执行了");
 });
+
+/**
+ * 根据难度获取对应的文本
+ */
+const getDifficultyText = (difficulty: number): string => {
+  switch (difficulty) {
+    case 0:
+      return "简单";
+    case 1:
+      return "中等";
+    case 2:
+      return "困难";
+    default:
+      return "未知";
+  }
+};
+
+/**
+ * 根据难度获取对应的颜色
+ */
+const getDifficultyColor = (difficulty: number): string => {
+  switch (difficulty) {
+    case 0:
+      return "green";
+    case 1:
+      return "orange";
+    case 2:
+      return "red";
+    default:
+      return "gray";
+  }
+};
 
 const doSubmit = () => {
   searchParams.value = {
