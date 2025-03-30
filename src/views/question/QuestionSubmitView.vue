@@ -277,6 +277,7 @@ const columns = ref<TableColumnData[]>([
   {
     title: "#",
     slotName: "id",
+    width: 200,
   },
   {
     title: "作者",

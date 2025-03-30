@@ -2,44 +2,82 @@
   <!-- 题目管理页面 -->
   <div id="manageQuestionView">
     <BreadcrumbComponent :items="items" />
-    <div class="search-form-container">
-      <a-form :model="searchParams" layout="inline" class="search-form">
-        <div class="form-left">
-          <a-form-item
-            field="title"
-            label="题目名称"
-            :show-colon="true"
-            class="form-item"
-          >
-            <a-input
-              v-model="searchParams.title"
-              placeholder="请输入题目名称..."
-              :style="{ width: '200px' }"
-              allow-clear
-            />
-          </a-form-item>
-          <a-form-item
-            field="tags"
-            label="标签"
-            :show-colon="true"
-            class="form-item"
-          >
-            <a-input-tag
-              v-model="searchParams.tags"
-              placeholder="请输入标签..."
-              :style="{ width: '200px' }"
-            />
-          </a-form-item>
-        </div>
-        <div class="form-right">
-          <a-button type="primary" class="create-btn" @click="createQuestion">
-            <template #icon>
-              <icon-plus />
-            </template>
-            创建题目
-          </a-button>
-        </div>
-      </a-form>
+
+    <div class="header-container">
+      <div class="search-form-container">
+        <a-form :model="searchParams" layout="inline" class="search-form">
+          <div class="search-fields">
+            <a-form-item
+              field="number"
+              label="题号"
+              :show-colon="true"
+              class="form-item"
+            >
+              <a-input
+                v-model="searchParams.number"
+                placeholder="请输入题号..."
+                :style="{ width: '150px' }"
+                allow-clear
+              />
+            </a-form-item>
+            <a-form-item
+              field="title"
+              label="题目名称"
+              :show-colon="true"
+              class="form-item"
+            >
+              <a-input
+                v-model="searchParams.title"
+                placeholder="请输入题目名称..."
+                :style="{ width: '200px' }"
+                allow-clear
+              />
+            </a-form-item>
+            <a-form-item
+              field="difficulty"
+              label="难度"
+              :show-colon="true"
+              class="form-item"
+            >
+              <a-select
+                v-model="searchParams.difficulty"
+                placeholder="选择难度"
+                allow-clear
+                :style="{ width: '120px' }"
+              >
+                <a-option :value="0">简单</a-option>
+                <a-option :value="1">中等</a-option>
+                <a-option :value="2">困难</a-option>
+              </a-select>
+            </a-form-item>
+            <a-form-item
+              field="tags"
+              label="标签"
+              :show-colon="true"
+              class="form-item"
+            >
+              <a-input-tag
+                v-model="searchParams.tags"
+                placeholder="请输入标签..."
+                :style="{ width: '200px' }"
+              />
+            </a-form-item>
+          </div>
+          <div class="search-buttons">
+            <a-button type="primary" @click="doSubmit">搜索</a-button>
+            <a-button @click="resetSearchParams">重置</a-button>
+          </div>
+        </a-form>
+      </div>
+
+      <div class="create-btn-container">
+        <a-button type="primary" class="create-btn" @click="createQuestion">
+          <template #icon>
+            <icon-plus />
+          </template>
+          创建题目
+        </a-button>
+      </div>
     </div>
 
     <a-divider style="margin: 16px 0" />
@@ -168,6 +206,8 @@ import { QuestionQueryRequest } from "../../../generated";
 //搜索参数
 const searchParams = ref<QuestionQueryRequest>({
   title: "",
+  number: "",
+  difficulty: undefined,
   tags: [],
   pageSize: 10,
   current: 1,
@@ -188,10 +228,23 @@ const items = ref<BreadcrumbItem[]>([
  * 加载表格数据
  */
 const loadData = async () => {
-  //获取题目封装类，要写成对象的形式，不然会监听不到searchParams.value的变化
-  const res = await QuestionControllerService.listQuestionByPageUsingPost({
-    ...searchParams.value,
-  });
+  // 构建查询参数，排除空值
+  const queryParams = { ...searchParams.value };
+
+  // 如果没有选择难度，移除difficulty字段，避免后端查询问题
+  if (queryParams.difficulty === undefined) {
+    delete queryParams.difficulty;
+  }
+
+  // 如果题号为空，移除number字段
+  if (!queryParams.number) {
+    delete queryParams.number;
+  }
+
+  //获取题目封装类
+  const res = await QuestionControllerService.listQuestionByPageUsingPost(
+    queryParams
+  );
   if (res.code === 0) {
     dataList.value = res.data.records;
     //解析json
@@ -202,25 +255,11 @@ const loadData = async () => {
       } else {
         obj.tags = [];
       }
-      // if (obj.judgeCase) {
-      //   obj.judgeCase = JSON.parse(obj.judgeCase);
-      // } else {
-      //   obj.judgeCase = [
-      //     {
-      //       input: "",
-      //       output: "",
-      //     },
-      //   ];
-      // }
-      // if (obj.judgeConfig) {
-      //   obj.judgeConfig = JSON.parse(obj.judgeConfig);
-      // } else {
-      //   obj.judgeConfig = {
-      //     timeLimit: 1000,
-      //     memoryLimit: 1000,
-      //     stackLimit: 1000,
-      //   };
-      // }
+
+      // 确保difficulty是数字类型
+      if (obj.difficulty !== undefined) {
+        obj.difficulty = Number(obj.difficulty);
+      }
     }
     total.value = Number(res.data.total);
   } else {
@@ -502,6 +541,30 @@ const getDifficultyColor = (difficulty: number): string => {
       return "gray";
   }
 };
+
+/**
+ * 提交搜索表单
+ */
+const doSubmit = () => {
+  searchParams.value = {
+    ...searchParams.value,
+    current: 1, //先把当前页重置为1，再搜索
+  };
+};
+
+/**
+ * 重置搜索表单
+ */
+const resetSearchParams = () => {
+  searchParams.value = {
+    title: "",
+    number: "",
+    difficulty: undefined,
+    tags: [],
+    pageSize: 10,
+    current: 1,
+  };
+};
 </script>
 
 <style scoped>
@@ -536,35 +599,54 @@ const getDifficultyColor = (difficulty: number): string => {
   background-color: rgb(var(--gray-5));
 }
 
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
 .search-form-container {
   background-color: var(--color-bg-2);
   padding: 16px;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  flex: 1;
+  margin-right: 16px;
+  display: flex;
+  justify-content: space-between;
 }
 
 .search-form {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
+  flex-direction: column;
+  width: 100%;
   gap: 16px;
 }
 
-.form-left {
+.search-fields {
   display: flex;
-  gap: 16px;
   flex-wrap: wrap;
+  gap: 16px;
+  width: 100%;
 }
 
-.form-right {
+.search-buttons {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 8px;
+  justify-content: flex-end;
+  width: 100%;
 }
 
 .form-item {
   margin-bottom: 0;
+}
+
+.create-btn-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
 .create-btn {
@@ -620,14 +702,37 @@ const getDifficultyColor = (difficulty: number): string => {
 }
 
 @media screen and (max-width: 768px) {
-  .search-form {
+  .header-container {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .form-right {
+  .search-form-container {
+    margin-right: 0;
+    margin-bottom: 16px;
+  }
+
+  .create-btn-container {
     justify-content: flex-end;
-    margin-top: 16px;
+  }
+
+  .search-form {
+    flex-direction: column;
+  }
+
+  .search-fields {
+    width: 100%;
+  }
+
+  .search-buttons {
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+
+  .form-item {
+    margin-right: 0;
+    margin-bottom: 8px;
   }
 }
 </style>

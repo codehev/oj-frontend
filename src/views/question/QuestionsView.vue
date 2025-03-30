@@ -5,6 +5,19 @@
       <a-form :model="searchParams" layout="inline" class="search-form">
         <div class="form-left">
           <a-form-item
+            field="number"
+            label="题号"
+            :show-colon="true"
+            class="form-item"
+          >
+            <a-input
+              v-model="searchParams.number"
+              placeholder="请输入题号..."
+              :style="{ width: '150px' }"
+              allow-clear
+            />
+          </a-form-item>
+          <a-form-item
             field="title"
             label="题目名称"
             :show-colon="true"
@@ -18,6 +31,23 @@
             />
           </a-form-item>
           <a-form-item
+            field="difficulty"
+            label="难度"
+            :show-colon="true"
+            class="form-item"
+          >
+            <a-select
+              v-model="searchParams.difficulty"
+              placeholder="选择难度"
+              allow-clear
+              :style="{ width: '120px' }"
+            >
+              <a-option :value="0">简单</a-option>
+              <a-option :value="1">中等</a-option>
+              <a-option :value="2">困难</a-option>
+            </a-select>
+          </a-form-item>
+          <a-form-item
             field="tags"
             label="标签"
             :show-colon="true"
@@ -29,6 +59,10 @@
               :style="{ width: '200px' }"
             />
           </a-form-item>
+        </div>
+        <div class="form-right">
+          <a-button type="primary" @click="doSubmit">搜索</a-button>
+          <a-button @click="resetSearchParams">重置</a-button>
         </div>
       </a-form>
     </div>
@@ -121,6 +155,8 @@ import { TableColumnData } from "@arco-design/web-vue/es/table";
 //搜索参数
 const searchParams = ref<QuestionQueryRequest>({
   title: "",
+  number: "",
+  difficulty: undefined,
   tags: [],
   pageSize: 10,
   current: 1,
@@ -141,10 +177,23 @@ const items = ref<BreadcrumbItem[]>([
  * 加载表格数据
  */
 const loadData = async () => {
-  //获取题目封装类，要写成对象的形式，不然会监听不到searchParams.value的变化
-  const res = await QuestionControllerService.listQuestionVoByPageUsingPost({
-    ...searchParams.value,
-  });
+  // 构建查询参数，排除空值
+  const queryParams = { ...searchParams.value };
+
+  // 如果没有选择难度，移除difficulty字段，避免后端查询问题
+  if (queryParams.difficulty === undefined) {
+    delete queryParams.difficulty;
+  }
+
+  // 如果题号为空，移除number字段
+  if (!queryParams.number) {
+    delete queryParams.number;
+  }
+
+  //获取题目封装类
+  const res = await QuestionControllerService.listQuestionVoByPageUsingPost(
+    queryParams
+  );
   if (res.code === 0) {
     dataList.value = res.data.records;
     total.value = Number(res.data.total);
@@ -296,6 +345,17 @@ const doSubmit = () => {
   };
   // loadData(); //可以不需要调用，监听loadData()中的变量，searchParams
 };
+
+const resetSearchParams = () => {
+  searchParams.value = {
+    title: "",
+    number: "",
+    difficulty: undefined,
+    tags: [],
+    pageSize: 10,
+    current: 1,
+  };
+};
 </script>
 
 <style scoped>
@@ -326,6 +386,11 @@ const doSubmit = () => {
   flex-wrap: wrap;
 }
 
+.form-right {
+  display: flex;
+  gap: 8px;
+}
+
 .form-item {
   margin-bottom: 0;
 }
@@ -349,6 +414,11 @@ const doSubmit = () => {
   .search-form {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .form-right {
+    margin-top: 16px;
+    justify-content: flex-end;
   }
 }
 </style>
