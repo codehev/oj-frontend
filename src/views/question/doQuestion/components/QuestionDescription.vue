@@ -1,26 +1,28 @@
 <template>
   <div class="question-desc-container">
     <div class="header-info">
-      <div class="tags-container">
-        <a-tag
-          v-for="(tag, index) in questionVO?.tags"
-          :key="index"
-          color="green"
-          size="small"
-          >{{ tag }}</a-tag
+      <div class="difficulty-tags-row">
+        <div
+          v-if="questionVO && (questionVO as any).difficulty !== undefined"
+          class="difficulty-container"
         >
-      </div>
-      <div
-        v-if="questionVO && (questionVO as any).difficulty !== undefined"
-        class="difficulty-container"
-      >
-        <span class="difficulty-label">难度：</span>
-        <a-tag
-          :color="getDifficultyColor((questionVO as any).difficulty)"
-          size="small"
-        >
-          {{ getDifficultyText((questionVO as any).difficulty) }}
-        </a-tag>
+          <span class="difficulty-label">难度：</span>
+          <a-tag
+            :color="getDifficultyColor((questionVO as any).difficulty)"
+            size="small"
+          >
+            {{ getDifficultyText((questionVO as any).difficulty) }}
+          </a-tag>
+        </div>
+        <div class="tags-container">
+          <a-tag
+            v-for="(tag, index) in questionVO?.tags"
+            :key="index"
+            color="purple"
+            size="small"
+            >{{ tag }}</a-tag
+          >
+        </div>
       </div>
       <div class="judge-conditions">
         <span class="condition-label">判题条件：</span>
@@ -75,13 +77,13 @@ const getDifficultyText = (difficulty: number): string => {
 const getDifficultyColor = (difficulty: number): string => {
   switch (difficulty) {
     case 0:
-      return "success";
+      return "green";
     case 1:
-      return "warning";
+      return "orange";
     case 2:
-      return "error";
+      return "red";
     default:
-      return "default";
+      return "gray";
   }
 };
 </script>
@@ -104,21 +106,34 @@ const getDifficultyColor = (difficulty: number): string => {
   margin-bottom: 6px;
 }
 
-.tags-container {
+.difficulty-tags-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 4px;
+  width: 100%;
 }
 
-/* 添加难度样式 */
 .difficulty-container {
-  margin-bottom: 4px;
   display: flex;
   align-items: center;
+  background-color: #f9f9f9;
+  padding: 4px 8px;
+  border-radius: 4px;
 }
 
 .difficulty-label {
   font-size: 12px;
   color: #666;
   margin-right: 4px;
+  font-weight: bold;
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px;
 }
 
 .judge-conditions {
