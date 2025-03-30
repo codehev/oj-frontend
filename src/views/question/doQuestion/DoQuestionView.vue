@@ -30,6 +30,14 @@
               </template>
               <!-- 使用题目描述组件 -->
               <QuestionDescription :questionVO="questionVO" />
+
+              <!-- 将点赞收藏操作栏放在题目描述标签页内 -->
+              <QuestionActions
+                v-if="questionVO"
+                :questionInfo="questionVO"
+                :commentNum="commentNum"
+                @switch-tab="handleSwitchTab"
+              />
             </a-tab-pane>
             <a-tab-pane key="2">
               <template #title>
@@ -145,6 +153,7 @@ import {
   QuestionSubmitVO,
   QuestionVO,
   Question,
+  QuestionCommentControllerService,
 } from "../../../../generated";
 import message from "@arco-design/web-vue/es/message";
 import CodeEditor from "@/components/code/CodeEditor.vue";
@@ -159,17 +168,21 @@ import QuestionAnswers from "./components/QuestionAnswers.vue";
 import SubmissionHistory from "./components/SubmissionHistory.vue";
 import SubmissionDetail from "./components/SubmissionDetail.vue";
 import QuestionComment from "@/views/question/doQuestion/components/question-comment.vue";
+import QuestionActions from "@/views/question/doQuestion/components/question-actions.vue";
 
 const route = useRoute();
 
 interface Props {
   id: string;
 }
+
 // 获取路由参数，questionId
 const props = withDefaults(defineProps<Props>(), { id: () => "" });
 var activeKey = ref<string>("1");
 var questionVO = ref<QuestionVO>();
 var question = ref<Question>();
+// 添加评论数量变量
+var commentNum = ref<number>(0);
 
 const detailModalVisible = ref(false);
 const currentSubmission = ref<QuestionSubmitVO>();
@@ -209,6 +222,8 @@ const loadQuestion = async () => {
           default:
             form.value.code = DefaultCodeEnum.java;
         }
+        // 加载评论数
+        loadCommentCount();
       } else {
         message.error("题目不存在");
         console.error("题目不存在");
@@ -220,6 +235,29 @@ const loadQuestion = async () => {
   } catch (e: any) {
     message.error("加载失败，" + e.message);
     console.error("加载题目异常:", e);
+  }
+};
+
+/**
+ * 加载评论数量
+ */
+const loadCommentCount = async () => {
+  const questionId = props.id || route.params.id;
+  if (!questionId) {
+    return;
+  }
+
+  try {
+    const res = await QuestionCommentControllerService.getNumUsingGet1(
+      questionId as any
+    );
+    if (res.code === 0) {
+      commentNum.value = res.data as number;
+    } else {
+      console.error("获取评论数失败:", res.message);
+    }
+  } catch (error) {
+    console.error("获取评论数失败:", error);
   }
 };
 
@@ -315,6 +353,13 @@ const onSubmit = async () => {
   } else {
     message.error("提交失败：" + res.message);
   }
+};
+
+/**
+ * 处理子组件触发的标签页切换事件
+ */
+const handleSwitchTab = (key: string) => {
+  activeKey.value = key;
 };
 </script>
 

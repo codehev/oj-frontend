@@ -11,6 +11,8 @@ export type QuestionVO = {
     content?: string;
     createTime?: string;
     favourNum?: number;
+    hasFavour?: boolean;
+    hasThumb?: boolean;
     id?: number;
     judgeConfig?: JudgeConfig;
     submitNum?: number;

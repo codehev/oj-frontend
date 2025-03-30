@@ -1,27 +1,28 @@
 <template>
   <div class="question-desc-container">
-    <a-space wrap>
-      <a-tag v-for="(tag, index) in questionVO?.tags" :key="index" color="green"
-        >{{ tag }}
-      </a-tag>
-    </a-space>
-    <!--描述，不同窗口大小，动态调整列数-->
-    <a-descriptions title="判题条件：" :column="{ xs: 1, md: 2, lg: 3 }">
-      <a-descriptions-item label="时间限制">
-        {{ questionVO?.judgeConfig?.timeLimit ?? 0 }}ms
-      </a-descriptions-item>
-      <a-descriptions-item label="内存限制">
-        {{ questionVO?.judgeConfig?.memoryLimit ?? 0 }}kb
-      </a-descriptions-item>
-      <a-descriptions-item label="堆栈限制">
-        {{ questionVO?.judgeConfig?.stackLimit ?? 0 }}kb
-      </a-descriptions-item>
-    </a-descriptions>
-    <!-- <MdViewer
-      :key="questionVO?.id"
-      :value="questionVO?.content || ''"
-      style="height: 100%; width: 100%"
-    /> -->
+    <div class="header-info">
+      <div class="tags-container">
+        <a-tag
+          v-for="(tag, index) in questionVO?.tags"
+          :key="index"
+          color="green"
+          size="small"
+          >{{ tag }}</a-tag
+        >
+      </div>
+      <div class="judge-conditions">
+        <span class="condition-label">判题条件：</span>
+        <span class="condition-item"
+          >时间限制: {{ questionVO?.judgeConfig?.timeLimit ?? 0 }}ms</span
+        >
+        <span class="condition-item"
+          >内存限制: {{ questionVO?.judgeConfig?.memoryLimit ?? 0 }}kb</span
+        >
+        <span class="condition-item"
+          >堆栈限制: {{ questionVO?.judgeConfig?.stackLimit ?? 0 }}kb</span
+        >
+      </div>
+    </div>
     <div class="md-content-wrapper">
       <MdPreview
         v-if="questionVO?.content !== ''"
@@ -49,17 +50,47 @@ defineProps({
 /* 使用全局样式确保可以影响到md-editor-v3内部组件 */
 /* 注意：移除scoped属性，以便样式可以渗透到组件内部 */
 .question-desc-container {
-  height: calc(100vh - 110px);
-  padding: 5px 20px 20px 20px; /* 减小顶部内边距 */
+  height: calc(100vh - 190px); /* 减小高度留出操作栏空间 */
+  padding: 5px 20px 0 20px; /* 移除底部内边距 */
   overflow: hidden;
   display: flex;
   flex-direction: column;
   margin-top: 0; /* 确保容器顶部没有外边距 */
 }
 
+.header-info {
+  border-bottom: 1px solid #e6e6eb;
+  padding-bottom: 6px;
+  margin-bottom: 6px;
+}
+
+.tags-container {
+  margin-bottom: 4px;
+}
+
+.judge-conditions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: #666;
+  background-color: #f9f9f9;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.condition-label {
+  font-weight: bold;
+}
+
+.condition-item {
+  white-space: nowrap;
+}
+
 .md-content-wrapper {
   flex: 1;
-  margin-top: 10px; /* 减小内容区域顶部的边距 */
+  margin-top: 4px; /* 减小内容区域顶部的边距 */
   overflow: auto;
   position: relative;
   height: 100%;
@@ -76,14 +107,14 @@ defineProps({
   height: 100%;
   overflow: auto !important;
   padding: 10px;
-  padding-bottom: 30px; /* 增加底部间距防止内容被遮挡 */
+  padding-bottom: 10px; /* 减小底部间距 */
   border: 1px solid #e6e6e6;
   border-radius: 4px;
 }
 
 /* 确保内容区域底部有足够空间 */
 .md-content-wrapper .md-editor-preview > div:last-child {
-  margin-bottom: 20px;
+  margin-bottom: 10px; /* 减小底部边距 */
 }
 
 /* 自定义滚动条样式 */
