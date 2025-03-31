@@ -36,15 +36,37 @@
           >登录</a-button
         >
       </a-form-item>
+
+      <!-- 第三方登录 -->
+      <div class="third-party-login">
+        <div class="divider">
+          <span>第三方账号登录</span>
+        </div>
+        <div class="login-buttons">
+          <a-button @click="handleOAuthLogin('github')" class="github-button">
+            <template #icon><icon-github /></template>
+            GitHub登录
+          </a-button>
+          <a-button @click="handleOAuthLogin('gitee')" class="gitee-button">
+            <template #icon><icon-code /></template>
+            Gitee登录
+          </a-button>
+        </div>
+      </div>
     </a-form>
   </div>
 </template>
 <script setup lang="ts">
-import { reactive, ref } from "vue";
-import { UserControllerService, UserLoginRequest } from "../../../generated";
+import { reactive, ref, defineComponent, h } from "vue";
+import {
+  UserControllerService,
+  UserLoginRequest,
+  OAuthControllerService,
+} from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
 import router from "@/router";
 import { useStore } from "vuex";
+import { IconGithub, IconCode } from "@arco-design/web-vue/es/icon";
 
 const store = useStore();
 
@@ -101,6 +123,25 @@ const handleSubmit = async ({ values, errors }: any) => {
     message.error("登录失败!" + res.message);
   }
 };
+
+/**
+ * 第三方登录处理
+ * @param source 登录来源 (github, gitee 等)
+ */
+const handleOAuthLogin = async (source: string) => {
+  try {
+    const res = await OAuthControllerService.renderAuthUsingGet(source);
+
+    if (res.code === 0 && res.data) {
+      // 跳转到第三方授权页面
+      window.location.href = res.data;
+    } else {
+      message.error("获取授权链接失败：" + res.message);
+    }
+  } catch (error) {
+    message.error("获取授权链接失败：" + (error as Error).message);
+  }
+};
 </script>
 <style scoped>
 .form-title {
@@ -132,5 +173,68 @@ const handleSubmit = async ({ values, errors }: any) => {
 
 .submit-button {
   width: 380px;
+}
+
+/* 第三方登录样式 */
+.third-party-login {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.divider {
+  position: relative;
+  margin: 16px 0;
+  text-align: center;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+  background-color: #e5e6eb;
+}
+
+.divider::before {
+  left: 0;
+}
+
+.divider::after {
+  right: 0;
+}
+
+.divider span {
+  display: inline-block;
+  padding: 0 10px;
+  background-color: white;
+  position: relative;
+  z-index: 1;
+  color: #86909c;
+  font-size: 14px;
+}
+
+.login-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.github-button,
+.gitee-button {
+  min-width: 120px;
+}
+
+.gitee-button {
+  color: #fff;
+  background-color: #c71d23;
+  border-color: #c71d23;
+}
+
+.gitee-button:hover {
+  background-color: #e13035;
+  border-color: #e13035;
 }
 </style>

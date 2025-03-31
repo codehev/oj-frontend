@@ -87,6 +87,7 @@ export type { UserVO } from './models/UserVO';
 
 export { AiControllerService } from './services/AiControllerService';
 export { FileControllerService } from './services/FileControllerService';
+export { OAuthControllerService } from './services/OAuthControllerService';
 export { PostCommentControllerService } from './services/PostCommentControllerService';
 export { PostControllerService } from './services/PostControllerService';
 export { PostFavourControllerService } from './services/PostFavourControllerService';

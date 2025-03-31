@@ -26,6 +26,23 @@ export const routes: Array<RouteRecordRaw> = [
         component: () => import("@/views/user/UserHomeView.vue"),
         props: true, // 当 props 设置为 true 时，route.params 将被设置为组件的 props。
       },
+      // OAuth回调结果页面
+      {
+        path: "/user/oauth/success",
+        name: "第三方登录成功",
+        component: () => import("@/views/user/OAuthResultView.vue"),
+        meta: {
+          hideInMenu: true,
+        },
+      },
+      {
+        path: "/user/oauth/error",
+        name: "第三方登录失败",
+        component: () => import("@/views/user/OAuthResultView.vue"),
+        meta: {
+          hideInMenu: true,
+        },
+      },
     ],
   },
   {
