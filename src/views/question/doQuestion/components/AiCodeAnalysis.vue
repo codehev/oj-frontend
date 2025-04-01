@@ -10,7 +10,7 @@
         :loading="loading"
       >
         <template #icon>
-          <icon-park type="brain" theme="filled" size="16" fill="#fff" />
+          <IconRobot :size="16" :style="{ color: '#fff' }" />
         </template>
         {{ loading ? "分析中..." : "获取分析" }}
       </a-button>
@@ -25,7 +25,7 @@
         <MdViewer :value="analysisResult" />
       </div>
       <div v-else class="empty-analysis">
-        <icon-park type="click" theme="outline" size="32" />
+        <IconRefresh :size="32" />
         <p>点击"获取分析"按钮获取代码分析</p>
       </div>
     </a-spin>
@@ -37,7 +37,7 @@ import { defineProps, ref } from "vue";
 import { AiControllerService } from "../../../../../generated";
 import message from "@arco-design/web-vue/es/message";
 import MdViewer from "@/components/markdown/MdViewer.vue";
-import { IconPark } from "@icon-park/vue-next/es/all";
+import { IconRobot, IconRefresh } from "@arco-design/web-vue/es/icon";
 
 const props = defineProps({
   submissionId: {

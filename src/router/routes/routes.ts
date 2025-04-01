@@ -184,6 +184,7 @@ export const routes: Array<RouteRecordRaw> = [
     component: () => import("@/views/AboutView.vue"),
     meta: {
       icon: "bill",
+      hideInMenu: true,
     },
   },
   {

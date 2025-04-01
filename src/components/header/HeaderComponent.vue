@@ -29,12 +29,48 @@
           :key="item.path"
           class="menu-item"
         >
-          <IconPark
-            :type="item.meta?.icon as string"
-            theme="filled"
+          <!-- 根据meta.icon显示对应图标 -->
+          <icon-home
+            v-if="item.meta?.icon === 'home'"
             :size="16"
             class="menu-icon"
           />
+          <icon-storage
+            v-else-if="item.meta?.icon === 'all-application'"
+            :size="16"
+            class="menu-icon"
+          />
+          <icon-heart
+            v-else-if="item.meta?.icon === 'ecg'"
+            :size="16"
+            class="menu-icon"
+          />
+          <icon-trophy
+            v-else-if="item.meta?.icon === 'trophy'"
+            :size="16"
+            class="menu-icon"
+          />
+          <icon-message
+            v-else-if="item.meta?.icon === 'message'"
+            :size="16"
+            class="menu-icon"
+          />
+          <icon-common
+            v-else-if="item.meta?.icon === 'dropbox'"
+            :size="16"
+            class="menu-icon"
+          />
+          <icon-user
+            v-else-if="item.meta?.icon === 'user'"
+            :size="16"
+            class="menu-icon"
+          />
+          <icon-file
+            v-else-if="item.meta?.icon === 'bill'"
+            :size="16"
+            class="menu-icon"
+          />
+          <icon-common v-else :size="16" class="menu-icon" />
           {{ item.name }}
         </a-menu-item>
 
@@ -68,20 +104,20 @@
                   <div class="dropdown-menu">
                     <a-doption class="dropdown-item">
                       <template #icon>
-                        <IconPark type="user" theme="filled" :size="16" />
+                        <icon-user :size="16" />
                       </template>
                       <div @click="toUserHome">我的主页</div>
                     </a-doption>
                     <a-doption class="dropdown-item">
                       <template #icon>
-                        <IconPark type="config" theme="filled" :size="16" />
+                        <icon-settings :size="16" />
                       </template>
                       <div @click="toUserSettings">我的设置</div>
                     </a-doption>
                     <a-divider margin="4" />
                     <a-doption class="dropdown-item">
                       <template #icon>
-                        <IconPark type="logout" theme="filled" :size="16" />
+                        <icon-export :size="16" />
                       </template>
                       <div @click="userLoginout">退出登录</div>
                     </a-doption>
@@ -98,13 +134,13 @@
                   <div class="dropdown-menu">
                     <a-doption class="dropdown-item">
                       <template #icon>
-                        <IconPark type="login" theme="filled" :size="16" />
+                        <icon-import :size="16" />
                       </template>
                       <div @click="userLogin">登录</div>
                     </a-doption>
                     <a-doption class="dropdown-item">
                       <template #icon>
-                        <IconPark type="newlybuild" theme="filled" :size="16" />
+                        <icon-user-add :size="16" />
                       </template>
                       <div @click="userRegister">注册</div>
                     </a-doption>
@@ -126,11 +162,25 @@ import { useStore } from "vuex";
 import checkAccess from "@/access/checkAccess";
 import { UserControllerService } from "../../../generated";
 import accessEnum from "@/enum/AccessEnum";
-import { IconPark } from "@icon-park/vue-next/es/all";
-import { IconCode } from "@arco-design/web-vue/es/icon";
+import {
+  IconCode,
+  IconUser,
+  IconSettings,
+  IconExport,
+  IconImport,
+  IconUserAdd,
+  IconHome,
+  IconStorage,
+  IconHeart,
+  IconTrophy,
+  IconMessage,
+  IconCommon,
+  IconFile,
+} from "@arco-design/web-vue/es/icon";
 
 const router = useRouter();
 const route = useRoute();
+
 /**
  * 点击菜单项更新路由
  */

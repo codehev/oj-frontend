@@ -20,7 +20,7 @@
         <div class="right-section">
           <a-button type="primary" @click="closeModal">
             <template #icon>
-              <icon-park type="close" theme="outline" size="18" />
+              <IconClose :size="18" />
             </template>
             关闭
           </a-button>
@@ -95,7 +95,7 @@ import { defineProps, defineEmits, ref, watch } from "vue";
 import { QuestionSubmitVO } from "../../../../../generated";
 import CodeViewer from "@/components/code/CodeViewer.vue";
 import AiCodeAnalysis from "./AiCodeAnalysis.vue";
-import { IconPark } from "@icon-park/vue-next/es/all";
+import { IconClose } from "@arco-design/web-vue/es/icon";
 
 const props = defineProps({
   submissionData: {

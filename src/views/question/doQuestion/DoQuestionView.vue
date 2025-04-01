@@ -20,12 +20,7 @@
           >
             <a-tab-pane key="1">
               <template #title>
-                <IconPark
-                  type="transaction-order"
-                  theme="filled"
-                  size="16"
-                  fill="#007bff"
-                />
+                <IconBookmark :size="16" :style="{ color: '#007bff' }" />
                 题目描述
               </template>
               <!-- 使用题目描述组件 -->
@@ -41,12 +36,7 @@
             </a-tab-pane>
             <a-tab-pane key="2">
               <template #title>
-                <IconPark
-                  type="cuvette"
-                  theme="filled"
-                  size="16"
-                  fill="#007bff"
-                />
+                <IconExperiment :size="16" :style="{ color: '#007bff' }" />
                 题解
               </template>
               <!-- 使用题解组件 -->
@@ -54,12 +44,7 @@
             </a-tab-pane>
             <a-tab-pane key="3">
               <template #title>
-                <IconPark
-                  type="history"
-                  theme="filled"
-                  size="16"
-                  fill="#007bff"
-                />
+                <IconHistory :size="16" :style="{ color: '#007bff' }" />
                 提交记录
               </template>
               <!-- 使用提交记录组件 -->
@@ -70,12 +55,7 @@
             </a-tab-pane>
             <a-tab-pane key="4">
               <template #title>
-                <IconPark
-                  type="comment"
-                  theme="filled"
-                  size="16"
-                  fill="#007bff"
-                />
+                <IconMessage :size="16" :style="{ color: '#007bff' }" />
                 评论
               </template>
               <QuestionComment :questionId="questionVO?.id?.toString()" />
@@ -105,12 +85,7 @@
                   @click="onSubmit"
                 >
                   <template #icon>
-                    <IconPark
-                      type="upload-one"
-                      theme="filled"
-                      size="24"
-                      fill="#fff"
-                    />
+                    <IconUpload :size="16" :style="{ color: '#fff' }" />
                   </template>
                   <template #default>提交代码</template>
                 </a-button>
@@ -118,7 +93,7 @@
             </template>
             <a-tab-pane key="1">
               <template #title>
-                <IconPark type="code" theme="filled" size="16" fill="#02b128" />
+                <IconCode :size="16" :style="{ color: '#02b128' }" />
                 代码
               </template>
               <CodeEditor
@@ -159,8 +134,16 @@ import message from "@arco-design/web-vue/es/message";
 import CodeEditor from "@/components/code/CodeEditor.vue";
 import LanguageEnum from "@/enum/LanguageEnum";
 import { DefaultCodeEnum } from "@/enum/DefaultCodeEnum";
-import { IconPark } from "@icon-park/vue-next/es/all";
 import { useRoute } from "vue-router";
+// 导入Arco Design图标
+import {
+  IconBookmark,
+  IconExperiment,
+  IconHistory,
+  IconMessage,
+  IconUpload,
+  IconCode,
+} from "@arco-design/web-vue/es/icon";
 
 // 导入自定义组件
 import QuestionDescription from "./components/QuestionDescription.vue";

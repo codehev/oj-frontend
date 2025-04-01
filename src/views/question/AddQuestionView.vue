@@ -102,7 +102,7 @@
             class="generate-button"
             style="margin-bottom: 10px"
           >
-            <IconPark type="magic" theme="filled" size="16" fill="#fff" />
+            <IconBulb :size="16" :style="{ color: '#fff' }" />
             AI生成答案
           </a-button>
           <MdEditor
@@ -262,7 +262,7 @@ import {
   AiControllerService,
   QuestionControllerService,
 } from "../../../generated";
-import { IconPark } from "@icon-park/vue-next/es/all";
+import { IconBulb } from "@arco-design/web-vue/es/icon";
 import BreadcrumbComponent from "@/components/breadcrumb/BreadcrumbComponent.vue";
 import { BreadcrumbItem } from "@/components/breadcrumb/types";
 import router from "@/router";

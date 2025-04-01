@@ -56,16 +56,11 @@ import {
   IconStarFill,
   IconMessage,
 } from "@arco-design/web-vue/es/icon";
-import { useRoute } from "vue-router";
 import {
   QuestionFavourControllerService,
   QuestionThumbControllerService,
   QuestionVO,
 } from "../../../../../generated";
-import { useRouter } from "vue-router";
-
-const router = useRouter();
-const route = useRoute();
 
 // 发出事件
 const emit = defineEmits(["reload-comment-count", "switch-tab"]);

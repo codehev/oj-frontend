@@ -68,21 +68,11 @@
         <div class="submission-detail">
           <div class="submission-info">
             <div v-if="record?.judgeInfo?.message === '答案正确'">
-              <IconPark
-                type="check-one"
-                theme="filled"
-                size="30"
-                fill="#19be6b"
-              />
+              <IconCheckCircleFill :size="30" :style="{ color: '#19be6b' }" />
               {{ record?.judgeInfo?.message }}
             </div>
             <div v-else>
-              <IconPark
-                type="close-one"
-                theme="filled"
-                size="30"
-                fill="#ed3f14"
-              />
+              <IconCloseCircleFill :size="30" :style="{ color: '#ed3f14' }" />
               {{ record?.judgeInfo?.message }}
             </div>
             <div class="info-items">
@@ -191,7 +181,10 @@ import moment from "moment";
 import languageEnum from "@/enum/LanguageEnum";
 import statusEnum from "../../enum/StatusEnum";
 import { useStore } from "vuex";
-import { IconPark } from "@icon-park/vue-next/es/all";
+import {
+  IconCheckCircleFill,
+  IconCloseCircleFill,
+} from "@arco-design/web-vue/es/icon";
 import AccessEnum from "@/enum/AccessEnum";
 import CodeViewer from "@/components/code/CodeViewer.vue";
 import BreadcrumbComponent from "@/components/breadcrumb/BreadcrumbComponent.vue";
