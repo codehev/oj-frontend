@@ -4,7 +4,7 @@
       <a-col :span="1">
         <post-actions
           :post-info="postVO"
-          :comment-num="commentNum"
+          :comment-num="Number(commentNum)"
           @reload-comment-count="loadCommentCount"
         />
       </a-col>

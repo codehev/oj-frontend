@@ -133,7 +133,7 @@ const loadSubmissions = async () => {
         language: searchParams.value.language,
         pageSize: pageSize.value,
         current: current.value,
-        sortField: "createTime",
+        sortField: "create_time",
         sortOrder: "descend",
       });
 

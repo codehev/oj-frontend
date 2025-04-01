@@ -75,12 +75,12 @@
     :data="postList"
     :loading="loading"
     :pagination="{
-      current: searchParams.current,
-      pageSize: searchParams.pageSize,
+      current: Number(searchParams.current),
+      pageSize: Number(searchParams.pageSize),
       defaultCurrent: 1,
       defaultPageSize: 10,
       showTotal: true,
-      total: total,
+      total: Number(total),
       showJumper: true,
       showPageSize: true,
       pageSizeOptions: [10, 20, 30, 40, 50],
