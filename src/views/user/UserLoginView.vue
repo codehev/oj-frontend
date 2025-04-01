@@ -1165,4 +1165,31 @@ onUnmounted(() => {
     height: 36px;
   }
 }
+
+/* 修复星号与表单文本对齐问题 */
+:deep(.arco-form-item-label-required) {
+  display: flex;
+  align-items: center;
+}
+
+:deep(.arco-form-item-label-required:before) {
+  position: relative;
+  top: 0;
+  margin-top: 0;
+  margin-right: 4px;
+  line-height: normal;
+}
+
+/* 调整表单标签文本的位置 */
+:deep(.arco-form-item-label) {
+  display: flex;
+  align-items: center;
+  height: 22px;
+  line-height: 22px;
+}
+
+:deep(.arco-form-item-label-col) {
+  display: flex;
+  align-items: center;
+}
 </style>
