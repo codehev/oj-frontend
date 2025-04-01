@@ -266,6 +266,9 @@ onMounted(() => {
     }
     binaryDigits.value = newDigits;
   }, 2000);
+
+  // 检查自动登录
+  checkAutoLogin();
 });
 
 // 获取二进制数字样式
@@ -395,6 +398,15 @@ const handlePasswordSubmit = async ({ values, errors }: any) => {
 
     if (res.code === 0) {
       await store.dispatch("user/getLoginUser");
+
+      // 如果勾选了自动登录，保存登录信息到本地存储
+      if (autoLogin.value) {
+        saveLoginInfo(passwordForm.account, isEmail);
+      } else {
+        // 如果没有勾选自动登录，清除可能存在的登录信息
+        clearLoginInfo();
+      }
+
       message.success("登录成功");
       const urlParams = new URL(window.location.href).searchParams;
       await router.push({
@@ -434,6 +446,15 @@ const handleEmailCodeSubmit = async ({ values, errors }: any) => {
     const res = await UserControllerService.emailLoginUsingPost(emailCodeForm);
     if (res.code === 0) {
       await store.dispatch("user/getLoginUser");
+
+      // 如果勾选了自动登录，保存登录信息到本地存储
+      if (autoLogin.value) {
+        saveLoginInfo(emailCodeForm.email, true);
+      } else {
+        // 如果没有勾选自动登录，清除可能存在的登录信息
+        clearLoginInfo();
+      }
+
       message.success("登录成功");
       const urlParams = new URL(window.location.href).searchParams;
       await router.push({
@@ -447,6 +468,68 @@ const handleEmailCodeSubmit = async ({ values, errors }: any) => {
     message.error("登录失败: " + (error as Error).message);
   } finally {
     loading.value = false;
+  }
+};
+
+/**
+ * 保存登录信息到本地存储
+ */
+const saveLoginInfo = (account: string, isEmail: boolean) => {
+  // 仅保存账号和登录类型，不保存密码
+  const loginInfo = {
+    account,
+    isEmail,
+    timestamp: new Date().getTime(), // 添加时间戳以便于实现登录过期
+  };
+  localStorage.setItem("autoLogin", JSON.stringify(loginInfo));
+};
+
+/**
+ * 清除保存的登录信息
+ */
+const clearLoginInfo = () => {
+  localStorage.removeItem("autoLogin");
+};
+
+/**
+ * 检查是否有保存的登录信息，如果有则自动填充
+ */
+const checkAutoLogin = () => {
+  const savedLoginInfo = localStorage.getItem("autoLogin");
+  if (savedLoginInfo) {
+    try {
+      const loginInfo = JSON.parse(savedLoginInfo);
+      const currentTime = new Date().getTime();
+
+      // 检查登录信息是否已过期（7天过期）
+      const DAY_IN_MS = 24 * 60 * 60 * 1000;
+      if (currentTime - loginInfo.timestamp > 7 * DAY_IN_MS) {
+        clearLoginInfo();
+        return;
+      }
+
+      // 自动填充账号
+      if (loginInfo.isEmail) {
+        if (loginInfo.account.includes("@")) {
+          // 如果是邮箱验证码登录方式
+          loginType.value = "email-code";
+          emailCodeForm.email = loginInfo.account;
+
+          // 使用邮箱密码登录更为合适，因为验证码需要重新获取
+          // loginType.value = "password";
+          // passwordForm.account = loginInfo.account;
+        }
+      } else {
+        loginType.value = "password";
+        passwordForm.account = loginInfo.account;
+      }
+
+      // 设置自动登录勾选状态
+      autoLogin.value = true;
+    } catch (e) {
+      console.error("读取自动登录信息失败", e);
+      clearLoginInfo();
+    }
   }
 };
 
