@@ -130,7 +130,7 @@
               message: '密码长度不能小于8',
             },
             {
-              validator: (value) => {
+              validator: (value: string) => {
                 if (
                   modalType === 'edit' &&
                   value &&
@@ -158,7 +158,7 @@
           :rules="[
             { required: modalType === 'add', message: '确认密码为必填字段' },
             {
-              validator: (value) => {
+              validator: (value: string) => {
                 if (modalType === 'edit' && !userForm.userPassword) {
                   return true;
                 }
@@ -170,7 +170,7 @@
               message: '两次输入的密码不一致',
             },
             {
-              validator: (value) => {
+              validator: (value: string) => {
                 if (
                   modalType === 'edit' &&
                   value &&
