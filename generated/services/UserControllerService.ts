@@ -10,6 +10,9 @@ import type { BaseResponse_Page_UserVO_ } from '../models/BaseResponse_Page_User
 import type { BaseResponse_User_ } from '../models/BaseResponse_User_';
 import type { BaseResponse_UserVO_ } from '../models/BaseResponse_UserVO_';
 import type { DeleteRequest } from '../models/DeleteRequest';
+import type { EmailLoginRequest } from '../models/EmailLoginRequest';
+import type { EmailRegisterRequest } from '../models/EmailRegisterRequest';
+import type { SendEmailCodeRequest } from '../models/SendEmailCodeRequest';
 import type { UserAddRequest } from '../models/UserAddRequest';
 import type { UserLoginRequest } from '../models/UserLoginRequest';
 import type { UserQueryRequest } from '../models/UserQueryRequest';
@@ -46,6 +49,55 @@ userAddRequest: UserAddRequest,
     }
 
     /**
+     * bindEmail
+     * @param emailRegisterRequest emailRegisterRequest
+     * @returns BaseResponse_boolean_ OK
+     * @returns any Created
+     * @throws ApiError
+     */
+    public static bindEmailUsingPost(
+emailRegisterRequest: EmailRegisterRequest,
+): CancelablePromise<BaseResponse_boolean_ | any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/user/bind/email',
+            body: emailRegisterRequest,
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+
+    /**
+     * bindOauth
+     * @param oauthId oauthId
+     * @param source source
+     * @returns BaseResponse_boolean_ OK
+     * @returns any Created
+     * @throws ApiError
+     */
+    public static bindOauthUsingPost(
+oauthId: string,
+source: string,
+): CancelablePromise<BaseResponse_boolean_ | any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/user/bind/oauth',
+            query: {
+                'oauthId': oauthId,
+                'source': source,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+
+    /**
      * deleteUser
      * @param deleteRequest deleteRequest
      * @returns BaseResponse_boolean_ OK
@@ -59,6 +111,72 @@ deleteRequest: DeleteRequest,
             method: 'POST',
             url: '/api/user/delete',
             body: deleteRequest,
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+
+    /**
+     * sendEmailCode
+     * @param sendEmailCodeRequest sendEmailCodeRequest
+     * @returns BaseResponse_boolean_ OK
+     * @returns any Created
+     * @throws ApiError
+     */
+    public static sendEmailCodeUsingPost(
+sendEmailCodeRequest: SendEmailCodeRequest,
+): CancelablePromise<BaseResponse_boolean_ | any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/user/email/code/send',
+            body: sendEmailCodeRequest,
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+
+    /**
+     * emailLogin
+     * @param emailLoginRequest emailLoginRequest
+     * @returns BaseResponse_LoginUserVO_ OK
+     * @returns any Created
+     * @throws ApiError
+     */
+    public static emailLoginUsingPost(
+emailLoginRequest: EmailLoginRequest,
+): CancelablePromise<BaseResponse_LoginUserVO_ | any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/user/email/login',
+            body: emailLoginRequest,
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+
+    /**
+     * emailRegister
+     * @param emailRegisterRequest emailRegisterRequest
+     * @returns BaseResponse_long_ OK
+     * @returns any Created
+     * @throws ApiError
+     */
+    public static emailRegisterUsingPost(
+emailRegisterRequest: EmailRegisterRequest,
+): CancelablePromise<BaseResponse_long_ | any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/user/email/register',
+            body: emailRegisterRequest,
             errors: {
                 401: `Unauthorized`,
                 403: `Forbidden`,

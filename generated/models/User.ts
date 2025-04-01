@@ -5,11 +5,12 @@
 
 export type User = {
     createTime?: string;
+    email?: string;
+    giteeId?: string;
+    githubId?: string;
     id?: number;
     isDelete?: number;
     mpOpenId?: string;
-    oauthId?: string;
-    oauthSource?: string;
     unionId?: string;
     updateTime?: string;
     userAccount?: string;
