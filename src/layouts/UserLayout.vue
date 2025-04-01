@@ -25,15 +25,7 @@
       </a-layout-header>
 
       <a-layout-content class="content">
-        <router-view v-slot="{ Component }">
-          <div class="router-view-container">
-            <transition name="fade" mode="out-in">
-              <keep-alive>
-                <component :is="Component" :key="$route.fullPath" />
-              </keep-alive>
-            </transition>
-          </div>
-        </router-view>
+        <router-view />
       </a-layout-content>
 
       <a-layout-footer class="footer">
