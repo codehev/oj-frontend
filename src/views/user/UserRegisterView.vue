@@ -451,6 +451,7 @@ const handleRegister = async ({ values, errors }: any) => {
     const userRegisterRequest: UserRegisterRequest = {
       userAccount: registerForm.userAccount,
       userPassword: registerForm.userPassword,
+      checkPassword: registerForm.confirm,
     };
 
     const res = await UserControllerService.userRegisterUsingPost(
@@ -486,6 +487,7 @@ const handleEmailRegister = async ({ values, errors }: any) => {
       email: emailRegisterForm.email,
       code: emailRegisterForm.code,
       password: emailRegisterForm.userPassword,
+      checkPassword: emailRegisterForm.confirm,
     };
 
     const res = await UserControllerService.emailRegisterUsingPost(
