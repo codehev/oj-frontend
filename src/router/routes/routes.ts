@@ -19,7 +19,7 @@ export const routes: Array<RouteRecordRaw> = [
         name: "题目",
         component: () => import("@/views/question/QuestionsView.vue"),
         meta: {
-          icon: "all-application",
+          icon: "code",
         },
       },
       {
@@ -28,7 +28,7 @@ export const routes: Array<RouteRecordRaw> = [
         component: () => import("@/views/question/QuestionSubmitView.vue"),
         meta: {
           access: ACCESS_ENUM.USER,
-          icon: "ecg",
+          icon: "dashboard",
         },
       },
       {
@@ -61,7 +61,7 @@ export const routes: Array<RouteRecordRaw> = [
         component: () => import("@/views/question/ManageQuestionView.vue"),
         meta: {
           access: ACCESS_ENUM.ADMIN,
-          icon: "dropbox",
+          icon: "apps",
         },
       },
       {
@@ -123,7 +123,7 @@ export const routes: Array<RouteRecordRaw> = [
         name: "关于",
         component: () => import("@/views/AboutView.vue"),
         meta: {
-          icon: "bill",
+          icon: "file",
           hideInMenu: true,
         },
       },
@@ -140,9 +140,6 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: "/user",
     component: () => import("@/layouts/UserLayout.vue"),
-    meta: {
-      hideInMenu: true,
-    },
     children: [
       {
         path: "login",
@@ -181,9 +178,6 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: "/view",
     component: () => import("@/layouts/QuestionLayout.vue"),
-    meta: {
-      hideInMenu: true,
-    },
     children: [
       {
         path: "question/:id",

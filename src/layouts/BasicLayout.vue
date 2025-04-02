@@ -9,7 +9,7 @@
       <!-- 内容区域与header保持适当距离 -->
       <div class="header-placeholder"></div>
 
-      <!-- 完全简化内容区域，确保路由内容能正确显示 -->
+      <!-- 内容区域 -->
       <a-layout-content class="content">
         <router-view />
       </a-layout-content>

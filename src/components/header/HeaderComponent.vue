@@ -20,7 +20,7 @@
             v-for="item in menuItems"
             :key="item.path"
             class="nav-item"
-            :class="{ active: selectedKeys.includes(item.path) }"
+            :class="{ active: isMenuActive(item.path) }"
             @click="doMenuClick(item.path)"
           >
             <component :is="item.icon" :size="16" class="menu-icon" />
@@ -138,6 +138,9 @@ import {
   IconDown,
   IconMoonFill,
   IconSunFill,
+  IconDashboard,
+  IconApps,
+  IconCalendar,
 } from "@arco-design/web-vue/es/icon";
 
 const router = useRouter();
@@ -145,6 +148,125 @@ const route = useRoute();
 const store = useStore();
 const unreadCount = ref(0); // 未读消息数
 const isDarkMode = ref(localStorage.getItem("theme") === "dark");
+
+// 当前选中的菜单项
+const activeMenuPath = ref("");
+
+// 根据图标类型返回对应的组件
+const getMenuIcon = (iconType?: string) => {
+  if (!iconType) return IconCommon;
+
+  switch (iconType) {
+    case "home":
+      return IconHome;
+    case "code":
+      return IconCode;
+    case "dashboard":
+      return IconDashboard;
+    case "trophy":
+      return IconTrophy;
+    case "message":
+      return IconMessage;
+    case "apps":
+      return IconApps;
+    case "user":
+      return IconUser;
+    case "file":
+      return IconFile;
+    case "calendar":
+      return IconCalendar;
+    default:
+      return IconCommon;
+  }
+};
+
+// 预处理菜单项
+const menuItems = computed(() => {
+  // 获取基础布局的子路由
+  const mainRoutes = routes.find((route) => route.path === "/")?.children || [];
+
+  // 过滤出可见的路由
+  const filteredRoutes = mainRoutes.filter((item) => {
+    if (item.meta?.hideInMenu) {
+      return false;
+    }
+    if (!checkAccess(store.state.user.loginUser, item.meta?.access as string)) {
+      return false;
+    }
+    return true;
+  });
+
+  // 提前计算好菜单项的属性，确保path前面有"/"
+  return filteredRoutes.map((item) => ({
+    path: item.path === "" ? "/" : `/${item.path}`,
+    name: item.name,
+    icon: getMenuIcon(item.meta?.icon as string),
+  }));
+});
+
+// 检查菜单项是否处于激活状态
+const isMenuActive = (menuPath: string) => {
+  // 处理首页的特殊情况
+  if (menuPath === "/" && route.path === "/") {
+    return true;
+  }
+
+  // 对于其他页面，比较路由路径
+  if (menuPath !== "/") {
+    // 移除开头的斜杠以匹配路由定义中的相对路径
+    const currentPathWithoutSlash = route.path.startsWith("/")
+      ? route.path.substring(1)
+      : route.path;
+
+    // 移除菜单路径开头的斜杠进行比较
+    const menuPathWithoutSlash = menuPath.startsWith("/")
+      ? menuPath.substring(1)
+      : menuPath;
+
+    // 检查当前路径是否以菜单路径开头
+    return (
+      currentPathWithoutSlash === menuPathWithoutSlash ||
+      currentPathWithoutSlash.startsWith(`${menuPathWithoutSlash}/`)
+    );
+  }
+
+  return false;
+};
+
+// 更新当前激活的菜单路径
+const updateActiveMenu = () => {
+  // 获取当前路由的路径
+  const currentPath = route.path;
+
+  // 对于根路径，直接设为 "/"
+  if (currentPath === "/") {
+    activeMenuPath.value = "/";
+    return;
+  }
+
+  // 提取第一级路径部分（不带开头的"/"）
+  const mainPathSegment = currentPath.split("/").filter(Boolean)[0] || "";
+  const mainPath = `/${mainPathSegment}`;
+
+  // 在menuItems中查找匹配项
+  const menuItem = menuItems.value.find((item) => {
+    // 移除两个路径开头的"/"后比较
+    const itemPathNormalized = item.path.startsWith("/")
+      ? item.path.substring(1)
+      : item.path;
+    const mainPathNormalized = mainPath.startsWith("/")
+      ? mainPath.substring(1)
+      : mainPath;
+
+    return itemPathNormalized === mainPathNormalized;
+  });
+
+  if (menuItem) {
+    activeMenuPath.value = menuItem.path;
+  } else {
+    // 如果找不到匹配项，保持当前状态
+  }
+};
 
 // 切换主题模式
 const toggleTheme = () => {
@@ -173,20 +295,27 @@ const getUserRoleText = () => {
 const doMenuClick = (key: string) => {
   // 处理路径，如果已经是以/开头，直接使用，否则在/后拼接
   const path = key.startsWith("/") ? key : `/${key}`;
+
+  // 更新当前激活的菜单
+  activeMenuPath.value = path;
+
+  // 导航到新路径
   router.push({
     path,
   });
 };
 
-// 获取主路径作为选中项
-const initialPath = route.path === "/" ? "/" : `/${route.path.split("/")[1]}`;
-const selectedKeys = ref([initialPath]);
+// 监听路由变化以更新菜单高亮状态
+watch(
+  () => route.path,
+  () => {
+    updateActiveMenu();
+  },
+  { immediate: true }
+);
 
+// 监听路由变化以更新页面标题
 watch(route, (newRoute) => {
-  // 处理子路由，提取主路径
-  const mainPath =
-    newRoute.path === "/" ? "/" : `/${newRoute.path.split("/")[1]}`;
-  selectedKeys.value = [mainPath];
   // 更新页面标题
   document.title = (newRoute.name as string) || "Online Judge";
 });
@@ -216,61 +345,14 @@ watch(
   { immediate: true }
 );
 
-// 根据图标类型返回对应的组件
-const getMenuIcon = (iconType?: string) => {
-  if (!iconType) return IconCommon;
-
-  switch (iconType) {
-    case "home":
-      return IconHome;
-    case "all-application":
-      return IconStorage;
-    case "ecg":
-      return IconHeart;
-    case "trophy":
-      return IconTrophy;
-    case "message":
-      return IconMessage;
-    case "dropbox":
-      return IconCommon;
-    case "user":
-      return IconUser;
-    case "bill":
-      return IconFile;
-    default:
-      return IconCommon;
-  }
-};
-
-// 预处理菜单项
-const menuItems = computed(() => {
-  // 获取基础布局的子路由
-  const mainRoutes = routes.find((route) => route.path === "/")?.children || [];
-
-  // 过滤出可见的路由
-  const filteredRoutes = mainRoutes.filter((item) => {
-    if (item.meta?.hideInMenu) {
-      return false;
-    }
-    if (!checkAccess(store.state.user.loginUser, item.meta?.access as string)) {
-      return false;
-    }
-    return true;
-  });
-
-  // 提前计算好菜单项的属性
-  return filteredRoutes.map((item) => ({
-    path: item.path,
-    name: item.name,
-    icon: getMenuIcon(item.meta?.icon as string),
-  }));
-});
-
 // 应用存储的主题
 onMounted(() => {
   if (isDarkMode.value) {
     document.body.setAttribute("arco-theme", "dark");
   }
+
+  // 初始化页面加载时的菜单高亮状态
+  updateActiveMenu();
 
   // 初始化未读消息数量
   if (userInfo.value && userInfo.value.userRole !== accessEnum.NOT_LOGIN) {
