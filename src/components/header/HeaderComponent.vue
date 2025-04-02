@@ -70,11 +70,11 @@
                 <div class="dropdown-menu">
                   <div class="dropdown-item" @click="toUserHome">
                     <icon-user :size="16" />
-                    <span>我的主页</span>
+                    <span>个人主页</span>
                   </div>
                   <div class="dropdown-item" @click="toUserSettings">
                     <icon-settings :size="16" />
-                    <span>我的设置</span>
+                    <span>账号设置</span>
                   </div>
                   <a-divider style="margin: 2px 0" />
                   <div class="dropdown-item logout" @click="userLoginout">
@@ -129,8 +129,6 @@ import {
   IconImport,
   IconUserAdd,
   IconHome,
-  IconStorage,
-  IconHeart,
   IconTrophy,
   IconMessage,
   IconCommon,
