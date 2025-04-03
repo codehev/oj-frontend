@@ -8,7 +8,7 @@
   <a-comment
     v-for="(comment, index) in visibleComments"
     :key="index"
-    :author="comment.userName"
+    :author="comment.nickname"
     :datetime="dayjs(comment.createTime).format('YYYY-MM-DD HH:mm:ss')"
   >
     <template #avatar>

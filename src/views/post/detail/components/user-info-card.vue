@@ -3,7 +3,7 @@
     <a-space size="medium">
       <a-avatar
         trigger-type="mask"
-        :image-url="post?.user?.userAvatar"
+        :image-url="post?.userProfileVO?.userAvatar"
         @click="handleToUserInfo"
       >
         <template #trigger-icon>
@@ -12,7 +12,7 @@
       </a-avatar>
       <a-space direction="vertical">
         <a-typography-title bold style="font-size: 17px">
-          {{ post?.user?.userName ?? "暂无用户名" }}
+          {{ post?.userProfileVO?.nickname ?? "暂无用户名" }}
         </a-typography-title>
         <a-typography-paragraph
           type="secondary"
@@ -27,7 +27,7 @@
             },
           }"
         >
-          {{ post?.user?.userProfile ?? "暂无简介" }}
+          {{ post?.userProfileVO?.bio ?? "暂无简介" }}
         </a-typography-paragraph>
       </a-space>
     </a-space>
@@ -46,11 +46,11 @@ const props = defineProps<{
 
 const post = ref<PostVO>({
   userId: 0,
-  user: {
+  userProfileVO: {
     id: 0,
     userAvatar: "",
-    userName: "",
-    userProfile: "",
+    nickname: "",
+    bio: "",
   },
 });
 

@@ -48,23 +48,23 @@
     >
       <!-- 状态列 -->
       <template #status="{ record }">
-        {{ STATUS_ENUM[record.status] }}
+        {{ STATUS_ENUM[record.status] || "--" }}
       </template>
       <!-- 结果列 -->
       <template #judgeMessage="{ record }">
-        {{ record.judgeInfo?.message }}
+        {{ record.judgeInfo?.message || "--" }}
       </template>
       <!-- 时间列 -->
       <template #judgeTime="{ record }">
-        {{ record.judgeInfo?.time }}ms
+        {{ record.judgeInfo?.time || "--" }}ms
       </template>
       <!-- 内存列 -->
       <template #judgeMemory="{ record }">
-        {{ record.judgeInfo?.memory }}kb
+        {{ record.judgeInfo?.memory || "--" }}kb
       </template>
       <!-- 提交时间列 -->
       <template #createTime="{ record }">
-        {{ formatTime(record.createTime) }}
+        {{ formatTime(record.createTime) || "--" }}
       </template>
     </a-table>
   </div>
@@ -121,10 +121,10 @@ const searchParams = ref({
 const loadSubmissions = async () => {
   const questionId = props.questionId;
   if (!questionId) {
-    console.log("未提供questionId，无法加载提交记录");
+    // console.log("未提供questionId，无法加载提交记录");
     return;
   }
-  console.log("开始加载提交记录，questionId:", questionId);
+  // console.log("开始加载提交记录，questionId:", questionId);
   loading.value = true;
   try {
     const res =
@@ -137,7 +137,7 @@ const loadSubmissions = async () => {
         sortOrder: "descend",
       });
 
-    console.log("提交记录API返回：", res);
+    // console.log("提交记录API返回：", res);
     if (res.code === 0) {
       submissions.value = res.data.records;
       total.value = Number(res.data.total);
@@ -206,7 +206,7 @@ const formatTime = (timeString: string) => {
 watch(
   () => props.questionId,
   (newId) => {
-    console.log("questionId变化，新值:", newId);
+    // console.log("questionId变化，新值:", newId);
     // 重置分页
     current.value = 1;
     searchParams.value.language = undefined;

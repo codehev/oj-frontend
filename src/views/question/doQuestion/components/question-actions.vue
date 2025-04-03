@@ -83,7 +83,7 @@ watch(
   () => props.questionInfo,
   (newVal) => {
     if (newVal) {
-      console.log("接收到新的问题信息:", newVal);
+      // console.log("接收到新的问题信息:", newVal);
       // 确保所有需要的字段都有值
       question.value = {
         id: newVal.id,
@@ -110,7 +110,7 @@ const scrollToComment = () => {
 // 点赞
 const handleThumb = async () => {
   try {
-    console.log("点赞操作，当前问题ID:", question.value.id);
+    // console.log("点赞操作，当前问题ID:", question.value.id);
     if (!question.value.id) {
       Message.error("题目ID不存在，无法点赞");
       return;
@@ -119,7 +119,7 @@ const handleThumb = async () => {
     var res = await QuestionThumbControllerService.doThumbUsingPost1({
       questionId: question.value.id,
     });
-    console.log("点赞返回结果:", res);
+    // console.log("点赞返回结果:", res);
 
     if (res.code === 0) {
       const thumbChange = res.data;
@@ -143,7 +143,7 @@ const handleThumb = async () => {
 // 收藏
 const handleFavour = async () => {
   try {
-    console.log("收藏操作，当前问题ID:", question.value.id);
+    // console.log("收藏操作，当前问题ID:", question.value.id);
     if (!question.value.id) {
       Message.error("题目ID不存在，无法收藏");
       return;
@@ -154,7 +154,7 @@ const handleFavour = async () => {
         questionId: question.value.id,
       }
     );
-    console.log("收藏返回结果:", res);
+    // console.log("收藏返回结果:", res);
 
     if (res.code === 0) {
       const favourChange = res.data;

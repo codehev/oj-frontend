@@ -6,7 +6,7 @@
     <a-layout style="height: 100vh">
       <a-layout-header class="header">
         <a-drawer
-          :width="550"
+          :width="650"
           :visible="visible"
           placement="left"
           :footer="false"
@@ -83,7 +83,7 @@
                 {{
                   `${
                     record.submitNum
-                      ? record.acceptedNum / record.submitNum
+                      ? (record.acceptedNum / record.submitNum) * 100
                       : "0"
                   }% (${record.acceptedNum} / ${record.submitNum})`
                 }}
@@ -238,7 +238,7 @@ const columns = [
   {
     title: "通过率",
     slotName: "acceptedRate",
-    width: 100,
+    width: 130,
   },
 ];
 

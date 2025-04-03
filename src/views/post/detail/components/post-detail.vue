@@ -17,7 +17,7 @@
                 <a-space size="mini">
                   <icon-user />
                   <a-typography-text class="second-info-color">
-                    {{ post?.user?.userName ?? "---" }}
+                    {{ post?.userProfileVO?.nickname ?? "---" }}
                   </a-typography-text>
                 </a-space>
               </div>
@@ -110,8 +110,8 @@ watch(
 const post = ref<PostVO>({
   content: "",
   title: "",
-  user: {
-    userName: "",
+  userProfileVO: {
+    nickname: "",
     userAvatar: "",
   },
   createTime: "",

@@ -24,13 +24,13 @@
                 题目描述
               </template>
               <!-- 使用题目描述组件 -->
-              <QuestionDescription :questionVO="questionVO" />
+              <QuestionDescription v-if="questionVO" :questionVO="questionVO" />
 
               <!-- 将点赞收藏操作栏放在题目描述标签页内 -->
               <QuestionActions
-                v-if="questionVO"
+                v-if="questionVO && commentNum"
                 :questionInfo="questionVO"
-                :commentNum="commentNum"
+                :commentNum="Number(commentNum)"
                 @switch-tab="handleSwitchTab"
               />
             </a-tab-pane>
@@ -40,7 +40,7 @@
                 题解
               </template>
               <!-- 使用题解组件 -->
-              <QuestionAnswers :question="question" />
+              <QuestionAnswers v-if="question" :question="question" />
             </a-tab-pane>
             <a-tab-pane key="3">
               <template #title>
@@ -49,6 +49,7 @@
               </template>
               <!-- 使用提交记录组件 -->
               <SubmissionHistory
+                v-if="questionVO"
                 :questionId="questionVO?.id?.toString()"
                 @showDetail="handleShowSubmissionDetail"
               />
@@ -58,7 +59,10 @@
                 <IconMessage :size="16" :style="{ color: '#007bff' }" />
                 评论
               </template>
-              <QuestionComment :questionId="questionVO?.id?.toString()" />
+              <QuestionComment
+                v-if="questionVO"
+                :questionId="questionVO?.id?.toString()"
+              />
             </a-tab-pane>
           </a-tabs>
         </div>
@@ -181,18 +185,18 @@ const loadQuestion = async () => {
     return;
   }
 
-  console.log("开始加载题目信息，ID:", questionId);
+  // console.log("开始加载题目信息，ID:", questionId);
 
   try {
     const res = await QuestionControllerService.getQuestionVoByIdUsingGet(
       questionId as any
     );
-    console.log("题目信息API返回:", res);
+    // console.log("题目信息API返回:", res);
 
     if (res.code === 0) {
       if (res.data) {
         questionVO.value = res.data;
-        console.log("题目信息加载成功:", questionVO.value);
+        // console.log("题目信息加载成功:", questionVO.value);
         // 初始化代码
         switch (form.value.language) {
           case LanguageEnum.JAVA:

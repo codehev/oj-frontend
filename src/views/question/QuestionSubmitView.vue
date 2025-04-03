@@ -79,7 +79,7 @@
               <span>时间：{{ record?.judgeInfo?.time }}ms</span>
               <span>内存：{{ record?.judgeInfo?.memory }}kb</span>
               <span>语言：{{ record?.language }}</span>
-              <span>作者：{{ record?.userVO?.userName }}</span>
+              <span>作者：{{ record?.userProfileVO?.nickname }}</span>
             </div>
           </div>
           <CodeViewer
@@ -123,14 +123,14 @@
       <!--用户-->
       <template #userName="{ record }">
         <router-link
-          v-if="record.userVO?.userName"
+          v-if="record.userProfileVO?.nickname"
           class="tableLink"
           :to="{
             path: `/user/home/${record.userId}`,
           }"
-          >{{ record.userVO?.userName || "--" }}
+          >{{ record.userProfileVO?.nickname || "--" }}
         </router-link>
-        <span v-else style="color: red">用户丢失</span>
+        <span v-else style="color: red">--</span>
       </template>
       <!--题目-->
       <template #title="{ record }">
@@ -142,27 +142,27 @@
           }"
           >{{ record.questionVO?.title || "--" }}
         </router-link>
-        <span v-else style="color: red">题目丢失</span>
+        <span v-else style="color: red">--</span>
       </template>
       <!--判题状态-->
       <template #status="{ record }">
-        {{ statusEnum[record.status] }}
+        {{ statusEnum[record.status] || "--" }}
       </template>
       <!--判题结果-->
       <template #judgeMessage="{ record }">
-        {{ record.judgeInfo.message }}
+        {{ record.judgeInfo.message || "--" }}
       </template>
       <!--时间消耗-->
       <template #judgeTime="{ record }">
-        {{ record.judgeInfo.time }}ms
+        {{ record.judgeInfo.time || "--" }}ms
       </template>
       <!--内存消耗-->
       <template #judgeMemory="{ record }">
-        {{ record.judgeInfo.memory }}kb
+        {{ record.judgeInfo.memory || "--" }}kb
       </template>
       <!--创建时间-->
       <template #createTime="{ record }">
-        {{ moment(record.createTime).format("YYYY-MM-DD h:mm:ss") }}
+        {{ moment(record.createTime).format("YYYY-MM-DD h:mm:ss") || "--" }}
       </template>
     </a-table>
   </div>

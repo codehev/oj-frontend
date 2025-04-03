@@ -62,11 +62,11 @@
               <a-popover>
                 <template #content>
                   <a-space size="medium">
-                    <a-avatar :image-url="item?.user?.userAvatar" />
+                    <a-avatar :image-url="item?.userProfileVO?.userAvatar" />
                     <a-space direction="vertical">
                       <!-- 排版 -->
                       <a-typography-title bold style="font-size: 17px">
-                        {{ item?.user?.userName ?? "---" }}
+                        {{ item?.userProfileVO?.nickname ?? "---" }}
                       </a-typography-title>
                       <a-typography-paragraph
                         type="secondary"
@@ -81,12 +81,15 @@
                           },
                         }"
                       >
-                        {{ item?.user?.userProfile ?? "---" }}
+                        {{ item?.userProfileVO?.bio ?? "---" }}
                       </a-typography-paragraph>
                     </a-space>
                   </a-space>
                 </template>
-                <a-avatar shape="square" :image-url="item?.user?.userAvatar" />
+                <a-avatar
+                  shape="square"
+                  :image-url="item?.userProfileVO?.userAvatar"
+                />
               </a-popover>
             </template>
           </a-list-item-meta>
