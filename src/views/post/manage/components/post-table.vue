@@ -102,7 +102,7 @@
       </a-space>
     </template>
     <template #Avatar="{ record }">
-      <a-image width="40px" :src="record?.user?.userAvatar"></a-image>
+      <a-image width="40px" :src="record?.userProfileVO?.userAvatar"></a-image>
     </template>
     <template #Controls="{ record }">
       <a-link @click="handleEdit(record)">编辑</a-link>
@@ -184,14 +184,14 @@ const zoneOptions = ref<SelectOptionData[]>([]);
 const columns: TableColumnData[] = [
   {
     title: "作者",
-    dataIndex: "user.userName",
+    dataIndex: "userProfileVO.nickname",
     align: "center",
     slotName: "User",
     width: 200,
   },
   {
     title: "头像",
-    dataIndex: "user.userAvatar",
+    dataIndex: "userProfileVO.userAvatar",
     align: "center",
     slotName: "Avatar",
     width: 100,
