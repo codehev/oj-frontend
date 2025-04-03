@@ -1,16 +1,27 @@
 <template>
   <div class="oauth-result-container">
-    <div v-if="success" class="success-container">
-      <a-result status="success" title="登录成功">
+    <div v-if="isSuccess" class="success-container">
+      <a-result status="success" :title="successMessage">
         <template #extra>
-          <a-button type="primary" @click="goToHome">返回首页</a-button>
+          <a-button
+            v-if="optionType == 'login'"
+            type="primary"
+            @click="goToHome"
+            >返回首页 ({{ countDown }}s)</a-button
+          >
+          <a-button v-else @click="router.back()"
+            >返回 ({{ countDown }}s)</a-button
+          >
         </template>
       </a-result>
     </div>
     <div v-else class="error-container">
       <a-result status="error" :title="errorMessage">
         <template #extra>
-          <a-button @click="goToLogin">返回登录</a-button>
+          <a-button v-if="optionType == 'login'" @click="goToLogin"
+            >返回登录</a-button
+          >
+          <a-button v-else @click="router.back()">返回</a-button>
         </template>
       </a-result>
     </div>
@@ -25,8 +36,16 @@ import { useStore } from "vuex";
 const router = useRouter();
 const route = useRoute();
 const store = useStore();
-const success = ref(route.path === "/user/oauth/success");
-const errorMessage = ref("登录失败");
+
+const isSuccess = ref(route.path === "/user/oauth/success");
+const optionType = ref(route.query.type);
+const token = route.query.token;
+const message = route.query.message;
+const errorMessage = ref(optionType.value == "login" ? "登录失败" : "绑定失败");
+const successMessage = ref(
+  optionType.value == "login" ? "登录成功" : "绑定成功"
+);
+const countDown = ref(3); // 倒计时变量，从3开始
 
 const goToHome = () => {
   router.push("/");
@@ -38,16 +57,14 @@ const goToLogin = () => {
 
 onMounted(() => {
   // 处理错误消息
-  if (route.query.message) {
-    const message = route.query.message;
+  if (message) {
     errorMessage.value = Array.isArray(message)
       ? String(message[0])
       : String(message);
   }
 
-  // 如果是登录成功页面，检查URL参数中的token
-  if (success.value) {
-    const token = route.query.token;
+  // 如果是成功页面，检查URL参数中的token
+  if (isSuccess.value) {
     if (token) {
       // 保存token到localStorage
       localStorage.setItem(
@@ -58,12 +75,18 @@ onMounted(() => {
       // 获取当前登录用户信息
       store.dispatch("user/getLoginUser");
 
-      // 3秒后自动跳转到首页
-      setTimeout(() => {
-        goToHome();
-      }, 3000);
+      // 设置倒计时
+      const timer = setInterval(() => {
+        countDown.value--;
+        if (countDown.value <= 0) {
+          clearInterval(timer);
+          // 倒计时结束后自动跳转
+          if (optionType.value == "login") goToHome();
+          else router.back();
+        }
+      }, 1000);
     } else {
-      success.value = false;
+      isSuccess.value = false;
       errorMessage.value = "Token不存在";
     }
   }

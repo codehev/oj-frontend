@@ -35,6 +35,7 @@ export type { BaseResponse_UserProfileVO_ } from './models/BaseResponse_UserProf
 export type { BaseResponse_UserVO_ } from './models/BaseResponse_UserVO_';
 export type { ChangePasswordRequest } from './models/ChangePasswordRequest';
 export type { DeleteRequest } from './models/DeleteRequest';
+export type { EmailBindRequest } from './models/EmailBindRequest';
 export type { EmailLoginRequest } from './models/EmailLoginRequest';
 export type { EmailRegisterRequest } from './models/EmailRegisterRequest';
 export type { GenerateAnswerRequest } from './models/GenerateAnswerRequest';

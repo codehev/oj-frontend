@@ -74,14 +74,16 @@
                     <a-radio value="male">
                       <template #radio="{ checked }">
                         <a-space :class="{ 'gender-checked': checked }">
-                          <icon-man /> 男性
+                          <icon-man />
+                          男性
                         </a-space>
                       </template>
                     </a-radio>
                     <a-radio value="female">
                       <template #radio="{ checked }">
                         <a-space :class="{ 'gender-checked': checked }">
-                          <icon-woman /> 女性
+                          <icon-woman />
+                          女性
                         </a-space>
                       </template>
                     </a-radio>
@@ -287,7 +289,7 @@
               </div>
               <a-button
                 type="text"
-                @click="handleBindGithub"
+                @click="handleBindGithub('github')"
                 :status="securityForm.githubBound ? 'success' : 'danger'"
               >
                 {{ securityForm.githubBound ? "解绑" : "绑定" }}
@@ -310,7 +312,7 @@
               </div>
               <a-button
                 type="text"
-                @click="handleBindGitee"
+                @click="handleBindGitee('gitee')"
                 :status="securityForm.giteeBound ? 'success' : 'danger'"
               >
                 {{ securityForm.giteeBound ? "解绑" : "绑定" }}
@@ -425,6 +427,23 @@
           </a-input>
         </a-form-item>
         <a-form-item
+          label="密码"
+          field="password"
+          :rules="[{ required: true, message: '请输入密码' }]"
+          :validate-trigger="['change', 'blur']"
+        >
+          <template #default>
+            <a-input-password
+              v-model="emailForm.password"
+              placeholder="请输入密码"
+              allow-clear
+            />
+          </template>
+          <template #help>
+            <div class="form-help-text">请输入您的账号密码以验证身份</div>
+          </template>
+        </a-form-item>
+        <a-form-item
           label="验证码"
           field="code"
           :rules="[{ required: true, message: '请输入验证码' }]"
@@ -476,6 +495,7 @@ import {
 import {
   UserControllerService,
   FileControllerService,
+  OAuthControllerService,
 } from "../../../generated";
 import { chinaRegions } from "../../data/china-regions";
 
@@ -574,6 +594,7 @@ const showPasswordModal = ref(false);
 const emailForm = reactive({
   email: "",
   code: "",
+  password: "",
   countDown: 0,
 });
 const emailFormRef = ref();
@@ -775,10 +796,10 @@ const sendVerificationCode = async () => {
 
   try {
     // 这里调用API发送验证码
-    // 示例代码，实际开发中替换为真实API调用
-    // await UserControllerService.sendEmailCodeUsingPost({
-    //   email: emailForm.email,
-    // });
+    await UserControllerService.sendEmailCodeUsingPost({
+      email: emailForm.email,
+      type: "bind",
+    });
 
     Message.success("验证码已发送");
 
@@ -798,27 +819,28 @@ const sendVerificationCode = async () => {
 
 // 绑定邮箱
 const bindEmail = async () => {
-  const validate = await emailFormRef.value.validate();
-  if (validate) {
-    try {
-      // 这里调用API绑定邮箱
-      // 示例代码，实际开发中替换为真实API调用
-      // await UserControllerService.bindEmailUsingPost({
-      //   email: emailForm.email,
-      //   code: emailForm.code,
-      // });
+  // const validate = await emailFormRef.value.validate();
+  // if (validate) {
 
-      Message.success("邮箱绑定成功");
-      securityForm.email = emailForm.email;
-      showEmailModal.value = false;
-      resetEmailForm();
+  // }
+  try {
+    // 这里调用API绑定邮箱
+    await UserControllerService.bindEmailUsingPost({
+      email: emailForm.email,
+      code: emailForm.code,
+      password: emailForm.password,
+    });
 
-      // 更新用户信息
-      // await store.dispatch("user/getLoginUser");
-    } catch (error) {
-      Message.error("邮箱绑定失败");
-      console.error("邮箱绑定失败:", error);
-    }
+    Message.success("邮箱绑定成功");
+    securityForm.email = emailForm.email;
+    showEmailModal.value = false;
+    resetEmailForm();
+
+    // 更新用户信息
+    await store.dispatch("user/getLoginUser");
+  } catch (error) {
+    Message.error("邮箱绑定失败");
+    console.error("邮箱绑定失败:", error);
   }
 };
 
@@ -826,36 +848,69 @@ const bindEmail = async () => {
 const resetEmailForm = () => {
   emailForm.email = "";
   emailForm.code = "";
+  emailForm.password = "";
   emailForm.countDown = 0;
   showEmailModal.value = false;
   emailFormRef.value?.resetFields();
 };
 
 // 绑定GitHub账号
-const handleBindGithub = () => {
+const handleBindGithub = async (source: string) => {
   if (securityForm.githubBound) {
     // 解绑逻辑
-    // await UserControllerService.unbindGithubUsingPost();
+    const res = await OAuthControllerService.unbindOauthUsingPost(source);
+    if (res.code === 0) {
+      Message.success("GitHub账号解绑成功");
+      securityForm.giteeBound = false;
+      // 更新用户信息
+      await store.dispatch("user/getLoginUser");
+    } else {
+      Message.error("GitHub账号解绑失败");
+    }
     Message.success("GitHub账号解绑成功");
     securityForm.githubBound = false;
   } else {
     // 跳转到GitHub授权页面
-    // window.location.href = "/api/oauth2/authorization/github";
+    handleOAuthLogin(source);
     Message.info("正在跳转至GitHub授权页面");
   }
 };
 
 // 绑定Gitee账号
-const handleBindGitee = () => {
+const handleBindGitee = async (source: string) => {
   if (securityForm.giteeBound) {
     // 解绑逻辑
-    // await UserControllerService.unbindGiteeUsingPost();
-    Message.success("Gitee账号解绑成功");
-    securityForm.giteeBound = false;
+    const res = await OAuthControllerService.unbindOauthUsingPost(source);
+    if (res.code === 0) {
+      Message.success("Gitee账号解绑成功");
+      securityForm.giteeBound = false;
+      // 更新用户信息
+      await store.dispatch("user/getLoginUser");
+    } else {
+      Message.error("Gitee账号解绑失败");
+    }
   } else {
     // 跳转到Gitee授权页面
-    // window.location.href = "/api/oauth2/authorization/gitee";
+    handleOAuthLogin(source);
     Message.info("正在跳转至Gitee授权页面");
+  }
+};
+
+/**
+ * 第三方登录绑定处理
+ */
+const handleOAuthLogin = async (source: string) => {
+  try {
+    const res = await OAuthControllerService.renderAuthUsingGet(source);
+
+    if (res.code === 0 && res.data) {
+      // 跳转到第三方授权页面
+      window.location.href = res.data;
+    } else {
+      Message.error("获取授权链接失败：" + res.message);
+    }
+  } catch (error) {
+    Message.error("获取授权链接失败：" + (error as Error).message);
   }
 };
 
@@ -1088,5 +1143,21 @@ const maskEmail = (email: string) => {
   background-color: rgb(var(--primary-1));
   border-color: rgb(var(--primary-4));
   color: rgb(var(--primary-6));
+}
+
+.form-item-tip {
+  font-size: 12px;
+  color: var(--color-text-3);
+  display: block;
+  line-height: 1.5;
+  margin-top: 4px;
+}
+
+.form-help-text {
+  font-size: 12px;
+  color: var(--color-text-3);
+  display: block;
+  line-height: 1.5;
+  margin-top: 4px;
 }
 </style>

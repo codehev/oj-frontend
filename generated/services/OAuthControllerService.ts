@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { BaseResponse_boolean_ } from '../models/BaseResponse_boolean_';
 import type { BaseResponse_string_ } from '../models/BaseResponse_string_';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -22,6 +23,30 @@ source: string,
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/oauth/render/{source}',
+            path: {
+                'source': source,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+
+    /**
+     * unbindOauth
+     * @param source source
+     * @returns BaseResponse_boolean_ OK
+     * @returns any Created
+     * @throws ApiError
+     */
+    public static unbindOauthUsingPost(
+source: string,
+): CancelablePromise<BaseResponse_boolean_ | any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/oauth/unbind/oauth/{source}',
             path: {
                 'source': source,
             },

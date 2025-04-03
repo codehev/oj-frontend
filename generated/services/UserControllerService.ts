@@ -12,6 +12,7 @@ import type { BaseResponse_UserProfileVO_ } from '../models/BaseResponse_UserPro
 import type { BaseResponse_UserVO_ } from '../models/BaseResponse_UserVO_';
 import type { ChangePasswordRequest } from '../models/ChangePasswordRequest';
 import type { DeleteRequest } from '../models/DeleteRequest';
+import type { EmailBindRequest } from '../models/EmailBindRequest';
 import type { EmailLoginRequest } from '../models/EmailLoginRequest';
 import type { EmailRegisterRequest } from '../models/EmailRegisterRequest';
 import type { SendEmailCodeRequest } from '../models/SendEmailCodeRequest';
@@ -52,45 +53,18 @@ userAddRequest: UserAddRequest,
 
     /**
      * bindEmail
-     * @param emailRegisterRequest emailRegisterRequest
+     * @param emailBindRequest emailBindRequest
      * @returns BaseResponse_boolean_ OK
      * @returns any Created
      * @throws ApiError
      */
     public static bindEmailUsingPost(
-emailRegisterRequest: EmailRegisterRequest,
+emailBindRequest: EmailBindRequest,
 ): CancelablePromise<BaseResponse_boolean_ | any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/user/bind/email',
-            body: emailRegisterRequest,
-            errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
-                404: `Not Found`,
-            },
-        });
-    }
-
-    /**
-     * bindOauth
-     * @param oauthId oauthId
-     * @param source source
-     * @returns BaseResponse_boolean_ OK
-     * @returns any Created
-     * @throws ApiError
-     */
-    public static bindOauthUsingPost(
-oauthId: string,
-source: string,
-): CancelablePromise<BaseResponse_boolean_ | any> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/api/user/bind/oauth',
-            query: {
-                'oauthId': oauthId,
-                'source': source,
-            },
+            body: emailBindRequest,
             errors: {
                 401: `Unauthorized`,
                 403: `Forbidden`,
