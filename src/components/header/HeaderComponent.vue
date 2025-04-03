@@ -8,7 +8,7 @@
         <div class="logo-section" @click="doMenuClick('/')">
           <div class="logo-wrapper">
             <router-link to="/" class="logo-link">
-              <!-- <img src="@/assets/logo.svg" alt="Logo" class="logo-img" /> -->
+              <img src="@/assets/logo.png" alt="Logo" class="logo-img" />
               <span class="site-name">Online Judge</span>
             </router-link>
           </div>
@@ -412,6 +412,7 @@ const toUserSettings = () => {
   margin: 0 auto;
   display: flex;
   align-items: center;
+  width: 100%; /* 确保占满容器宽度 */
 }
 
 /* 导航栏主体样式 */
@@ -420,7 +421,7 @@ const toUserSettings = () => {
   height: 60px;
   display: flex;
   align-items: center;
-  padding: 0 20px;
+  padding: 0 10px; /* 减小内边距 */
   position: relative;
 }
 
@@ -429,7 +430,7 @@ const toUserSettings = () => {
   display: flex;
   align-items: center;
   padding: 0 4px;
-  margin-right: 40px;
+  margin-right: 20px; /* 减小右侧边距 */
   cursor: pointer;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -481,20 +482,28 @@ const toUserSettings = () => {
 .nav-menu {
   display: flex;
   height: 100%;
+  flex-wrap: nowrap; /* 确保不换行 */
+  overflow-x: auto; /* 在小屏幕上允许滚动 */
+  scrollbar-width: none; /* 隐藏滚动条 - Firefox */
+}
+
+.nav-menu::-webkit-scrollbar {
+  display: none; /* 隐藏滚动条 - Chrome, Safari */
 }
 
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 0 16px;
-  font-size: 15px;
+  gap: 4px; /* 减小图标和文字间距 */
+  padding: 0 10px; /* 减小左右内边距 */
+  font-size: 14px; /* 减小字体大小 */
   height: 100%;
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   color: var(--color-text-2);
   position: relative;
   overflow: hidden;
+  white-space: nowrap; /* 确保文字不换行 */
 }
 
 .nav-item:hover {
@@ -530,7 +539,7 @@ const toUserSettings = () => {
 }
 
 .menu-icon {
-  margin-right: 6px;
+  margin-right: 4px; /* 减小图标右侧间距 */
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -720,11 +729,11 @@ const toUserSettings = () => {
   }
 
   .custom-nav {
-    padding: 0 12px;
+    padding: 0 8px;
   }
 
   .logo-section {
-    margin-right: 20px;
+    margin-right: 10px;
   }
 
   .site-name {
@@ -733,12 +742,12 @@ const toUserSettings = () => {
 
   .logo-img {
     height: 28px;
-    margin-right: 8px;
+    margin-right: 6px;
   }
 
   .nav-item {
-    padding: 0 12px;
-    font-size: 14px;
+    padding: 0 8px;
+    font-size: 13px;
   }
 
   .user-info {
@@ -748,11 +757,12 @@ const toUserSettings = () => {
 
 @media screen and (max-width: 480px) {
   .nav-item {
-    padding: 0 8px;
+    padding: 0 6px;
+    font-size: 12px;
   }
 
   .menu-icon {
-    margin-right: 4px;
+    margin-right: 2px;
   }
 
   .site-name {
@@ -765,7 +775,7 @@ const toUserSettings = () => {
   }
 
   .logo-section {
-    margin-right: 10px;
+    margin-right: 6px;
   }
 
   .theme-toggle {
