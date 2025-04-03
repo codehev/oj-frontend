@@ -301,7 +301,7 @@ watch(
 );
 
 const onTabChange = (key: string | number) => {
-  console.log("切换标签页:", key);
+  // console.log("切换标签页:", key);
   if (key === "1") {
     loadQuestion();
   } else if (key === "2") {

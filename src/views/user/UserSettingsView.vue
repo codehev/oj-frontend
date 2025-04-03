@@ -478,6 +478,7 @@ import {
   UserControllerService,
   FileControllerService,
 } from "../../../generated";
+import { chinaRegions } from "../../data/china-regions";
 
 // 选中的标签页
 const activeTab = ref("profile");
@@ -551,38 +552,8 @@ const quickAddSkillTag = (value: string) => {
   profileForm.skillTags.push(value);
 };
 
-// 省市级联数据（模拟数据）
-const locationOptions = ref([
-  {
-    value: "beijing",
-    label: "北京市",
-    children: [
-      {
-        value: "beijing_city",
-        label: "北京市",
-        children: [
-          { value: "haidian", label: "海淀区" },
-          { value: "chaoyang", label: "朝阳区" },
-        ],
-      },
-    ],
-  },
-  {
-    value: "shanghai",
-    label: "上海市",
-    children: [
-      {
-        value: "shanghai_city",
-        label: "上海市",
-        children: [
-          { value: "pudong", label: "浦东新区" },
-          { value: "xuhui", label: "徐汇区" },
-        ],
-      },
-    ],
-  },
-  // 可以根据需要添加更多省份
-]);
+// 省市级联数据
+const locationOptions = ref(chinaRegions);
 
 // 账号安全表单数据
 const securityForm = reactive({
