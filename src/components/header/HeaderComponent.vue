@@ -50,7 +50,7 @@
                   <img :src="userInfo.userAvatar" alt="用户头像" />
                 </a-avatar>
                 <a-avatar :size="32" class="user-avatar" v-else>
-                  {{ userInfo?.userName?.charAt(0) || "?" }}
+                  {{ userInfo?.nickname?.charAt(0) || "?" }}
                 </a-avatar>
                 <div class="user-text">
                   <a-typography-paragraph
@@ -60,7 +60,7 @@
                     }"
                     class="username"
                   >
-                    {{ userInfo?.userName }}
+                    {{ userInfo?.nickname }}
                   </a-typography-paragraph>
                   <span class="role-tag">{{ getUserRoleText() }}</span>
                 </div>
@@ -278,10 +278,12 @@ const toggleTheme = () => {
 const getUserRoleText = () => {
   const role = userInfo.value?.userRole;
   switch (role) {
-    case accessEnum.ADMIN:
-      return "管理员";
     case accessEnum.USER:
       return "用户";
+    case accessEnum.VIP:
+      return "VIP";
+    case accessEnum.ADMIN:
+      return "管理员";
     default:
       return "访客";
   }

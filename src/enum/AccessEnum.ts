@@ -2,6 +2,7 @@
 const ACCESS_ENUM = {
   NOT_LOGIN: "notlogin",
   USER: "user",
+  VIP: "vip",
   ADMIN: "admin",
 };
 

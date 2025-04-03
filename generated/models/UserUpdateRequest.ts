@@ -7,9 +7,6 @@ export type UserUpdateRequest = {
     checkPassword?: string;
     id?: number;
     userAccount?: string;
-    userAvatar?: string;
-    userName?: string;
     userPassword?: string;
-    userProfile?: string;
     userRole?: string;
 };

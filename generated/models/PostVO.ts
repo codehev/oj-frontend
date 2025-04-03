@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 import type { PostZone } from './PostZone';
-import type { UserVO } from './UserVO';
+import type { UserProfileVO } from './UserProfileVO';
 
 export type PostVO = {
     content?: string;
@@ -18,8 +18,8 @@ export type PostVO = {
     thumbNum?: number;
     title?: string;
     updateTime?: string;
-    user?: UserVO;
     userId?: number;
+    userProfileVO?: UserProfileVO;
     viewNum?: number;
     zoneId?: number;
 };

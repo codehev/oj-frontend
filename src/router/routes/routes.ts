@@ -176,6 +176,21 @@ export const routes: Array<RouteRecordRaw> = [
     ],
   },
   {
+    path: "/user/settings",
+    component: () => import("@/layouts/BasicLayout.vue"),
+    meta: {
+      access: ACCESS_ENUM.USER,
+      hideInMenu: true,
+    },
+    children: [
+      {
+        path: "",
+        name: "账号设置",
+        component: () => import("@/views/user/UserSettingsView.vue"),
+      },
+    ],
+  },
+  {
     path: "/view",
     component: () => import("@/layouts/QuestionLayout.vue"),
     children: [

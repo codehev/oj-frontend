@@ -16,16 +16,22 @@
           />
         </a-form-item>
         <a-form-item
-          field="userName"
-          label="用户名"
+          field="userRole"
+          label="角色"
           :show-colon="true"
           class="form-item"
         >
-          <a-input
-            v-model="searchParams.userName"
-            placeholder="请输入用户名..."
+          <a-select
+            v-model="searchParams.userRole"
+            placeholder="请选择角色"
             allow-clear
-          />
+            style="width: 120px"
+          >
+            <a-option value="user">用户</a-option>
+            <a-option value="admin">管理员</a-option>
+            <a-option value="vip">会员</a-option>
+            <a-option value="ban">禁用</a-option>
+          </a-select>
         </a-form-item>
         <a-form-item>
           <a-button type="primary" @click="loadData">搜索</a-button>
@@ -53,14 +59,6 @@
       @page-change="onPageChange"
       @page-size-change="onPageSizeChange"
     >
-      <template #userAvatar="{ record }">
-        <a-avatar :size="32" class="user-avatar" v-if="record.userAvatar">
-          <img :src="record.userAvatar" alt="用户头像" />
-        </a-avatar>
-        <a-avatar :size="32" class="user-avatar" v-else>
-          {{ record?.userName.charAt(0) }}
-        </a-avatar>
-      </template>
       <template #userRole="{ record }">
         <span>{{ roleEnum[record.userRole as keyof typeof roleEnum] }}</span>
       </template>
@@ -192,9 +190,6 @@
             "
           />
         </a-form-item>
-        <a-form-item label="昵称" field="userName">
-          <a-input v-model="userForm.userName" placeholder="请输入昵称..." />
-        </a-form-item>
         <a-form-item label="角色" field="userRole">
           <a-select v-model="userForm.userRole" placeholder="请选择角色">
             <a-option value="user">用户</a-option>
@@ -219,7 +214,7 @@ import { TableColumnData } from "@arco-design/web-vue/es/table";
 
 const searchParams = ref<UserQueryRequest>({
   userAccount: "",
-  userName: "",
+  userRole: undefined,
   pageSize: 10,
   current: 1,
 });
@@ -239,7 +234,6 @@ const userForm = ref({
   userAccount: "",
   userPassword: "",
   checkPassword: "",
-  userName: "",
   userRole: "user",
 });
 
@@ -270,16 +264,8 @@ onMounted(() => {
 
 const columns = ref<TableColumnData[]>([
   {
-    title: "用户头像",
-    slotName: "userAvatar",
-  },
-  {
     title: "账号",
     dataIndex: "userAccount",
-  },
-  {
-    title: "用户名",
-    dataIndex: "userName",
   },
   {
     title: "角色",
@@ -319,7 +305,6 @@ const showUserModal = (type: string, record?: any) => {
       userAccount: "",
       userPassword: "",
       checkPassword: "",
-      userName: "",
       userRole: "user",
     };
   }
@@ -412,16 +397,15 @@ const toggleUserStatus = async (record: any) => {
 .search-form {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.form-item {
+  margin-bottom: 12px;
 }
 
 .add-user-button {
   margin-left: auto;
-}
-
-.user-avatar {
-  width: 40px; /* 设置头像宽度 */
-  height: 40px; /* 设置头像高度 */
-  border-radius: 50%; /* 使头像圆形 */
 }
 </style>

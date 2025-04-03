@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { UserVO } from './UserVO';
+import type { UserProfileVO } from './UserProfileVO';
 
 export type PostZoneVO = {
     createTime?: string;
@@ -12,7 +12,7 @@ export type PostZoneVO = {
     postCount?: number;
     sort?: number;
     updateTime?: string;
-    user?: UserVO;
     userId?: number;
+    userProfileVO?: UserProfileVO;
     zoneName?: string;
 };

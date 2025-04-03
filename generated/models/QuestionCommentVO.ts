@@ -8,9 +8,9 @@ export type QuestionCommentVO = {
     createTime?: string;
     expandedFlag?: boolean;
     id?: number;
+    nickname?: string;
     parentId?: number;
     questionId?: number;
     userAvatar?: string;
     userId?: number;
-    userName?: string;
 };

@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 import type { JudgeConfig } from './JudgeConfig';
-import type { UserVO } from './UserVO';
+import type { UserProfileVO } from './UserProfileVO';
 
 export type QuestionVO = {
     acceptedNum?: number;
@@ -24,5 +24,5 @@ export type QuestionVO = {
     title?: string;
     updateTime?: string;
     userId?: number;
-    userVO?: UserVO;
+    userProfileVO?: UserProfileVO;
 };

@@ -8,9 +8,9 @@ export type PostCommentVO = {
     createTime?: string;
     expandedFlag?: boolean;
     id?: number;
+    nickname?: string;
     parentId?: number;
     postId?: number;
     userAvatar?: string;
     userId?: number;
-    userName?: string;
 };

@@ -12,7 +12,5 @@ export type UserQueryRequest = {
     sortOrder?: string;
     unionId?: string;
     userAccount?: string;
-    userName?: string;
-    userProfile?: string;
     userRole?: string;
 };

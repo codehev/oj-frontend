@@ -5,10 +5,15 @@
 
 export type LoginUserVO = {
     createTime?: string;
+    email?: string;
+    giteeId?: string;
+    githubId?: string;
     id?: number;
+    mpOpenId?: string;
+    nickname?: string;
+    unionId?: string;
     updateTime?: string;
+    userAccount?: string;
     userAvatar?: string;
-    userName?: string;
-    userProfile?: string;
     userRole?: string;
 };

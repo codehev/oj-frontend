@@ -5,7 +5,7 @@
 
 import type { JudgeInfo } from './JudgeInfo';
 import type { QuestionVO } from './QuestionVO';
-import type { UserVO } from './UserVO';
+import type { UserProfileVO } from './UserProfileVO';
 
 export type QuestionSubmitVO = {
     code?: string;
@@ -18,5 +18,5 @@ export type QuestionSubmitVO = {
     status?: number;
     updateTime?: string;
     userId?: number;
-    userVO?: UserVO;
+    userProfileVO?: UserProfileVO;
 };

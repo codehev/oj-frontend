@@ -6,8 +6,6 @@
 export type UserAddRequest = {
     checkPassword?: string;
     userAccount?: string;
-    userAvatar?: string;
-    userName?: string;
     userPassword?: string;
     userRole?: string;
 };

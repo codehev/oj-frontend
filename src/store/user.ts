@@ -35,7 +35,7 @@ export default {
   state: () => ({
     // 存储后端返回的脱敏的用户信息，此处给出必要字段的默认值
     loginUser: {
-      userName: "未登录",
+      nickname: "未登录",
       userRole: ACCESS_ENUM.NOT_LOGIN,
     },
   }),

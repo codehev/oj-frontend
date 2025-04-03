@@ -14,9 +14,6 @@ export type User = {
     unionId?: string;
     updateTime?: string;
     userAccount?: string;
-    userAvatar?: string;
-    userName?: string;
     userPassword?: string;
-    userProfile?: string;
     userRole?: string;
 };

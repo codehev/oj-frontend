@@ -3,12 +3,18 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import type { UserProfileVO } from './UserProfileVO';
+
 export type UserVO = {
     createTime?: string;
+    email?: string;
+    giteeId?: string;
+    githubId?: string;
     id?: number;
+    mpOpenId?: string;
+    unionId?: string;
+    updateTime?: string;
     userAccount?: string;
-    userAvatar?: string;
-    userName?: string;
-    userProfile?: string;
+    userProfileVO?: UserProfileVO;
     userRole?: string;
 };
