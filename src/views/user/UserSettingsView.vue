@@ -469,7 +469,6 @@ import {
   IconLock,
   IconEmail,
   IconGithub,
-  IconLink,
   IconCode,
   IconMan,
   IconWoman,
@@ -495,13 +494,13 @@ const profileForm = reactive({
   nickname: "",
   gender: "male" as "male" | "female",
   birthday: "",
+  location: [] as string[],
   bio: "",
   website: "",
   github: "",
   school: "",
   company: "",
   jobTitle: "",
-  location: [] as string[],
   skillTags: [] as string[],
 });
 
@@ -585,10 +584,11 @@ const store = useStore();
 
 // 组件挂载时获取用户信息
 onMounted(async () => {
+  const loginUser = store.state.user.loginUser;
   try {
     // 使用API获取用户个人资料
     const response = await UserControllerService.getUserProfileUsingGet(
-      store.state.user.loginUser.id
+      loginUser.id
     );
     if (response.code === 0 && response.data) {
       const userProfile = response.data;
@@ -609,16 +609,15 @@ onMounted(async () => {
       profileForm.skillTags = userProfile.skillTags
         ? userProfile.skillTags
         : [];
-
+      // 填充安全信息
+      securityForm.email = loginUser?.email || "";
+      securityForm.githubBound = !!loginUser?.githubId;
+      securityForm.giteeBound = !!loginUser?.giteeId;
       // 获取用户基本信息
-      const userResponse = await UserControllerService.getLoginUserUsingGet();
-      if (userResponse.code === 0 && userResponse.data) {
-        const userInfo = userResponse.data;
-        // 填充安全信息
-        securityForm.email = userInfo.email || "";
-        securityForm.githubBound = !!userInfo.githubId;
-        securityForm.giteeBound = !!userInfo.giteeId;
-      }
+      // const userResponse = await UserControllerService.getLoginUserUsingGet();
+      // if (userResponse.code === 0 && userResponse.data) {
+      //   const userInfo = userResponse.data;
+      // }
     }
   } catch (error) {
     Message.error("获取用户信息失败");
@@ -710,25 +709,52 @@ const uploadAvatar = (
 };
 
 // 修改密码
-const changePassword = async () => {
-  const validate = await passwordFormRef.value.validate();
-  if (validate) {
-    try {
-      // 这里调用API修改密码
-      // 示例代码，实际开发中替换为真实API调用
-      // await UserControllerService.changePasswordUsingPost({
-      //   oldPassword: passwordForm.oldPassword,
-      //   newPassword: passwordForm.newPassword,
-      // });
-
-      Message.success("密码修改成功");
-      showPasswordModal.value = false;
-      resetPasswordForm();
-    } catch (error) {
-      Message.error("密码修改失败");
-      console.error("密码修改失败:", error);
-    }
+const changePassword = () => {
+  // 直接进行手动验证，不使用框架的验证
+  if (!passwordForm.oldPassword) {
+    Message.error("请输入当前密码");
+    return;
   }
+
+  if (!passwordForm.newPassword) {
+    Message.error("请输入新密码");
+    return;
+  }
+
+  if (passwordForm.newPassword.length < 8) {
+    Message.error("新密码长度不能少于8位");
+    return;
+  }
+
+  if (!passwordForm.confirmPassword) {
+    Message.error("请确认新密码");
+    return;
+  }
+
+  if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+    Message.error("两次输入的密码不一致");
+    return;
+  }
+
+  // 所有验证通过后，调用API
+  UserControllerService.changePasswordUsingPost({
+    oldPassword: passwordForm.oldPassword,
+    newPassword: passwordForm.newPassword,
+    confirmPassword: passwordForm.confirmPassword,
+  })
+    .then((res) => {
+      if (res.code === 0) {
+        Message.success("密码修改成功");
+        showPasswordModal.value = false;
+        resetPasswordForm();
+      } else {
+        Message.error(res.message || "密码修改失败");
+      }
+    })
+    .catch((error) => {
+      Message.error("密码修改失败，请稍后再试");
+      console.error("密码修改失败:", error);
+    });
 };
 
 // 重置密码表单

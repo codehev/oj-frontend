@@ -10,6 +10,7 @@ import type { BaseResponse_Page_UserVO_ } from '../models/BaseResponse_Page_User
 import type { BaseResponse_User_ } from '../models/BaseResponse_User_';
 import type { BaseResponse_UserProfileVO_ } from '../models/BaseResponse_UserProfileVO_';
 import type { BaseResponse_UserVO_ } from '../models/BaseResponse_UserVO_';
+import type { ChangePasswordRequest } from '../models/ChangePasswordRequest';
 import type { DeleteRequest } from '../models/DeleteRequest';
 import type { EmailLoginRequest } from '../models/EmailLoginRequest';
 import type { EmailRegisterRequest } from '../models/EmailRegisterRequest';
@@ -90,6 +91,28 @@ source: string,
                 'oauthId': oauthId,
                 'source': source,
             },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+
+    /**
+     * changePassword
+     * @param changePasswordRequest changePasswordRequest
+     * @returns BaseResponse_boolean_ OK
+     * @returns any Created
+     * @throws ApiError
+     */
+    public static changePasswordUsingPost(
+changePasswordRequest: ChangePasswordRequest,
+): CancelablePromise<BaseResponse_boolean_ | any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/user/change/password',
+            body: changePasswordRequest,
             errors: {
                 401: `Unauthorized`,
                 403: `Forbidden`,

@@ -60,7 +60,7 @@ export default {
           userRole: ACCESS_ENUM.NOT_LOGIN,
         });
       }
-      // commit("updateUser", { userName: "鱼皮" });
+      // commit("updateUser", { userName: "admin" });
       // commit("updateUser", payload);
     },
   },

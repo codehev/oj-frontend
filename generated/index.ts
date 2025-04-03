@@ -33,6 +33,7 @@ export type { BaseResponse_string_ } from './models/BaseResponse_string_';
 export type { BaseResponse_User_ } from './models/BaseResponse_User_';
 export type { BaseResponse_UserProfileVO_ } from './models/BaseResponse_UserProfileVO_';
 export type { BaseResponse_UserVO_ } from './models/BaseResponse_UserVO_';
+export type { ChangePasswordRequest } from './models/ChangePasswordRequest';
 export type { DeleteRequest } from './models/DeleteRequest';
 export type { EmailLoginRequest } from './models/EmailLoginRequest';
 export type { EmailRegisterRequest } from './models/EmailRegisterRequest';
